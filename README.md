@@ -1,1 +1,1 @@
-# cake-rest-plugin
+# RestApi package for CakePHP
