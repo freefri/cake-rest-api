@@ -26,7 +26,10 @@
   },
   "require": {
     "php": ">=7.3",
+    "ext-json": "*",
     "cakephp/cakephp": "^4.4",
+    "cakephp/migrations": "^3.2",
+    "bshaffer/oauth2-server-php": "~1.7",
     "composer/composer": "^2.0"
   },
   "require-dev": {

@@ -7,17 +7,8 @@ use PHPUnit\Runner\AfterLastTestHook;
 
 class PHPUnitExtension implements AfterLastTestHook
 {
-    public function executeAfterLastTest(): void
-    {
-        $paths = $this->_readFiles();
-        $counter = 1;
-        foreach ($paths as &$path) {
-            foreach ($path as &$method) {
-                $method['operationId'] = '' . $counter;
-                $counter++;
-            }
-        }
-        $obj = [
+    protected function getInfo(array $paths): array {
+        return [
             'openapi' => '3.0.0',
             'info' => [
                 'version' => (date('Y') - 2017).'.'.date('W').'.'.date('dHi'),
@@ -42,7 +33,19 @@ class PHPUnitExtension implements AfterLastTestHook
                 ],
             ],
         ];
-        $this->_writeFile($obj);
+    }
+
+    public function executeAfterLastTest(): void
+    {
+        $paths = $this->_readFiles();
+        $counter = 1;
+        foreach ($paths as &$path) {
+            foreach ($path as &$method) {
+                $method['operationId'] = '' . $counter;
+                $counter++;
+            }
+        }
+        $this->_writeFile($this->getInfo($paths));
     }
 
     private function _readFiles(): array
