@@ -44,4 +44,13 @@ trait SoftDeleteTrait
             throw new InternalErrorException('Error soft deleting '. $primaryKey);
         }
     }
+
+    public function softDeleteAll(array $condition): int
+    {
+        $query = $this->query();
+        $statement = $query->update()
+            ->set([$this->_getSoftDeleteField() => date('Y-m-d H:i:s')])
+            ->where($condition);
+        return $statement->execute()->rowCount();
+    }
 }

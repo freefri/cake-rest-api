@@ -6,6 +6,7 @@ use Cake\Cache\Cache;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\NotImplementedException;
+use Cake\Http\Exception\UnauthorizedException;
 use Cake\I18n\FrozenTime;
 use OAuth2\Storage\AccessTokenInterface;
 use OAuth2\Storage\AuthorizationCodeInterface;
@@ -250,6 +251,15 @@ class OauthAccessTokensTable extends RestApiTable implements
             return false;
         }
         return empty($res['client_secret']);
+    }
+
+    public function checkUserAccessToken ($userId, $token) {
+        $userToken =$this->find()
+            ->where(['user_id' => $userId, 'access_token' => $token])
+            ->first();
+        if (!$userToken) {
+            throw new UnauthorizedException('Invalid user credentials');
+        }
     }
 
     public function expireUserTokens($userId): void

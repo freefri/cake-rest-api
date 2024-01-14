@@ -5,7 +5,6 @@ namespace RestApi\Model\Table;
 use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
-use Cake\Http\Exception\InternalErrorException;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
@@ -132,28 +131,5 @@ abstract class RestApiTable extends Table
             throw new ValidationException($entity);
         }
         return $res;
-    }
-
-    protected function getLastIncrementId($sellerId = null): int
-    {
-        $isGlobalIncrement = \App\Lib\Helpers\Configure::read('Platform.globalIncrement') ?? false;
-        if ($sellerId === null && !$isGlobalIncrement) {
-            throw new InternalErrorException('seller id must be provided');
-        }
-        $query = $this->find()
-            ->where([
-                'YEAR(created) = YEAR("' . date('Y-m-d') . '")',
-                'increment !=' => 0
-            ])
-            ->order(['increment' => 'desc']);
-        if (!$isGlobalIncrement) {
-            $query->where(['seller_id' => $sellerId]);
-        }
-        $incr = $query->first();
-        if (isset($incr->increment)) {
-            return $incr->increment + 1;
-        } else {
-            return 1;
-        }
     }
 }
