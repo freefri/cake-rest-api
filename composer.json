@@ -26,6 +26,8 @@
   },
   "require": {
     "php": ">=7.3",
+    "ext-mbstring": "*",
+    "ext-memcached": "*",
     "ext-json": "*",
     "cakephp/cakephp": "^4.4",
     "cakephp/migrations": "^3.2",

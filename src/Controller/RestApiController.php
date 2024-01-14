@@ -38,6 +38,13 @@ abstract class RestApiController extends Controller
     protected $flatResponse = false;
     protected $useOauthServer = true;
 
+    protected function loadComponentFromClass(string $className)
+    {
+        $arraySplit = explode('\\', $className);
+        $AppCorsClassName = explode('Component', array_pop($arraySplit))[0];
+        $this->loadComponent($AppCorsClassName);
+    }
+
     public function isPublicController(): bool
     {
         return false;
