@@ -3,7 +3,6 @@
 namespace RestApi\Lib\Validator;
 
 use Cake\Validation\Validator;
-use RestApi\Lib\Validator\Emoji;
 
 class RestApiValidator extends Validator
 {
