@@ -204,9 +204,9 @@ class OauthAccessTokensTable extends RestApiTable implements
 
     public function setAuthorizationCode($authorization_code, $client_id, $user_id, $redirect_uri, $expires, $scope = null): bool
     {
-        if (func_num_args() > 6) {
-            throw new NotImplementedException('See /OAuth2/Storage/Pdo');
-        }
+        //if (func_num_args() > 6) {
+        //    throw new NotImplementedException('See /OAuth2/Storage/Pdo');
+        //}
         $save = compact('authorization_code', 'client_id', 'user_id', 'redirect_uri', 'expires', 'scope');
         return $this->_saveAuthorizationCodes($save);
     }
