@@ -6,11 +6,13 @@ use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use RestApi\Lib\Validator\RestApiValidator;
 use RestApi\Lib\Validator\ValidationException;
 use RestApi\Model\ORM\RestApiQuery;
+use RestApi\Model\ORM\RestApiSelectQuery;
 
 abstract class RestApiTable extends Table
 {
@@ -93,9 +95,21 @@ abstract class RestApiTable extends Table
     }
     */
 
+    /**
+     * @return Query
+     * @deprecated As of 4.5.0 using query() is deprecated. Instead use `insertQuery()`,
+     * `deleteQuery()`, `selectQuery()` or `updateQuery()`. The query objects
+     * returned by these methods will emit deprecations that will become fatal errors in 5.0.
+     * See https://book.cakephp.org/4/en/appendices/4-5-migration-guide.html for more information.
+     */
     public function query(): Query
     {
         return new RestApiQuery($this->getConnection(), $this);
+    }
+
+    public function selectQuery(): SelectQuery
+    {
+        return new RestApiSelectQuery($this->getConnection(), $this);
     }
 
     public function quotedSave(EntityInterface $entity, $options = [])

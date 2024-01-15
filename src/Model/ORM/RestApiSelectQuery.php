@@ -6,24 +6,13 @@ use Cake\Database\StatementInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use RestApi\Lib\Exception\SilentException;
 
-/**
- * @deprecated As of 4.5.0 using query() is deprecated. Instead use `insertQuery()`,
- * `deleteQuery()`, `selectQuery()` or `updateQuery()`. The query objects
- * returned by these methods will emit deprecations that will become fatal errors in 5.0.
- * See https://book.cakephp.org/4/en/appendices/4-5-migration-guide.html for more information.
- */
-class RestApiQuery extends Query
+class RestApiSelectQuery extends SelectQuery
 {
     const WITH_DELETED = 'with_deleted';
 
-    /**
-     * @deprecated As of 4.5.0 using query() is deprecated. Instead use `insertQuery()`,
-     * `deleteQuery()`, `selectQuery()` or `updateQuery()`. The query objects
-     * returned by these methods will emit deprecations that will become fatal errors in 5.0.
-     * See https://book.cakephp.org/4/en/appendices/4-5-migration-guide.html for more information.
-     */
     public function withDeleted(bool $includeDeleted): Query
     {
         $containOptions = $includeDeleted ? [self::WITH_DELETED] : [];
@@ -31,12 +20,6 @@ class RestApiQuery extends Query
         return $this;
     }
 
-    /**
-     * @deprecated As of 4.5.0 using query() is deprecated. Instead use `insertQuery()`,
-     * `deleteQuery()`, `selectQuery()` or `updateQuery()`. The query objects
-     * returned by these methods will emit deprecations that will become fatal errors in 5.0.
-     * See https://book.cakephp.org/4/en/appendices/4-5-migration-guide.html for more information.
-     */
     public function triggerBeforeFind(): void
     {
         if (!$this->_beforeFindFired && $this->_type === 'select') {
@@ -54,12 +37,6 @@ class RestApiQuery extends Query
         }
     }
 
-    /**
-     * @deprecated As of 4.5.0 using query() is deprecated. Instead use `insertQuery()`,
-     * `deleteQuery()`, `selectQuery()` or `updateQuery()`. The query objects
-     * returned by these methods will emit deprecations that will become fatal errors in 5.0.
-     * See https://book.cakephp.org/4/en/appendices/4-5-migration-guide.html for more information.
-     */
     protected function _execute(): ResultSetInterface
     {
         $this->triggerBeforeFind();
@@ -75,12 +52,6 @@ class RestApiQuery extends Query
         return new RestApiResultSet($this, $statement);
     }
 
-    /**
-     * @deprecated As of 4.5.0 using query() is deprecated. Instead use `insertQuery()`,
-     * `deleteQuery()`, `selectQuery()` or `updateQuery()`. The query objects
-     * returned by these methods will emit deprecations that will become fatal errors in 5.0.
-     * See https://book.cakephp.org/4/en/appendices/4-5-migration-guide.html for more information.
-     */
     public function firstOrSilent(string $message)
     {
         $res = $this->first();
@@ -90,12 +61,6 @@ class RestApiQuery extends Query
         return $res;
     }
 
-    /**
-     * @deprecated As of 4.5.0 using query() is deprecated. Instead use `insertQuery()`,
-     * `deleteQuery()`, `selectQuery()` or `updateQuery()`. The query objects
-     * returned by these methods will emit deprecations that will become fatal errors in 5.0.
-     * See https://book.cakephp.org/4/en/appendices/4-5-migration-guide.html for more information.
-     */
     public function execute(): StatementInterface
     {
         try {
@@ -115,12 +80,6 @@ class RestApiQuery extends Query
         return $this->_iterator;
     }
 
-    /**
-     * @deprecated As of 4.5.0 using query() is deprecated. Instead use `insertQuery()`,
-     * `deleteQuery()`, `selectQuery()` or `updateQuery()`. The query objects
-     * returned by these methods will emit deprecations that will become fatal errors in 5.0.
-     * See https://book.cakephp.org/4/en/appendices/4-5-migration-guide.html for more information.
-     */
     public function __debugInfo(): array
     {
         $res = parent::__debugInfo();
