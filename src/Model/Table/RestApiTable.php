@@ -3,6 +3,8 @@
 namespace RestApi\Model\Table;
 
 use Cake\Core\Configure;
+use Cake\Database\Driver\Mysql;
+use Cake\Database\Exception\MissingConnectionException;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Query;
@@ -145,5 +147,29 @@ abstract class RestApiTable extends Table
             throw new ValidationException($entity);
         }
         return $res;
+    }
+
+    public function __call($method, $args)
+    {
+        try {
+            return parent::__call($method, $args);
+        } catch (MissingConnectionException $e) {
+            $this->_createMysqlFromConfig($e);
+            throw $e;
+        }
+    }
+
+    private function _createMysqlFromConfig($e): void
+    {
+        $dbConfig = $this->getConnection()->config();
+        $database = $dbConfig['database'];
+        $msg = "Connection to Mysql could not be established: SQLSTATE[HY000] [1049] Unknown database '$database'";
+        if (strlen($database) > 3 && $dbConfig['driver'] == Mysql::class && $e->getMessage() == $msg) {
+            $sql = "CREATE DATABASE $database";
+            $dbConfig['database'] = null;
+            $dbConfig['init'][] = $sql;
+            $mysql = new Mysql($dbConfig);
+            $mysql->connect();
+        }
     }
 }
