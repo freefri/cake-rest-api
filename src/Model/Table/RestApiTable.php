@@ -111,7 +111,12 @@ abstract class RestApiTable extends Table
 
     public function selectQuery(): SelectQuery
     {
-        return new RestApiSelectQuery($this->getConnection(), $this);
+        try {
+            return new RestApiSelectQuery($this->getConnection(), $this);
+        } catch (MissingConnectionException $e) {
+            $this->_createMysqlFromConfig($e);
+            throw $e;
+        }
     }
 
     public function quotedSave(EntityInterface $entity, $options = [])
