@@ -35,11 +35,7 @@ trait SoftDeleteTrait
 
     public function softDelete($primaryKey): void
     {
-        $query = $this->query();
-        $statement = $query->update()
-            ->set([$this->_getSoftDeleteField() => date('Y-m-d H:i:s')])
-            ->where(['id' => $primaryKey]);
-        $success = $statement->execute()->rowCount() > 0;
+        $success = $this->softDeleteAll(['id' => $primaryKey]) > 0;
         if (!$success) {
             throw new InternalErrorException('Error soft deleting '. $primaryKey);
         }
