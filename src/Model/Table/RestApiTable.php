@@ -7,6 +7,11 @@ use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
+use Cake\Http\Exception\InternalErrorException;
+use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Association\BelongsToMany;
+use Cake\ORM\Association\HasMany;
+use Cake\ORM\Association\HasOne;
 use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
@@ -29,6 +34,16 @@ abstract class RestApiTable extends Table
         return self::TABLE_PREFIX;
     }
 
+    public static final function name(): string
+    {
+        $split = namespaceSplit(static::class);
+        $name = array_pop($split);
+        if (strpos($name, 'Table') === false) {
+            throw new InternalErrorException('Class name must contain Table');
+        }
+        return substr($name, 0, -1 * strlen('Table'));
+    }
+
     public static function nameWithPlugin()
     {
         $namespaceSplit = namespaceSplit(get_called_class());
@@ -47,6 +62,39 @@ abstract class RestApiTable extends Table
         /** @var self $table */
         $table = FactoryLocator::get('Table')->get($alias);
         return $table;
+    }
+
+    public static function addHasMany(RestApiTable $model): HasMany
+    {
+        return $model->hasMany(static::name(), ['className' => static::nameWithPlugin()]);
+    }
+
+    public static function addHasOne(RestApiTable $model): HasOne
+    {
+        return $model->hasOne(static::name(), ['className' => static::nameWithPlugin()]);
+    }
+
+    public static function addBelongsTo(RestApiTable $model): BelongsTo
+    {
+        return $model->belongsTo(static::name(), ['className' => static::nameWithPlugin()]);
+    }
+
+    public static function addBelongsToMany(RestApiTable $model): BelongsToMany
+    {
+        return $model->belongsToMany(static::name(), ['className' => static::nameWithPlugin()]);
+    }
+
+    public function addBehavior(string $name, array $options = [])
+    {
+        if (strpos($name, '\\') !== false) {
+            $split = namespaceSplit($name);
+            $name = array_pop($split);
+            if (strpos($name, 'Behavior') === false) {
+                throw new InternalErrorException('Class name must contain Behavior');
+            }
+            $name = substr($name, 0, -1 * strlen('Behavior'));
+        }
+        return parent::addBehavior($name, $options);
     }
 
     public function getTable(): string
