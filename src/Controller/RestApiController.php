@@ -68,7 +68,10 @@ abstract class RestApiController extends Controller
         return [];
     }
 
-    abstract protected function getMandatoryParams(): array;
+    protected function getMandatoryParams(): array
+    {
+        return $this->getRequest()->getAttribute('route')->keys;
+    }
 
     protected function setPublicAccess()
     {
