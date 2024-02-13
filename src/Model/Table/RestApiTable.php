@@ -64,7 +64,7 @@ abstract class RestApiTable extends Table
         return $table;
     }
 
-    public static function addHasMany(RestApiTable $model): HasMany
+    public static function addBelongsTo(RestApiTable $model): HasMany
     {
         return $model->hasMany(static::name(), ['className' => static::nameWithPlugin()]);
     }
@@ -74,7 +74,7 @@ abstract class RestApiTable extends Table
         return $model->hasOne(static::name(), ['className' => static::nameWithPlugin()]);
     }
 
-    public static function addBelongsTo(RestApiTable $model): BelongsTo
+    public static function addHasMany(RestApiTable $model): BelongsTo
     {
         return $model->belongsTo(static::name(), ['className' => static::nameWithPlugin()]);
     }
