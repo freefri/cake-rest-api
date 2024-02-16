@@ -61,6 +61,15 @@ class OauthAccessTokensTable extends RestApiTable implements
         }
     }
 
+    public function deleteAllAccessTokensCache()
+    {
+        $tokens = $this->find();
+        foreach ($tokens as $token) {
+            $cacheKey = $this->_getAccessTokenCacheKey($token['access_token']);
+            Cache::delete($cacheKey, self::CACHE_GROUP);
+        }
+    }
+
     public function getPublicKey($client_id = null)
     {
         $res = $this->_findPublicKeyByClientID($client_id);
@@ -273,5 +282,14 @@ class OauthAccessTokensTable extends RestApiTable implements
             $this->expireAccessToken($token->access_token);
         }
         $this->saveMany($oauthTokens);
+    }
+
+    public function getValidAccessToken(): string
+    {
+        /** @var OauthAccessToken $oauthAccessToken */
+        $oauthAccessToken =  $this->find()
+            ->where(['expires >' => new FrozenTime('+1 hour') ])
+            ->first();
+        return $oauthAccessToken->access_token;
     }
 }

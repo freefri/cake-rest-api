@@ -6,7 +6,6 @@ use Cake\Validation\Validator;
 
 class RestApiValidator extends Validator
 {
-
     public function justLetters(string $field, ?string $message = null)
     {
         return $this->add($field, 'invalid-letters',

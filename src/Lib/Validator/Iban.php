@@ -54,7 +54,6 @@ class Iban
         $country = mb_substr($value, 0, 2);
         if (isset(self::$_ibanregex[$country])) {
             if (preg_match(self::$_ibanregex[$country], $value)) {
-
                 $format = mb_substr($value, 4) . mb_substr($value, 0, 4);
                 $format = str_replace(
                     ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
