@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace RestApi\Controller\Component;
 
-use App\Controller\Component\ApiCorsComponent;
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
@@ -14,10 +13,10 @@ class ApiRestCorsComponent extends Component
     public static function load(Controller $controller, $AppCorsClassName = null)
     {
         if (!$AppCorsClassName) {
-            $AppCorsClassName = Configure::read('App.Cors.ClassName');
+            $AppCorsClassName = env('CORS_CLASS_NAME');
         }
         if (!$AppCorsClassName) {
-            $arraySplit = explode('\\', ApiCorsComponent::class);
+            $arraySplit = explode('\\', Configure::read('App.Cors.ClassName'));
             $AppCorsClassName = explode('Component', array_pop($arraySplit))[0];
         }
         $controller->loadComponent($AppCorsClassName);
