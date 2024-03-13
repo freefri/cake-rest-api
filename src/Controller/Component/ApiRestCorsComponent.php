@@ -6,6 +6,7 @@ namespace RestApi\Controller\Component;
 use App\Controller\Component\ApiCorsComponent;
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
+use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 
 class ApiRestCorsComponent extends Component
@@ -13,7 +14,7 @@ class ApiRestCorsComponent extends Component
     public static function load(Controller $controller, $AppCorsClassName = null)
     {
         if (!$AppCorsClassName) {
-            $AppCorsClassName = env('CORS_CLASS_NAME');
+            $AppCorsClassName = Configure::read('App.Cors.ClassName');
         }
         if (!$AppCorsClassName) {
             $arraySplit = explode('\\', ApiCorsComponent::class);
@@ -24,7 +25,7 @@ class ApiRestCorsComponent extends Component
 
     protected function getAllowedCors()
     {
-        return ['http://localhost:8080', 'http://localhost:8081'];
+        return Configure::read('App.Cors.AllowOrigin');
     }
 
     public function beforeFilter(EventInterface $event)
