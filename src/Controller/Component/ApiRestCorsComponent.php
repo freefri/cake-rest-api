@@ -36,7 +36,7 @@ class ApiRestCorsComponent extends Component
         return $className;
     }
 
-    protected function getAllowedCors()
+    protected function getAllowedCors(): array
     {
         $cors = Configure::read('App.Cors.AllowOrigin');
         if (!$cors) {
