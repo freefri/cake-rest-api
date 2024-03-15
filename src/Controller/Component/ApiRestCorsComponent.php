@@ -7,6 +7,7 @@ use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
+use Cake\Http\Exception\InternalErrorException;
 
 class ApiRestCorsComponent extends Component
 {
@@ -16,15 +17,28 @@ class ApiRestCorsComponent extends Component
             $AppCorsClassName = env('CORS_CLASS_NAME');
         }
         if (!$AppCorsClassName) {
-            $arraySplit = explode('\\', Configure::read('App.Cors.ClassName'));
+            $arraySplit = explode('\\', self::getCorsClassName());
             $AppCorsClassName = explode('Component', array_pop($arraySplit))[0];
         }
         $controller->loadComponent($AppCorsClassName);
     }
 
+    private static function getCorsClassName(): string
+    {
+        $res = Configure::read('App.Cors.ClassName');
+        if (!$res) {
+            die('ApiRestCorsComponent Error: Configuration App.Cors.ClassName in config/app.php must be defined');
+        }
+        return $res;
+    }
+
     protected function getAllowedCors()
     {
-        return Configure::read('App.Cors.AllowOrigin');
+        $cors = Configure::read('App.Cors.AllowOrigin');
+        if (!$cors) {
+            return [];
+        }
+        return $cors;
     }
 
     public function beforeFilter(EventInterface $event)
