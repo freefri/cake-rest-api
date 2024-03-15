@@ -25,11 +25,15 @@ class ApiRestCorsComponent extends Component
 
     private static function getCorsClassName(): string
     {
-        $res = Configure::read('App.Cors.ClassName');
-        if (!$res) {
-            die('ApiRestCorsComponent Error: Configuration App.Cors.ClassName in config/app.php must be defined');
+        $className = Configure::read('App.Cors.ClassName');
+        $err = 'ApiRestCorsComponent Error! Configuration App.Cors.ClassName in config/app.php';
+        if (!$className) {
+            die($err . ' must be defined');
         }
-        return $res;
+        if (!class_exists($className)) {
+            die($err . ' must be a class: '.$className);
+        }
+        return $className;
     }
 
     protected function getAllowedCors()
