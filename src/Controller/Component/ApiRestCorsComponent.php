@@ -10,7 +10,7 @@ use Cake\Event\EventInterface;
 
 class ApiRestCorsComponent extends Component
 {
-    public static function load(Controller $controller, $AppCorsClassName = null): Component
+    public static function load(Controller $controller, $AppCorsClassName = null): ApiRestCorsComponent
     {
         if (!$AppCorsClassName) {
             $AppCorsClassName = env('CORS_CLASS_NAME');
