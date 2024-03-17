@@ -7,11 +7,10 @@ use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
-use Cake\Http\Exception\InternalErrorException;
 
 class ApiRestCorsComponent extends Component
 {
-    public static function load(Controller $controller, $AppCorsClassName = null)
+    public static function load(Controller $controller, $AppCorsClassName = null): Component
     {
         if (!$AppCorsClassName) {
             $AppCorsClassName = env('CORS_CLASS_NAME');
@@ -20,7 +19,7 @@ class ApiRestCorsComponent extends Component
             $arraySplit = explode('\\', self::getCorsClassName());
             $AppCorsClassName = explode('Component', array_pop($arraySplit))[0];
         }
-        $controller->loadComponent($AppCorsClassName);
+        return $controller->loadComponent($AppCorsClassName);
     }
 
     private static function getCorsClassName(): string
