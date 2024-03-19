@@ -40,6 +40,11 @@ abstract class RestPlugin extends BasePlugin
         return self::getGenericPluginConfig('tablePrefix', $pluginNamespace);
     }
 
+    public static function getRoutePath(): string
+    {
+        return self::getRoutePathGeneric(self::getBaseNamespace());
+    }
+
     private static function getRoutePathGeneric(string $pluginNamespace): string
     {
         return self::getGenericPluginConfig('routePath', $pluginNamespace);
