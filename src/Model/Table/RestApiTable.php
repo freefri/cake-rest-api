@@ -44,7 +44,12 @@ abstract class RestApiTable extends Table
 
     protected function getTablePrefix(): string
     {
-        return RestPlugin::getTablePrefix();
+        return RestPlugin::getTablePrefixGeneric(self::getBaseNamespace());
+    }
+
+    private static function getBaseNamespace()
+    {
+        return explode('\\', get_called_class())[0] ?? '';
     }
 
     public static final function name(): string
