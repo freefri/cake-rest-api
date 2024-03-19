@@ -15,10 +15,7 @@ abstract class RestPlugin extends BasePlugin
     public function __construct(array $options = [])
     {
         if (isset($options['tablePrefix'])) {
-            Configure::write(
-                'App.RestPlugin.' . $this->getBaseNamespace() . '.tablePrefix',
-                (string)$options['tablePrefix']
-            );
+            $this->_setTablePrefix($options['tablePrefix']);
             unset($options['tablePrefix']);
         }
         if (isset($options['routePath'])) {
@@ -39,6 +36,23 @@ abstract class RestPlugin extends BasePlugin
             }
         );
         parent::routes($routes);
+    }
+
+    public static function getMigrationLoader(string $tablePrefix = null): array
+    {
+        if ($tablePrefix) {
+            self::_setTablePrefix($tablePrefix);
+        }
+        $className = get_called_class();
+        return ['plugin' => (new $className)->getName()];
+    }
+
+    private static function _setTablePrefix($tablePrefix): void
+    {
+        Configure::write(
+            'App.RestPlugin.' . self::getBaseNamespace() . '.tablePrefix',
+            (string)$tablePrefix
+        );
     }
 
     public static function getTablePrefix(): string
