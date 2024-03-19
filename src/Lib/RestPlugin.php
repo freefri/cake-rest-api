@@ -10,27 +10,13 @@ use Cake\Routing\RouteBuilder;
 
 abstract class RestPlugin extends BasePlugin
 {
-    protected string $routePath = '';
-
-    public function __construct(array $options = [])
-    {
-        if (isset($options['tablePrefix'])) {
-            $this->_setTablePrefix($options['tablePrefix']);
-            unset($options['tablePrefix']);
-        }
-        if (isset($options['routePath'])) {
-            $this->routePath = (string)$options['routePath'];
-        }
-        parent::__construct($options);
-    }
-
     protected abstract function routeConnectors(RouteBuilder $builder): void;
 
     public function routes(RouteBuilder $routes): void
     {
         $routes->plugin(
             $this->name,
-            ['path' => $this->routePath],
+            ['path' => $this->getRoutePathGeneric($this->getBaseNamespace())],
             function (RouteBuilder $builder) {
                 $this->routeConnectors($builder);
             }
@@ -38,21 +24,10 @@ abstract class RestPlugin extends BasePlugin
         parent::routes($routes);
     }
 
-    public static function getMigrationLoader(string $tablePrefix = null): array
+    public static function getMigrationLoader(): array
     {
-        if ($tablePrefix) {
-            self::_setTablePrefix($tablePrefix);
-        }
         $className = get_called_class();
         return ['plugin' => (new $className)->getName()];
-    }
-
-    private static function _setTablePrefix($tablePrefix): void
-    {
-        Configure::write(
-            'App.RestPlugin.' . self::getBaseNamespace() . '.tablePrefix',
-            (string)$tablePrefix
-        );
     }
 
     public static function getTablePrefix(): string
@@ -62,17 +37,27 @@ abstract class RestPlugin extends BasePlugin
 
     public static function getTablePrefixGeneric(string $pluginNamespace): string
     {
+        return self::getGenericPluginConfig('tablePrefix', $pluginNamespace);
+    }
+
+    private static function getRoutePathGeneric(string $pluginNamespace): string
+    {
+        return self::getGenericPluginConfig('routePath', $pluginNamespace);
+    }
+
+    private static function getGenericPluginConfig(string $key, string $pluginNamespace): string
+    {
         if ($pluginNamespace === 'RestApi') {
             throw new InternalErrorException('RestPlugin::getTablePrefix() must be called from child class');
         }
-        $res = Configure::read('App.RestPlugin.' . $pluginNamespace . '.tablePrefix');
+        $res = Configure::read($pluginNamespace . 'Plugin.' . $key);
         if (!$res) {
             return '';
         }
         return $res;
     }
 
-    private static function getBaseNamespace()
+    public static function getBaseNamespace()
     {
         return explode('\\', get_called_class())[0] ?? '';
     }
