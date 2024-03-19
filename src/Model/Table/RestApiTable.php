@@ -29,6 +29,19 @@ abstract class RestApiTable extends Table
 
     protected $_validatorClass = RestApiValidator::class;
 
+    public function __construct(array $config = [])
+    {
+        $validator = Configure::read('App.Classes.tableValidator');
+        if ($validator) {
+            if (!class_exists($validator)) {
+                $e = 'Validator class from App.Classes.tableValidator does not exist ' . $validator;
+                throw new InternalErrorException($e);
+            }
+            $this->_validatorClass = $validator;
+        }
+        parent::__construct($config);
+    }
+
     protected function getTablePrefix(): string
     {
         return RestPlugin::getTablePrefix();
@@ -191,6 +204,11 @@ abstract class RestApiTable extends Table
             $driver->enableAutoQuoting($oldState);
         }
         return $res;
+    }
+
+    public function findById($id): Query
+    {
+        return parent::findById($id);
     }
 
     public function patchEntity(EntityInterface $entity, array $data, array $options = []): EntityInterface
