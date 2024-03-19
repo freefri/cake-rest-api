@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace RestApi\Model\Table;
 
@@ -16,6 +17,7 @@ use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
+use RestApi\Lib\RestPlugin;
 use RestApi\Lib\Validator\RestApiValidator;
 use RestApi\Lib\Validator\ValidationException;
 use RestApi\Model\ORM\RestApiQuery;
@@ -25,13 +27,11 @@ abstract class RestApiTable extends Table
 {
     use SoftDeleteTrait;
 
-    const TABLE_PREFIX = '';
-
     protected $_validatorClass = RestApiValidator::class;
 
     protected function getTablePrefix(): string
     {
-        return self::TABLE_PREFIX;
+        return RestPlugin::getTablePrefix();
     }
 
     public static final function name(): string
