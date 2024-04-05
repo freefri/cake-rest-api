@@ -65,7 +65,13 @@ class ApiRestCorsComponent extends Component
             if ($controller->getRequest()->is('options')) {
                 $responseBuilder
                     ->allowMethods(['POST', 'GET', 'PATCH', 'PUT', 'DELETE'])
-                    ->allowHeaders(['Authorization', 'Content-Type', 'Accept-Language', 'X-Experience-API-Version'])
+                    ->allowHeaders([
+                        'Authorization',
+                        'Content-Type',
+                        'Accept-Language',
+                        'X-Experience-API-Version',
+                        'X-Whitelabel',
+                    ])
                     ->maxAge(3600);
                 $response = $responseBuilder->build();
                 $controller->setResponse($response);
