@@ -113,12 +113,18 @@ abstract class RestApiController extends Controller
     public function beforeFilter(EventInterface $event)
     {
         foreach ($this->getMandatoryParams() as $param) {
-            if (!$this->request->is('OPTIONS') && $this->getRequest()->getParam($param) < 1) {
+            $paramValue = $this->getRequest()->getParam($param);
+            if (!$this->request->is('OPTIONS') && !$this->isValidParam($paramValue)) {
                 throw new BadRequestException('Invalid mandatory params in URL: '.$param.' in '.$this->getName());
             }
         }
         $this->_setLanguage();
         parent::beforeFilter($event);
+    }
+
+    public static function isValidParam(?string $paramValue): bool
+    {
+        return $paramValue >= 1;
     }
 
     protected abstract function _setLanguage(): void;
