@@ -124,6 +124,17 @@ abstract class RestApiController extends Controller
 
     public static function isValidParam(?string $paramValue): bool
     {
+        if (!$paramValue) {
+            return false;
+        }
+        if (strlen($paramValue) > 1) {
+            foreach (str_split($paramValue) as $char) {
+                if ($char && $char !== '0' && $char !== ' ') {
+                    return true;
+                }
+            }
+            return false;
+        }
         return $paramValue >= 1;
     }
 
