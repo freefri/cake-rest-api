@@ -8,6 +8,7 @@ use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\NotImplementedException;
 use Cake\Http\Exception\UnauthorizedException;
 use Cake\I18n\FrozenTime;
+use OAuth2\ResponseType\AccessToken;
 use OAuth2\Storage\AccessTokenInterface;
 use OAuth2\Storage\AuthorizationCodeInterface;
 use OAuth2\Storage\ClientCredentialsInterface;
@@ -260,6 +261,23 @@ class OauthAccessTokensTable extends RestApiTable implements
             return false;
         }
         return empty($res['client_secret']);
+    }
+
+    public function createBearerToken($userId, $clientId, $secondsLifetime = 3600): array
+    {
+        if (!$this->getClientDetails($clientId)) {
+            throw new BadRequestException('Invalid client id: ' . $clientId);
+        }
+        $config = [
+            'access_lifetime' => $secondsLifetime,
+            'token_type' => 'Bearer'
+        ];
+        $accessToken = new AccessToken($this, null, $config);
+        $res = $accessToken->createAccessToken($clientId, $userId);
+        if (!$res['access_token'] ?? false) {
+            throw new InternalErrorException('Access token could not be generated');
+        }
+        return $res;
     }
 
     public function checkUserAccessToken ($userId, $token) {
