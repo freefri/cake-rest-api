@@ -160,10 +160,16 @@ class OauthAccessTokensTable extends RestApiTable implements
         if ($cached !== null) {
             return $cached;
         }
+        /** @var OauthAccessToken $r */
         $r = $this->find('all', ['conditions' => ['access_token' => $oauth_token]])
             ->first();
         if (isset($r['expires'])) {
             $toRet = $r->toArray();
+            if (!$r->expires->isFuture()) {
+                Cache::write($cacheKey, null, self::CACHE_GROUP);
+                return false;
+            }
+            $toRet['expires'] = $r->expires->getTimestamp();
             Cache::write($cacheKey, $toRet, self::CACHE_GROUP);
             return $toRet;
         } else {

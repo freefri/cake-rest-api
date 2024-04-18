@@ -19,8 +19,8 @@ class OauthAccessToken extends Entity
         'scope' => true,
     ];
 
-    protected function _getExpires(FrozenTime $expires)
-    {
-        return $expires->getTimestamp();
-    }
+    //protected function _getExpires(FrozenTime $expires)
+    //{
+    //    return $expires->getTimestamp();
+    //}
 }
