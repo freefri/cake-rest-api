@@ -11,7 +11,8 @@ use DateTimeZone;
 
 class CookieHelper
 {
-    const ENCRIPT_METHOD = 'AES-256-CBC';
+    public const ENCRIPT_METHOD = 'AES-256-CBC';
+    public Cookie $cookie;
 
     private function _getConfig(): array
     {
@@ -37,7 +38,7 @@ class CookieHelper
     {
         $encryptedToken = openssl_encrypt(
             $accessToken,
-            self::ENCRIPT_METHOD,
+            $this->getEncriptMethod(),
             $this->_getEncryptKey(),
             null,
             $this->_getEncryptIv()
@@ -47,7 +48,7 @@ class CookieHelper
         }
         $expirationTime = new FrozenTime("+ $expires seconds", new DateTimeZone('GMT'));
         $key = $this->_getCookieName() . '[' . $this->getRememberName() . ']';
-        return new Cookie(
+        $this->cookie = new Cookie(
             $key,
             $encryptedToken,
             $expirationTime,
@@ -57,6 +58,7 @@ class CookieHelper
             true,
             CookieInterface::SAMESITE_NONE
         );
+        return $this->cookie;
     }
 
     protected function getRememberName(): string
@@ -64,12 +66,17 @@ class CookieHelper
         return env('REMEMBER_NAME_API', 'rememberapi2');
     }
 
+    protected function getEncriptMethod()
+    {
+        return self::ENCRIPT_METHOD;
+    }
+
     public function readApi2Remember(ServerRequest $request)
     {
         $token = $request->getCookie($this->_getCookieName() . '.' . $this->getRememberName());
         return openssl_decrypt(
             $token,
-            self::ENCRIPT_METHOD,
+            $this->getEncriptMethod(),
             $this->_getEncryptKey(),
             null,
             $this->_getEncryptIv()
