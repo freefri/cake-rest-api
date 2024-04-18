@@ -5,7 +5,7 @@ use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 
 /**
- * @property mixed expires
+ * @property FrozenTime expires
  * @property mixed access_token
  */
 class OauthAccessToken extends Entity
