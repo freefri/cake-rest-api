@@ -19,7 +19,7 @@ class CookieHelper
         return explode(':', env('COOKIE_ENCRYPT_CONFIG', '::'));
     }
 
-    private function _getCookieName(): string
+    protected function _getCookieName(): string
     {
         return $this->_getConfig()[0];
     }
@@ -34,10 +34,16 @@ class CookieHelper
         return $this->_getConfig()[2];
     }
 
-    public function writeApi2Remember($accessToken, $expires = null)
+    public function writeApi2Remember($accessToken, $expires = null): Cookie
+    {
+        $key = $this->_getCookieName() . '[' . $this->getRememberName() . ']';
+        return $this->writeCookie($key, $accessToken, $expires);
+    }
+
+    protected function writeCookie(string $key, string $storedValue, $expires = null): Cookie
     {
         $encryptedToken = openssl_encrypt(
-            $accessToken,
+            $storedValue,
             $this->getEncriptMethod(),
             $this->_getEncryptKey(),
             null,
@@ -47,7 +53,6 @@ class CookieHelper
             $expires = Configure::read('Platform.User.rememberExpires');
         }
         $expirationTime = new FrozenTime("+ $expires seconds", new DateTimeZone('GMT'));
-        $key = $this->_getCookieName() . '[' . $this->getRememberName() . ']';
         $this->cookie = new Cookie(
             $key,
             $encryptedToken,
@@ -73,7 +78,13 @@ class CookieHelper
 
     public function readApi2Remember(ServerRequest $request)
     {
-        $token = $request->getCookie($this->_getCookieName() . '.' . $this->getRememberName());
+        $key = $this->_getCookieName() . '.' . $this->getRememberName();
+        return $this->readCookie($key, $request);
+    }
+
+    protected function readCookie(string $key, ServerRequest $request)
+    {
+        $token = $request->getCookie($key);
         return openssl_decrypt(
             $token,
             $this->getEncriptMethod(),
