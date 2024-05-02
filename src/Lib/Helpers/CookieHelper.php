@@ -5,6 +5,7 @@ namespace RestApi\Lib\Helpers;
 use Cake\Core\Configure;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieInterface;
+use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\ServerRequest;
 use Cake\I18n\FrozenTime;
 use DateTimeZone;
@@ -51,6 +52,12 @@ class CookieHelper
         );
         if (!$expires) {
             $expires = Configure::read('Platform.User.rememberExpires');
+        }
+        if (!$expires) {
+            $expires = Configure::read('App.Conf.defaultExpirationCookie');
+        }
+        if (!$expires) {
+            throw new InternalErrorException('Default cookie expiration is mandatory, define: App.Conf.defaultExpirationCookie');
         }
         $expirationTime = new FrozenTime("+ $expires seconds", new DateTimeZone('GMT'));
         $this->cookie = new Cookie(
