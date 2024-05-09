@@ -8,7 +8,7 @@ use Cake\Http\Exception\InternalErrorException;
 use Cake\Log\LogTrait;
 use RestApi\Model\Table\OauthAccessTokensTable;
 
-abstract class OAuthBaseServer
+abstract class OauthBaseServer
 {
     use LogTrait;
 
