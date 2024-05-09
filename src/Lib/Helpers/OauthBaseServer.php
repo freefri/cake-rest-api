@@ -76,9 +76,14 @@ abstract class OauthBaseServer
         return in_array($this->getUserGroup(), $this->managerGroups());
     }
 
+    protected function silentVerificationPath(): string
+    {
+        return '/api/me';
+    }
+
     public function verifyAuthorization()
     {
-        $this->_uid = $this->_oauthSetup->verifyAuthorization('/api/v3/me');
+        $this->_uid = $this->_oauthSetup->verifyAuthorization($this->silentVerificationPath());
         return $this->_uid;
     }
 
