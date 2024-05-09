@@ -105,7 +105,11 @@ abstract class RestApiController extends Controller
         $this->_setUserLang();
     }
 
-    protected abstract function _loadCorsComponent(): ApiRestCorsComponent;
+    protected function _loadCorsComponent(): ApiRestCorsComponent
+    {
+        return ApiRestCorsComponent::load($this);
+    }
+
     protected abstract function _loadOAuthServerComponent(): Component;
 
     protected abstract function _setUserLang(): void;

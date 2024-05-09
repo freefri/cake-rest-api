@@ -16,8 +16,7 @@ class ApiRestCorsComponent extends Component
             $AppCorsClassName = env('CORS_CLASS_NAME');
         }
         if (!$AppCorsClassName) {
-            $arraySplit = explode('\\', self::getCorsClassName());
-            $AppCorsClassName = explode('Component', array_pop($arraySplit))[0];
+            $AppCorsClassName = self::getCorsClassName();
         }
         return $controller->loadComponent($AppCorsClassName);
     }
@@ -27,7 +26,7 @@ class ApiRestCorsComponent extends Component
         $className = Configure::read('App.Cors.ClassName');
         $err = 'ApiRestCorsComponent Error! Configuration App.Cors.ClassName in config/app.php';
         if (!$className) {
-            die($err . ' must be defined');
+            return ApiRestCorsComponent::class;
         }
         if (!class_exists($className)) {
             die($err . ' must be a class: '.$className);
