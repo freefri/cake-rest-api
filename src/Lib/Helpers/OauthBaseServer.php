@@ -8,21 +8,21 @@ use Cake\Http\Exception\InternalErrorException;
 use Cake\Log\LogTrait;
 use RestApi\Model\Table\OauthAccessTokensTable;
 
-abstract class OAuthServer
+abstract class OAuthBaseServer
 {
     use LogTrait;
 
     private $_uid;
-    private OauthHelper $_oauthSetup;
+    protected OauthHelper $_oauthSetup;
 
     public function __construct(array $config = [])
     {
-        $this->_oauthSetup = new OauthHelper($this->getStorageClass());
+        $this->_oauthSetup = new OauthHelper($this->loadStorage());
         foreach ($config as $key => $value) {
             $this->{'_' . $key} = $value;
         }
     }
-    protected abstract function getStorageClass(): OauthAccessTokensTable;
+    protected abstract function loadStorage(): OauthAccessTokensTable;
 
     public function setupOauth(Controller $controller)
     {
@@ -65,7 +65,11 @@ abstract class OAuthServer
         return $this->_oauthSetup->getUserModel()->getUserGroup($this->getUserID());
     }
 
-    protected abstract function managerGroups(): array;
+    protected function managerGroups(): array
+    {
+        // return [GROUP_ADMIN, GROUP_MODERATOR];
+        return [];
+    }
 
     public function isManagerUser(): bool
     {
