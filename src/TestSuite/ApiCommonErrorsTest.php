@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace RestApi\TestSuite;
 
+use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\TestSuite\Fixture\FixtureStrategyInterface;
 use Cake\TestSuite\Fixture\TransactionStrategy;
@@ -28,6 +29,15 @@ abstract class ApiCommonErrorsTest extends ApiCommonTestCase
                 'Authorization' => 'Bearer ' . $token
             ]
         ]);
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $origin = Configure::read('Testing.http_origin');
+        if ($origin) {
+            $_SERVER['HTTP_ORIGIN'] = $origin;
+        }
     }
 
     public function tearDown(): void
