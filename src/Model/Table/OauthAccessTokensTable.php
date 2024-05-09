@@ -44,6 +44,11 @@ class OauthAccessTokensTable extends RestApiTable implements
         return $table;
     }
 
+    protected function getTablePrefix(): string
+    {
+        return '';
+    }
+
     public function deleteAccessTokenByUserId($uId)
     {
         if (!$uId || !is_numeric($uId)) {
