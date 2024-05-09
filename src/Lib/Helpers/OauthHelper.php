@@ -3,6 +3,7 @@
 namespace RestApi\Lib\Helpers;
 
 use Cake\Controller\Controller;
+use Cake\Http\Exception\InternalErrorException;
 use OAuth2\Autoloader;
 use OAuth2\GrantType\AuthorizationCode;
 use OAuth2\GrantType\UserCredentials;
@@ -53,6 +54,21 @@ class OauthHelper
 
         // instantiate the oauth server
         $this->server = new Server($this->_storage, $this->_serverConfig, $grantTypes);
+    }
+
+    public function verifyAuthorization()
+    {
+        $isAuthorized = $this->server->verifyResourceRequest($this->request, $this->response);
+        if (!$isAuthorized) {
+            $err = 'Verify authorization error: ' .
+                $this->response->getParameter('error_description');
+            $code = $this->response->getStatusCode();
+            throw new InternalErrorException($err, $code);
+        }
+        $token = $this->server->getAccessTokenData($this->request);
+        $uid = ($token['user_id'] ?? '') ? $token['user_id'] : $token['client_id'];
+        $_SERVER = array_merge(['AUTH_TOKEN_UID' => $uid], $_SERVER);
+        return $uid;
     }
 
     public function getServer(): Server
