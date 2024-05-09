@@ -10,6 +10,7 @@ use OAuth2\GrantType\UserCredentials;
 use OAuth2\Request;
 use OAuth2\Response;
 use OAuth2\Server;
+use RestApi\Lib\Exception\SilentException;
 use RestApi\Model\Table\OauthAccessTokensTable;
 use RestApi\Model\Table\RestApiTable;
 
@@ -56,14 +57,18 @@ class OauthHelper
         $this->server = new Server($this->_storage, $this->_serverConfig, $grantTypes);
     }
 
-    public function verifyAuthorization()
+    public function verifyAuthorization(string $silentPath = '/api/me')
     {
         $isAuthorized = $this->server->verifyResourceRequest($this->request, $this->response);
         if (!$isAuthorized) {
             $err = 'Verify authorization error: ' .
                 $this->response->getParameter('error_description');
             $code = $this->response->getStatusCode();
-            throw new InternalErrorException($err, $code);
+            if (($_SERVER['REQUEST_URI'] ?? '') === '/api/v2/me') {
+                throw new SilentException($err, $code);
+            } else {
+                throw new InternalErrorException($err, $code);
+            }
         }
         $token = $this->server->getAccessTokenData($this->request);
         $uid = ($token['user_id'] ?? '') ? $token['user_id'] : $token['client_id'];
