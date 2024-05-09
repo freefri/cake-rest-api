@@ -18,7 +18,8 @@ class ApiRestCorsComponent extends Component
         if (!$AppCorsClassName) {
             $AppCorsClassName = self::getCorsClassName();
         }
-        return $controller->loadComponent($AppCorsClassName);
+        $controller->ApiCors = $controller->loadComponent($AppCorsClassName);
+        return $controller->ApiCors;
     }
 
     private static function getCorsClassName(): string
