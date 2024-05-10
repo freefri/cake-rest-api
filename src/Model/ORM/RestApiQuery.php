@@ -44,7 +44,7 @@ class RestApiQuery extends Query
             $repository = $this->getRepository();
             $options = $this->getOptions();
             if (!is_array($options) || !in_array(self::WITH_DELETED, $options)) {
-                /** @var \App\Model\Table\AppTable $repository */
+                /** @var \RestApi\Model\Table\RestApiTable $repository */
                 $fieldName = $repository->getSoftDeleteField();
                 if ($fieldName) {
                     $aliasedField = $repository->aliasField($fieldName);
