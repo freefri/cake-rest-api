@@ -288,32 +288,32 @@ abstract class RestApiController extends Controller
 
     protected function getList()
     {
-        throw new NotImplementedException('GET list not implemented yet');
+        throw new NotImplementedException('GET list not implemented yet '.get_called_class());
     }
 
     protected function addNew($data)
     {
-        throw new NotImplementedException('POST resource not implemented yet');
+        throw new NotImplementedException('POST resource not implemented yet '.get_called_class());
     }
 
     protected function getData($id)
     {
-        throw new NotImplementedException('GET resource not implemented yet');
+        throw new NotImplementedException('GET resource not implemented yet '.get_called_class());
     }
 
     protected function edit($id, $data)
     {
-        throw new NotImplementedException('PATCH not implemented yet');
+        throw new NotImplementedException('PATCH not implemented yet '.get_called_class());
     }
 
     protected function put($id, $data)
     {
-        throw new NotImplementedException('PUT not implemented yet');
+        throw new NotImplementedException('PUT not implemented yet '.get_called_class());
     }
 
     protected function delete($id)
     {
-        throw new NotImplementedException('DELETE not implemented yet');
+        throw new NotImplementedException('DELETE not implemented yet '.get_called_class());
     }
 
     protected function here()
