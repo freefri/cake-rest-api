@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace RestApi\Lib\Error;
 
+use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Log\Log;
 use Psr\Http\Message\ResponseInterface;
+use RestApi\Controller\RestApiErrorController;
 use RestApi\Lib\Exception\DetailedException;
 use RestApi\Lib\Validator\ValidationException;
 use Throwable;
@@ -21,6 +23,21 @@ class ExceptionRenderer extends WebExceptionRenderer
             return $this->template = $code < 500 ? 'error400' : 'error500';
         }
         return parent::_template($exception, $method, $code);
+    }
+
+    protected function _getController(): Controller
+    {
+        $request = $this->request;
+
+        try {
+            $controller = new RestApiErrorController($request);
+            $controller->startupProcess();
+        } catch (Throwable $e) {
+            debug($e->getMessage());
+            debug($e->getTraceAsString());
+            die('Unexpected error in RestApi\Lib\Error\ExceptionRenderer processing another error');
+        }
+        return $controller;
     }
 
     public function render(): ResponseInterface
