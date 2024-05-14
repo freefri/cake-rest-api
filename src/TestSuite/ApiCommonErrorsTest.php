@@ -108,16 +108,20 @@ abstract class ApiCommonErrorsTest extends ApiCommonTestCase
     {
         $body = $this->_getBodyAsString();
         $bodyDecoded = json_decode($body, true);
-        $this->assertEquals($type, $bodyDecoded['error'], $body);
+        $messageToDisplay = 'Error in assertException:' . ' ' . Debugger::exportVar($bodyDecoded);
+        $this->assertEquals($type, $bodyDecoded['error'], $messageToDisplay);
         if ($code) {
-            $this->assertResponseCode($code, $body);
+            $this->assertResponseCode($code, $messageToDisplay);
         }
         if ($message) {
-            $this->assertEquals($message, $bodyDecoded['message'], $body);
+            $this->assertEquals($message, $bodyDecoded['message'], $messageToDisplay);
         }
         return $bodyDecoded;
     }
 
+    /**
+     * @deprecated use assertException instead
+     */
     protected function assertExceptionMessage(string $message, $code = null): array
     {
         if ($code) {
