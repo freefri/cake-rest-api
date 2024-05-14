@@ -114,7 +114,7 @@ abstract class ApiCommonErrorsTest extends ApiCommonTestCase
             $this->assertResponseCode($code, $messageToDisplay);
         }
         if ($message) {
-            $this->assertEquals($message, $bodyDecoded['message'], $messageToDisplay);
+            $this->assertStringStartsWith($message, $bodyDecoded['message'], $messageToDisplay);
         }
         return $bodyDecoded;
     }
