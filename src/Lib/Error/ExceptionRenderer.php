@@ -101,7 +101,7 @@ class ExceptionRenderer extends WebExceptionRenderer
 
                 $toRet['file'] = $exception->getFile();
                 $toRet['line'] = $exception->getLine();
-                $toRet['details'] = explode("\n", $exception->getTraceAsString());
+                $toRet['details'] = $this->getDetails($exception);
             }
         }
         if (isset($_SERVER['REQUEST_URI'])) {
@@ -138,5 +138,15 @@ class ExceptionRenderer extends WebExceptionRenderer
             $request = $_SERVER['REQUEST_METHOD'] . ': ' . $request;
         }
         return $request;
+    }
+
+    private function getDetails($exception): array
+    {
+        $res = explode("\n", $exception->getTraceAsString());
+        foreach ($res as &$r) {
+            $r = str_replace(ROOT.DS.'vendor'.DS, 'vendor'.DS, $r);
+            $r = str_replace(ROOT, '[APP]', $r);
+        }
+        return $res;
     }
 }
