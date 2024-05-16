@@ -255,6 +255,8 @@ abstract class RestApiController extends Controller
             $this->response = $ret->setHeadersForDownload($this->response);
             $this->response = $this->response->withStringBody($ret->render());
             return $this->response;
+        } else if ($this->return instanceof Response) {
+            return $this->response;
         } else if ($this->return || $this->return === []) {
             $isOneEntity = $this->return instanceof Entity
                 || (count($this->return) == 1 && !$this->return instanceof ResultSetInterface);
