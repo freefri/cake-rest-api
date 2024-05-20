@@ -143,10 +143,10 @@ class ExceptionRenderer extends WebExceptionRenderer
     private function getDetails($exception): array
     {
         $res = explode("\n", $exception->getTraceAsString());
-        foreach ($res as &$r) {
-            $r = str_replace(ROOT.DS.'vendor'.DS, 'vendor'.DS, $r);
-            $r = str_replace(ROOT, '[APP]', $r);
-        }
+        //foreach ($res as &$r) {
+        //    $r = str_replace(ROOT.DS.'vendor'.DS, 'vendor'.DS, $r);
+        //    $r = str_replace(ROOT, '[APP]', $r);
+        //}
         return $res;
     }
 }
