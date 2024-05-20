@@ -99,6 +99,7 @@ class ExceptionRenderer extends WebExceptionRenderer
             if ($isDebugOn) {
                 $toRet['exception'] = get_class($exception);
 
+                $toRet['trigger'] = $exception->getFile().'('.$exception->getLine().')';
                 $toRet['file'] = $exception->getFile();
                 $toRet['line'] = $exception->getLine();
                 $toRet['details'] = $this->getDetails($exception);
