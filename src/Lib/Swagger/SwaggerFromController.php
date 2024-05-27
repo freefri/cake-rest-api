@@ -8,12 +8,6 @@ use Cake\Http\Response;
 class SwaggerFromController implements \JsonSerializable
 {
     private array $_map = [];
-    private string $_name;
-
-    public function __construct(string $name)
-    {
-        $this->_name = $name;
-    }
 
     public function addToSwagger(Controller $controller, array $request, Response $res)
     {
@@ -74,7 +68,7 @@ class SwaggerFromController implements \JsonSerializable
 
     private function _writeFile(string $name): string
     {
-        $dir = TMP.'tests'.DS.'swagger'.DS;
+        $dir = PHPUnitExtension::getDirectory();
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
@@ -85,8 +79,8 @@ class SwaggerFromController implements \JsonSerializable
         return $filename;
     }
 
-    public function writeFile()
+    public function writeFile(string $name)
     {
-        return $this->_writeFile($this->_name);
+        return $this->_writeFile($name);
     }
 }

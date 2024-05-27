@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace RestApi\Lib\Swagger;
 
+use Cake\Core\Configure;
 use PHPUnit\Runner\AfterLastTestHook;
 
 class PHPUnitExtension implements AfterLastTestHook
@@ -48,9 +49,18 @@ class PHPUnitExtension implements AfterLastTestHook
         $this->_writeFile($this->getInfo($paths));
     }
 
+    public static function getDirectory(): string
+    {
+        $dir = Configure::read('Swagger.jsonDir');
+        if (!$dir) {
+            $dir = TMP.'tests'.DS.'swagger'.DS;
+        }
+        return $dir;
+    }
+
     private function _readFiles(): array
     {
-        $dir = TMP.'tests'.DS.'swagger'.DS;
+        $dir = $this->getDirectory();
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
@@ -66,9 +76,15 @@ class PHPUnitExtension implements AfterLastTestHook
         return $files;
     }
 
-    private function _writeFile(array $contents)
+    private function _writeFile(array $contents): ?string
     {
-        $dir = TMP.'tests'.DS;
+        $dir = Configure::read('Swagger.fullFileDir');
+        if ($dir === false) {
+            return null;
+        }
+        if (!$dir) {
+            $dir = $this->getDirectory();
+        }
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
