@@ -2,6 +2,8 @@
 
 namespace RestApi\Lib\Swagger;
 
+use Cake\Http\Exception\NotFoundException;
+
 class SwaggerReader
 {
     public function getInfo(array $paths): array
@@ -49,7 +51,7 @@ class SwaggerReader
     private function _readFiles(string $dir): array
     {
         if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
+            throw new NotFoundException('Swagger directory not found ' . $dir);
         }
         $files = [];
         foreach (glob($dir . '*') as $fileName) {
