@@ -20,9 +20,6 @@ abstract class RestPlugin extends BasePlugin
             ['path' => $this->getRoutePathGeneric($this->getBaseNamespace())],
             function (RouteBuilder $builder) {
                 $this->routeConnectors($builder);
-                $route = '/' . $this->pluginPath() . '/' . $this->swaggerPath();
-                $builder->connect($route . '/*', \RestApi\Controller\SwaggerJsonController::route());
-                $builder->connect($route . '/ui/*', \Swagger\Controller\SwaggerUiController::route());
             }
         );
         parent::routes($routes);
@@ -31,11 +28,6 @@ abstract class RestPlugin extends BasePlugin
     public static function swaggerPath(): string
     {
         return 'swagger-openapi';
-    }
-
-    protected function pluginPath(): string
-    {
-        return strtolower($this->getBaseNamespace());
     }
 
     public static function getMigrationLoader(): array
