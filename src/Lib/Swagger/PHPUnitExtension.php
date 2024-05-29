@@ -17,7 +17,7 @@ class PHPUnitExtension implements AfterLastTestHook
 
     public static function getDirectory(): string
     {
-        $dir = Configure::read('Swagger.jsonDir');
+        $dir = Configure::read('Swagger.jsonDir');// default directory to store json files
         if (!$dir) {
             $dir = TMP.'tests'.DS.'swagger'.DS;
         }
@@ -26,7 +26,7 @@ class PHPUnitExtension implements AfterLastTestHook
 
     private function _writeFile(array $contents): ?string
     {
-        $dir = Configure::read('Swagger.fullFileDir');
+        $dir = Configure::read('Swagger.fullFileDir');// when false do not generate full json
         if ($dir === false) {
             return null;
         }

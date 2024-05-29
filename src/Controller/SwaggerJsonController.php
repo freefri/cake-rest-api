@@ -43,7 +43,7 @@ class SwaggerJsonController extends \Swagger\Controller\SwaggerUiController
 
     protected function getReader(): SwaggerReader
     {
-        $readerClass = Configure::read('Swagger.readerClass');
+        $readerClass = Configure::read('Swagger.readerClass');// default reader class
         if (!$readerClass) {
             $readerClass = SwaggerReader::class;
         }
