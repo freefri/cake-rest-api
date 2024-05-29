@@ -5,6 +5,7 @@ namespace RestApi\Lib\Swagger;
 
 use Cake\Core\Configure;
 use PHPUnit\Runner\AfterLastTestHook;
+use RestApi\Lib\RestPlugin;
 
 class PHPUnitExtension implements AfterLastTestHook
 {
@@ -19,7 +20,7 @@ class PHPUnitExtension implements AfterLastTestHook
     {
         $dir = Configure::read('Swagger.jsonDir');// default directory to store json files
         if (!$dir) {
-            $dir = TMP.'tests'.DS.'swagger'.DS;
+            $dir = ROOT . DS . RestPlugin::swaggerPath() . DS;
         }
         return $dir;
     }
