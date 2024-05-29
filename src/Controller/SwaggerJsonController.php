@@ -47,8 +47,7 @@ class SwaggerJsonController extends \Swagger\Controller\SwaggerUiController
         if (!$readerClass) {
             $readerClass = SwaggerReader::class;
         }
-        $reader = new $readerClass();
-        return $reader;
+        return new $readerClass();
     }
 
     protected function getContent(SwaggerReader $reader, array $paths): array

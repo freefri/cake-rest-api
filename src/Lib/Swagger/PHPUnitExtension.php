@@ -37,7 +37,7 @@ class PHPUnitExtension implements AfterLastTestHook
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        $filename = $dir . 'FULLswagger.json';
+        $filename = $dir . SwaggerReader::FULL_SWAGGER_JSON;
         $handle = fopen($filename, 'w') or die('cannot open the file to add swagger '.$filename);
         fwrite($handle, json_encode($contents, JSON_PRETTY_PRINT + JSON_UNESCAPED_SLASHES));
         fclose($handle);

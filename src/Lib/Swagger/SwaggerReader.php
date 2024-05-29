@@ -6,6 +6,8 @@ use Cake\Http\Exception\NotFoundException;
 
 class SwaggerReader
 {
+    public const FULL_SWAGGER_JSON = 'FULLswagger.json';
+
     private bool $_createDirectoryIfNotExists;
 
     public function __construct(bool $createDirectoryIfNotExists = false)
@@ -66,7 +68,7 @@ class SwaggerReader
         }
         $files = [];
         foreach (glob($dir . '*') as $fileName) {
-            if (filesize($fileName) > 0) {
+            if (!str_contains($fileName, self::FULL_SWAGGER_JSON) && filesize($fileName) > 0) {
                 $handle = fopen($fileName, 'r') or die('cannot open the file to add swagger '.$fileName);
                 $contents = fread($handle, filesize($fileName));
                 fclose($handle);
