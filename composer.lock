@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2223fc6af5a24d578a5fb6b41fcde05d",
+    "content-hash": "9f32010af8ffd55d85c3acb4ae101aaf",
     "packages": [
         {
             "name": "bshaffer/oauth2-server-php",
@@ -931,16 +931,16 @@
         },
         {
             "name": "eduplex-api/cake-api-swagger",
-            "version": "0.1.3",
+            "version": "0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/eduplex-api/cake-api-swagger.git",
-                "reference": "dc8fdbf6ad2701131c2e4a2078b6b17e614e063e"
+                "reference": "3e3331c5022e9e808506c29d897353b64151c6de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/eduplex-api%2Fcake-api-swagger/repository/archive.zip?sha=dc8fdbf6ad2701131c2e4a2078b6b17e614e063e",
-                "reference": "dc8fdbf6ad2701131c2e4a2078b6b17e614e063e",
+                "url": "https://gitlab.com/api/v4/projects/eduplex-api%2Fcake-api-swagger/repository/archive.zip?sha=3e3331c5022e9e808506c29d897353b64151c6de",
+                "reference": "3e3331c5022e9e808506c29d897353b64151c6de",
                 "shasum": ""
             },
             "require": {
@@ -954,7 +954,7 @@
                 "freefri/cake-rest-api-fake-app": "^0.1.2",
                 "phpunit/phpunit": "^8.5 || ^9.3"
             },
-            "type": "cakephp-plugin",
+            "type": "library",
             "autoload": {
                 "psr-4": {
                     "Swagger\\": "src/"
@@ -967,9 +967,9 @@
             "description": "Simple endpoint to display swagger-ui",
             "support": {
                 "issues": "https://gitlab.com/eduplex-api/cake-api-swagger/-/issues",
-                "source": "https://gitlab.com/eduplex-api/cake-api-swagger/-/tree/0.1.3"
+                "source": "https://gitlab.com/eduplex-api/cake-api-swagger/-/tree/0.1.4"
             },
-            "time": "2024-05-28T19:42:04+00:00"
+            "time": "2024-05-29T12:09:14+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
