@@ -6,6 +6,13 @@ use Cake\Http\Exception\NotFoundException;
 
 class SwaggerReader
 {
+    private bool $_createDirectoryIfNotExists;
+
+    public function __construct(bool $createDirectoryIfNotExists = false)
+    {
+        $this->_createDirectoryIfNotExists = $createDirectoryIfNotExists;
+    }
+
     public function getInfo(array $paths): array
     {
         return [
@@ -51,7 +58,11 @@ class SwaggerReader
     private function _readFiles(string $dir): array
     {
         if (!is_dir($dir)) {
-            throw new NotFoundException('Swagger directory not found ' . $dir);
+            if ($this->_createDirectoryIfNotExists) {
+                mkdir($dir, 0777, true);
+            } else {
+                throw new NotFoundException('Swagger directory not found ' . $dir);
+            }
         }
         $files = [];
         foreach (glob($dir . '*') as $fileName) {

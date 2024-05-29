@@ -10,7 +10,7 @@ class PHPUnitExtension implements AfterLastTestHook
 {
     public function executeAfterLastTest(): void
     {
-        $reader = new SwaggerReader();
+        $reader = new SwaggerReader(true);
         $paths = $reader->readFiles($this->getDirectory());
         $this->_writeFile($reader->getInfo($paths));
     }
