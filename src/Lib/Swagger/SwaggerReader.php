@@ -47,11 +47,9 @@ class SwaggerReader
         $paths = $this->_readFiles($directory);
         $counter = 1;
         foreach ($paths as &$path) {
-            if (is_array($path)) {
-                foreach ($path as &$method) {
-                    $method['operationId'] = '' . $counter;
-                    $counter++;
-                }
+            foreach ($path as &$method) {
+                $method['operationId'] = '' . $counter;
+                $counter++;
             }
         }
         return $paths;
