@@ -1,0 +1,25 @@
+image: public.ecr.aws/ct-nilus/base-images:nginx-php-dev-v17-focal-7.4
+
+services:
+  - name: mysql:8.0.36
+    alias: mysql
+  - name: docker.io/bitnami/memcached:1.6.9-debian-10-r194
+    alias: memcached
+
+variables:
+  # Configure mysql environment variables (https://hub.docker.com/r/_/mysql/)
+  MYSQL_DATABASE: phputesting
+  MYSQL_ROOT_PASSWORD: password
+  MYSQL_USER: phputesting
+  MYSQL_PASSWORD: a1234
+
+stages:
+  - test
+
+test:all:
+  before_script:
+    - composer install
+  script:
+    - composer test
+  except:
+    - publish
