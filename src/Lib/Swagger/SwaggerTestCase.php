@@ -12,12 +12,15 @@ class SwaggerTestCase implements \JsonSerializable
     private array $_request;
     private Response $_response;
     private \Exception $_exception;
+    private string $_cachedRoute = '';
+    private $_lastRoute;
 
-    public function __construct(Controller $controller, array $request, Response $res)
+    public function __construct(Controller $controller, array $request, Response $res, string $lastRoute = null)
     {
         $this->_controller = $controller;
         $this->_request = $request;
         $this->_response = $res;
+        $this->_lastRoute = $lastRoute;
         $this->_exception = new \Exception('');
     }
 
@@ -28,9 +31,21 @@ class SwaggerTestCase implements \JsonSerializable
         return str_replace('Test ', '', str_replace('  ', ' ', $humanize));
     }
 
-    public function getRoute(): string
+    private function _getMatchedRoute(): ?string
     {
         $matchedRoute = $this->_controller->getRequest()->getParam('_matchedRoute');
+        if (!$matchedRoute) {
+            return $this->_lastRoute;
+        }
+        return $matchedRoute;
+    }
+
+    public function getRoute(): string
+    {
+        if ($this->_cachedRoute) {
+            return $this->_cachedRoute;
+        }
+        $matchedRoute = $this->_getMatchedRoute();
         $mainRoute = str_replace('*', '', $matchedRoute);
         $exploded = explode('/', $mainRoute);
         $lastInRoute = array_pop($exploded);
@@ -39,13 +54,14 @@ class SwaggerTestCase implements \JsonSerializable
         }
         $url = $this->getRequest()['url'];
         $explodedUrl = explode('/' . $lastInRoute . '/', $url);
+        $this->_cachedRoute = $mainRoute;
         if (count($explodedUrl) >= 2) {
             $last = array_pop($explodedUrl);
             if ($last && strpos($last, '/') === false) {
-                return $mainRoute . '{entity_id}';
+                $this->_cachedRoute = $mainRoute . '{entity_id}';
             }
         }
-        return $mainRoute;
+        return $this->_cachedRoute;
     }
 
     public function getStatusCode(): int
@@ -81,6 +97,7 @@ class SwaggerTestCase implements \JsonSerializable
             if (isset($json['exception'])) {
                 unset($json['message']);
             }
+            unset($json['trigger']);
             unset($json['exception']);
             unset($json['file']);
             unset($json['line']);

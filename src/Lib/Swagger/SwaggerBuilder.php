@@ -15,7 +15,6 @@ class SwaggerBuilder
     public function toArray(): array
     {
         $toRet = [];
-        /** @var SwaggerTestCase $elem */
         foreach ($this->_data->buildMatrix() as $route => $method_code_md5_elem) {
             foreach ($method_code_md5_elem as $method => $code_md5_elem) {
                 $elem = $this->_data->getFirstTestCaseInRoute($route, $method);

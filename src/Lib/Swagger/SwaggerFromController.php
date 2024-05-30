@@ -12,7 +12,18 @@ class SwaggerFromController implements \JsonSerializable
     public function addToSwagger(Controller $controller, array $request, Response $res)
     {
         $index = count($this->_map);
-        $this->_map[$index] = new SwaggerTestCase($controller, $request, $res);
+        $lastRoute = $this->getLastRoute($index);
+        $this->_map[$index] = new SwaggerTestCase($controller, $request, $res, $lastRoute);
+    }
+
+    private function getLastRoute(int $index): ?string
+    {
+        /** @var SwaggerTestCase $lastTest */
+        $lastTest = ($this->_map[$index - 1] ?? null);
+        if (!$lastTest) {
+            return null;
+        }
+        return $lastTest->getRoute();
     }
 
     public function buildMatrix(): array
