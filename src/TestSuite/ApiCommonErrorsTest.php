@@ -98,6 +98,14 @@ abstract class ApiCommonErrorsTest extends ApiCommonTestCase
         }
     }
 
+    public function assertRedirectContains(string $url, string $message = ''): void
+    {
+        if (!$message) {
+            $message = $this->_getBodyAsString();
+        }
+        parent::assertRedirectContains($url, $message);
+    }
+
     protected function assertResponse204NoContent()
     {
         $this->assertEquals(204, $this->_response->getStatusCode());
