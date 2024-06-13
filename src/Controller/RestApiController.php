@@ -21,6 +21,7 @@ use Laminas\Diactoros\UploadedFile;
 use Psr\Http\Message\StreamInterface;
 use RestApi\Controller\Component\ApiRestCorsComponent;
 use RestApi\Lib\Exception\SilentException;
+use RestApi\Lib\Oauth\ScopeRules;
 use RestApi\Lib\RestRenderer;
 
 abstract class RestApiController extends Controller
@@ -50,9 +51,19 @@ abstract class RestApiController extends Controller
         return false;
     }
 
+    public function scopeRules(): ?ScopeRules
+    {
+        return null;
+    }
+
     protected function defineMainEntity(): ?Entity
     {
         return null;
+    }
+
+    public function getUrlUserId()
+    {
+        return $this->getRequest()->getParam('userID');
     }
 
     public function getMainEntity(): ?Entity
@@ -161,8 +172,8 @@ abstract class RestApiController extends Controller
 
     private function _main($id = null, $secondParam = null): Response
     {
-        if ($this->request->getParam('eventID') && $this->request->getParam('userID')) {
-            if (!$this->Event->doesOwnEvent($this->request->getParam('eventID'), $this->request->getParam('userID'))) {
+        if ($this->request->getParam('eventID') && $this->getUrlUserId()) {
+            if (!$this->Event->doesOwnEvent($this->request->getParam('eventID'), $this->getUrlUserId())) {
                 throw new ForbiddenException('Event does not belong to seller');
             }
         }

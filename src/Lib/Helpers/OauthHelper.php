@@ -11,6 +11,7 @@ use OAuth2\Request;
 use OAuth2\Response;
 use OAuth2\Server;
 use RestApi\Lib\Exception\SilentException;
+use RestApi\Lib\Oauth\AccessTokenEntity;
 use RestApi\Model\Table\OauthAccessTokensTable;
 use RestApi\Model\Table\RestApiTable;
 
@@ -22,6 +23,7 @@ class OauthHelper
     public $request;
     /** @var Response */
     public $response;
+    private AccessTokenEntity $_lastToken;
     private $_storage;
     private $_serverConfig = ['enforce_state' => true, 'allow_implicit' => true];
 
@@ -71,9 +73,14 @@ class OauthHelper
             }
         }
         $token = $this->server->getAccessTokenData($this->request);
-        $uid = ($token['user_id'] ?? '') ? $token['user_id'] : $token['client_id'];
-        $_SERVER = array_merge(['AUTH_TOKEN_UID' => $uid], $_SERVER);
-        return $uid;
+        $this->_lastToken = new AccessTokenEntity($token);
+        $this->_lastToken->storeInfoForLogs();
+        return $token['user_id'] ?? '';
+    }
+
+    public function getLastToken(): AccessTokenEntity
+    {
+        return $this->_lastToken;
     }
 
     public function getServer(): Server

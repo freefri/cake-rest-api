@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace RestApi\Test\TestCase\Model\Table;
+namespace RestApi\Test\TestCase\Lib\Swagger;
 
 use Cake\Controller\Controller;
 use Cake\Http\Response;
