@@ -19,6 +19,7 @@ abstract class OauthBaseServer
 
     public function __construct(array $config = [])
     {
+        $this->token = new AccessTokenEntity([]);
         $this->_oauthSetup = new OauthHelper($this->loadStorage());
         foreach ($config as $key => $value) {
             $this->{'_' . $key} = $value;
