@@ -38,6 +38,9 @@ class SwaggerJsonController extends \Swagger\Controller\SwaggerUiController
 
     private function getDirectory(): string
     {
+        if ($this->_getBaseNamespace() === 'App') {
+            return ROOT. DS . RestPlugin::swaggerPath() . DS;
+        }
         return ROOT . DS . 'plugins' . DS . $this->_getBaseNamespace() . DS . RestPlugin::swaggerPath() . DS;
     }
 

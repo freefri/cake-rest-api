@@ -27,11 +27,11 @@ class PHPUnitExtension implements AfterLastTestHook
 
     private function _writeFile(array $contents): ?string
     {
-        $dir = Configure::read('Swagger.fullFileDir');// when false do not generate full json
-        if ($dir === false) {
+        $dir = Configure::read('Swagger.fullFileDir');// when false or null do not generate full json
+        if (!$dir) {
             return null;
         }
-        if (!$dir) {
+        if ($dir === true) {// when true generate with default directory (optionally add string as directory path)
             $dir = $this->getDirectory();
         }
         if (!is_dir($dir)) {
