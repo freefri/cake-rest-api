@@ -14,12 +14,11 @@ abstract class OauthBaseServer
 {
     use LogTrait;
 
-    private AccessTokenEntity $token;
+    private ?AccessTokenEntity $token = null;
     protected OauthHelper $_oauthSetup;
 
     public function __construct(array $config = [])
     {
-        $this->token = new AccessTokenEntity([]);
         $this->_oauthSetup = new OauthHelper($this->loadStorage());
         foreach ($config as $key => $value) {
             $this->{'_' . $key} = $value;
@@ -50,6 +49,9 @@ abstract class OauthBaseServer
 
     public function getToken(): AccessTokenEntity
     {
+        if (!$this->token) {
+            $this->token = new AccessTokenEntity([]);
+        }
         return $this->token;
     }
 

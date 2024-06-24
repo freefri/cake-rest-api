@@ -73,4 +73,15 @@ class OauthBaseServerTest extends TestCase
 
         $oauth->authorizeUserData($controller);
     }
+
+    public function testGetUserID()
+    {
+        /** @var OauthServer $oauth */
+        $oauth = $this->getMockBuilder(OAuthServer::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+
+        $this->assertEquals('', $oauth->getUserID());
+    }
 }
