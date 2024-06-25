@@ -12,8 +12,13 @@ abstract class ApiCommonTestCase extends ApiCommonIntegrationTestCase
 
     public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
-        self::$_swagger = new SwaggerFromController();
+        self::newSwaggerFromController();
         parent::__construct($name, $data, $dataName);
+    }
+
+    private static function newSwaggerFromController()
+    {
+        self::$_swagger = new SwaggerFromController();
     }
 
     abstract protected function _getEndpoint() : string;
@@ -41,6 +46,7 @@ abstract class ApiCommonTestCase extends ApiCommonIntegrationTestCase
         $className = array_pop($class);
 
         self::$_swagger->writeFile($className);
+        self::newSwaggerFromController();
         parent::tearDownAfterClass();
     }
 }

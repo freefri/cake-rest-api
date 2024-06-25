@@ -77,7 +77,7 @@ class SwaggerFromController implements \JsonSerializable
         return $this->_toArray();
     }
 
-    private function _writeFile(string $name): string
+    private function _writeSingleTestJsonFile(string $name): string
     {
         $dir = PHPUnitExtension::getDirectory();
         if (!is_dir($dir)) {
@@ -92,6 +92,6 @@ class SwaggerFromController implements \JsonSerializable
 
     public function writeFile(string $name)
     {
-        return $this->_writeFile($name);
+        return $this->_writeSingleTestJsonFile($name);
     }
 }
