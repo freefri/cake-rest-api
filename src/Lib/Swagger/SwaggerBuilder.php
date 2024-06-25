@@ -22,7 +22,7 @@ class SwaggerBuilder
                     'operationId' => $this->_operation++,
                     'summary' => '',
                     'description' => $elem->getDescription(),
-                    'parameters' => $elem->getParams(),
+                    'parameters' => $this->_getParamsInRoute($code_md5_elem),
                     'tags' => $elem->getTags(),
                     'responses' => [],
                 ];
@@ -50,6 +50,23 @@ class SwaggerBuilder
             }
         }
         return $toRet;
+    }
+
+    public function _getParamsInRoute(array $selectedRouteMethod): array
+    {
+        $toRet = [];
+        foreach ($selectedRouteMethod as $md5_elem) {
+            /** @var SwaggerTestCase $testCase */
+            foreach ($md5_elem as $testCase) {
+                foreach ($testCase->getParams() as $param) {
+                    $key = $param['in'] . '__' . $param['name'];
+                    if (!isset($toRet[$key])) { // add same in-name only once (do not duplicate parameters)
+                        $toRet[$key] = $param;
+                    }
+                }
+            }
+        }
+        return array_values($toRet);
     }
 
     private function _buildResponseSchema(SwaggerTestCase $elem, array $existingResponses): array
