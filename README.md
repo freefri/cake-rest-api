@@ -29,6 +29,11 @@ The following configuration can be used:
 - `tablePrefix`: (optional) in case you want to add a prefix for you database tables, e.g. `myplugin_users`. Can be empty string.
 - `routePath`: Definition for the beginning of the path for all routes in the plugin
 
+## Swagger
+In order to make swagger UI with openapi description available, a new controller `SwaggerJsonController` must be
+created, with the corresponding route definition. The method `getContent` can be overwritten in this controller
+in order to add customization for the main spec info (title, description, version, etc.). Swagger generation can be
+configured as described in the Configuration section above.
 
 
 ## License

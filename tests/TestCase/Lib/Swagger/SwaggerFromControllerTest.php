@@ -40,8 +40,19 @@ class SwaggerFromControllerTest extends TestCase
                     'operationId' => (int) 1,
                     'summary' => '',
                     'description' => 'Run Bare',
+                    'security' => [['bearerAuth' => []]],
                     'parameters' => [
-                        (int) 0 => [
+                        [
+                            'description' => 'Auth token',
+                            'in' => 'header',
+                            'name' => 'Authentication',
+                            'example' => 'Bearer xxxxxx',
+                            'required' => true,
+                            'schema' => [
+                                'type' => 'string'
+                            ]
+                        ],
+                        [
                             'description' => 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
                             'in' => 'header',
                             'name' => 'Accept-Language',
@@ -50,7 +61,7 @@ class SwaggerFromControllerTest extends TestCase
                             'schema' => [
                                 'type' => 'string'
                             ]
-                        ]
+                        ],
                     ],
                     'tags' => [
                         ''

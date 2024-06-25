@@ -170,8 +170,8 @@ class SwaggerTestCase implements \JsonSerializable
 
     private function _isPublicController(): bool
     {
-        if (!property_exists($this->_controller, 'isPublicController')) {
-            return true;
+        if (!method_exists($this->_controller, 'isPublicController')) {
+            return false;
         }
         return $this->_controller->isPublicController();
     }
