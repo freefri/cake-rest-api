@@ -35,6 +35,8 @@ created, with the corresponding route definition. The method `getContent` can be
 in order to add customization for the main spec info (title, description, version, etc.). Swagger generation can be
 configured as described in the Configuration section above.
 
+In any controller test the function `$this->skipNextRequestInSwagger()` can be used to do not add the next request.
+
 
 ## License
 The source code for the site is licensed under the **MIT license**, which you can find in the [LICENSE](../LICENSE/) file.

@@ -39,13 +39,6 @@ class SwaggerFromController implements \JsonSerializable
         return $this->_removeMethodsWithoutOk($toRet);
     }
 
-    public function getFirstTestCaseInRoute(string $route, string $method): SwaggerTestCase
-    {
-        $selectedRouteMethod = $this->buildMatrix()[$route][$method];
-        $md5_elem = $selectedRouteMethod[array_key_first($selectedRouteMethod)];
-        return $md5_elem[array_key_first($md5_elem)];
-    }
-
     private function _toArray(): array
     {
         $res = $this->buildMatrix();

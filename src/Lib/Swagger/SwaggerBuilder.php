@@ -12,25 +12,31 @@ class SwaggerBuilder
         $this->_data = $data;
     }
 
+    public function _getFirstTestCaseInRoute(array $selectedRouteMethod): SwaggerTestCase
+    {
+        $md5_elem = $selectedRouteMethod[array_key_first($selectedRouteMethod)];
+        return $md5_elem[array_key_first($md5_elem)];
+    }
+
     public function toArray(): array
     {
         $toRet = [];
         foreach ($this->_data->buildMatrix() as $route => $method_code_md5_elem) {
             foreach ($method_code_md5_elem as $method => $code_md5_elem) {
-                $elem = $this->_data->getFirstTestCaseInRoute($route, $method);
+                $firstTestCase = $this->_getFirstTestCaseInRoute($code_md5_elem);
                 $operation = [
                     'operationId' => $this->_operation++,
                     'summary' => '',
-                    'description' => $elem->getDescription(),
+                    'description' => $firstTestCase->getDescription(),
                     'parameters' => $this->_getParamsInRoute($code_md5_elem),
-                    'tags' => $elem->getTags(),
+                    'tags' => $firstTestCase->getTags(),
                     'responses' => [],
                 ];
-                $sec = $elem->getSecurity();
+                $sec = $firstTestCase->getSecurity();
                 if ($sec) {
                     $operation['security'] = $sec;
                 }
-                $requestSchema = $elem->getRequestSchema();
+                $requestSchema = $firstTestCase->getRequestSchema();
                 if ($requestSchema) {
                     $operation['requestBody'] = [
                         'description' => '',
@@ -42,10 +48,10 @@ class SwaggerBuilder
                     ];
                 }
                 foreach ($code_md5_elem as $md5_elem) {
-                    foreach ($md5_elem as $case) {
-                        $operation['responses'] = $this->_buildResponseSchema($case, $operation['responses']);
+                    foreach ($md5_elem as $testCase) {
+                        $operation['responses'] = $this->_buildResponseSchema($testCase, $operation['responses']);
                     }
-                    $toRet[$elem->getRoute()][$elem->getMethod()] = $operation;
+                    $toRet[$firstTestCase->getRoute()][$firstTestCase->getMethod()] = $operation;
                 }
             }
         }
