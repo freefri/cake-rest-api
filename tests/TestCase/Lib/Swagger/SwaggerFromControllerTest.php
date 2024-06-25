@@ -42,7 +42,7 @@ class SwaggerFromControllerTest extends TestCase
                     'description' => 'Run Bare',
                     'parameters' => [
                         (int) 0 => [
-                            'description' => '2 letter code language (en, es, de, ar)',
+                            'description' => 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
                             'in' => 'header',
                             'name' => 'Accept-Language',
                             'example' => 'en',

@@ -3,6 +3,7 @@
 namespace RestApi\Lib\Swagger;
 
 use Cake\Controller\Controller;
+use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\Utility\Inflector;
 
@@ -188,14 +189,20 @@ class SwaggerTestCase implements \JsonSerializable
                 'schema' => ['type' => 'string'],
             ];
         }
-        $toRet[] = [
-            'description' => '2 letter code language (en, es, de, ar)',
-            'in' => 'header',
-            'name' => 'Accept-Language',
-            'example' => 'en',
-            'required' => false,
-            'schema' => ['type' => 'string'],
-        ];
+        $acceptLanguage = Configure::read('Swagger.acceptLanguage');
+        if ($acceptLanguage !== false) {
+            if (!$acceptLanguage) {
+                $acceptLanguage = 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)';
+            }
+            $toRet[] = [
+                'description' => $acceptLanguage,
+                'in' => 'header',
+                'name' => 'Accept-Language',
+                'example' => 'en',
+                'required' => false,
+                'schema' => ['type' => 'string'],
+            ];
+        }
         return $toRet;
     }
 
