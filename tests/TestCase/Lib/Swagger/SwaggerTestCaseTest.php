@@ -42,6 +42,7 @@ class SwaggerTestCaseTest extends TestCase
         $this->assertEquals('get', $test->getMethod());
         $this->assertEquals('403', $test->getStatusCodeString());
         $this->assertEquals('/testurl_last/', $test->getRoute());
+        $this->assertEquals('Run', $test->getDescription());
         $this->assertEquals([['bearerAuth' => []]], $test->getSecurity());
     }
 

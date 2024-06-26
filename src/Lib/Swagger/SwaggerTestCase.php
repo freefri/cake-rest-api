@@ -6,6 +6,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\Utility\Inflector;
+use RestApi\Controller\RestApiErrorController;
 
 class SwaggerTestCase implements \JsonSerializable
 {
@@ -29,7 +30,8 @@ class SwaggerTestCase implements \JsonSerializable
     {
         $fn = $this->_exception->getTrace()[4]['function'];
         $humanize = Inflector::humanize(Inflector::underscore($fn));
-        return str_replace('Test ', '', str_replace('  ', ' ', $humanize));
+        $humanize = str_replace('Test ', '', str_replace('  ', ' ', $humanize));
+        return mb_substr($humanize, 0, 1) . mb_strtolower(mb_substr($humanize, 1));
     }
 
     private function _getMatchedRoute(): ?string
@@ -170,6 +172,9 @@ class SwaggerTestCase implements \JsonSerializable
 
     private function _isPublicController(): bool
     {
+        if ($this->_controller instanceof RestApiErrorController) {
+            return true;
+        }
         if (!method_exists($this->_controller, 'isPublicController')) {
             return false;
         }
@@ -282,6 +287,7 @@ class SwaggerTestCase implements \JsonSerializable
             }
             return [
                 'type' => 'object',
+                'description' => $this->getDescription(),
                 'properties' => $properties,
             ];
         }

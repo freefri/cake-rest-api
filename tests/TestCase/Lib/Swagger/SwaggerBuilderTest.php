@@ -45,7 +45,7 @@ class SwaggerBuilderTest extends TestCase
                 'get' => [
                     'operationId' => (int) 1,
                     'summary' => '',
-                    'description' => 'Run Bare',
+                    'description' => 'Run bare',
                     'parameters' => [
                         [
                             'description' => 'Auth token',
@@ -88,6 +88,7 @@ class SwaggerBuilderTest extends TestCase
                                 'application/json' => [
                                     'schema' => [
                                         'type' => 'object',
+                                        'description' => 'Run bare',
                                         'properties' => [
                                             'hello' => [
                                                 'type' => 'string',
