@@ -309,6 +309,7 @@ class SwaggerTestCase implements \JsonSerializable
             }
             return [
                 'type' => 'array',
+                'description' => $this->getDescription(),
                 'items' => $this->_getItems($post),
             ];
         } else {
@@ -317,6 +318,7 @@ class SwaggerTestCase implements \JsonSerializable
             }
             return [
                 'type' => 'object',
+                'description' => $this->getDescription(),
                 'properties' => $properties,
             ];
         }

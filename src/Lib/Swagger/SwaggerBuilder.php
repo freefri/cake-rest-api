@@ -36,16 +36,9 @@ class SwaggerBuilder
                 if ($sec) {
                     $operation['security'] = $sec;
                 }
-                $requestSchema = $firstTestCase->getRequestSchema();
-                if ($requestSchema) {
-                    $operation['requestBody'] = [
-                        'description' => '',
-                        'content' => [
-                            'application/json' => [
-                                'schema' => $requestSchema
-                            ]
-                        ],
-                    ];
+                $requestBody = $this->_getRequestBodyInRoute($code_md5_elem);
+                if ($requestBody) {
+                    $operation['requestBody'] = $requestBody;
                 }
                 foreach ($code_md5_elem as $md5_elem) {
                     foreach ($md5_elem as $testCase) {
@@ -56,6 +49,39 @@ class SwaggerBuilder
             }
         }
         return $toRet;
+    }
+
+    public function _getRequestBodyInRoute(array $selectedRouteMethod): array
+    {
+        $requestSchema = [];
+        foreach ($selectedRouteMethod as $md5_elem) {
+            /** @var SwaggerTestCase $testCase */
+            foreach ($md5_elem as $testCase) {
+                $req = $testCase->getRequestSchema();
+                if ($req) {
+                    $requestSchema[] = $req;
+                }
+            }
+        }
+        if (!$requestSchema) {
+            return [];
+        }
+        $description = '';
+        $count = count($requestSchema);
+        if ($count > 1) {
+            $description = "Request body can match to any of the $count provided schemas";
+            $requestSchema = [
+                'oneOf' => $requestSchema
+            ];
+        }
+        return [
+            'description' => $description,
+            'content' => [
+                'application/json' => [
+                    'schema' => $requestSchema
+                ]
+            ],
+        ];
     }
 
     public function _getParamsInRoute(array $selectedRouteMethod): array
