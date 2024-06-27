@@ -21,11 +21,14 @@ class SwaggerTestCaseTest extends TestCase
             'query' => [],
             'files' => [],
             'environment' => [
-                'REQUEST_METHOD' => 'GET',
+                'REQUEST_METHOD' => 'PATCH',
                 'QUERY_STRING' => '',
                 'REQUEST_URI' => '/testurl/3'
             ],
-            'post' => [],
+            'post' => [
+                'hello' => 'param',
+                'object' => ['something' => ['withBig' => 'depth']],
+            ],
             'cookies' => []
         ];
         $body = [
@@ -39,11 +42,31 @@ class SwaggerTestCaseTest extends TestCase
         $lastRoute = '/testurl_last/*';
         $test = new SwaggerTestCase($controller, $request, $res, $lastRoute);
 
-        $this->assertEquals('get', $test->getMethod());
+        $this->assertEquals('patch', $test->getMethod());
         $this->assertEquals('403', $test->getStatusCodeString());
         $this->assertEquals('/testurl_last/', $test->getRoute());
         $this->assertEquals('Run', $test->getDescription());
         $this->assertEquals([['bearerAuth' => []]], $test->getSecurity());
+        $expectedRequest = [
+            'type' => 'object',
+            'description' => 'Run',
+            'properties' => [
+                'hello' => [
+                    'type' => 'string',
+                    'example' => 'param'
+                ],
+                'object' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'something' => [
+                            'type' => 'string',
+                            'example' => '{`withBig`:`depth`}'
+                        ],
+                    ],
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedRequest, $test->getRequestSchema());
     }
 
     private function _getResponse(array $body, int $status = 200): Response
@@ -89,5 +112,70 @@ class SwaggerTestCaseTest extends TestCase
         $controller->method('isPublicController')->willReturn(false);
         $test = new SwaggerTestCase($controller, $request, $res, $lastRoute);
         $this->assertEquals([['bearerAuth' => []]], $test->getSecurity());
+    }
+
+    public function testGetProp()
+    {
+        $request = [
+            'url' => '/testurl/3',
+            'session' => null,
+            'query' => [],
+            'files' => [],
+            'environment' => [
+                'REQUEST_METHOD' => 'GET',
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/testurl/3'
+            ],
+            'post' => [],
+            'cookies' => []
+        ];
+        $body = [
+            'error' => 'Forbidden',
+            'code' => 403,
+            'message' => 'Resource not allowed with this token',
+            'exception' => '\Exception',
+            'trigger' => 'somefile(231)',
+        ];
+        $lastRoute = '/testurl_last/*';
+        $res = $this->_getResponse($body, 403);
+        $controller = $this->createMock(RestApiController::class);
+        $test = new SwaggerTestCase($controller, $request, $res, $lastRoute);
+        // empty array
+        $this->assertEquals([
+            'type' => 'array',
+            'items' => [
+                'type' => 'object'
+            ]
+        ], $test->getProp([]));
+        // object 0 depth
+        $this->assertEquals([
+            'type' => 'object',
+            'properties' => [
+                'hello' => [
+                    'type' => 'string',
+                    'example' => 'world',
+                ]
+            ]
+        ], $test->getProp(['hello' => 'world']));
+        // object big depth
+        $this->assertEquals([
+            'type' => 'string',
+            'example' => '{`hello`:`world`}'
+        ], $test->getProp(['hello' => 'world'], 'prop', 1));
+        // numeric
+        $this->assertEquals([
+            'type' => 'number',
+            'example' => 456
+        ], $test->getProp(456));
+        // boolean
+        $this->assertEquals([
+            'type' => 'boolean',
+            'example' => true
+        ], $test->getProp(true));
+        // string password
+        $this->assertEquals([
+            'type' => 'string',
+            'example' => '*****'
+        ], $test->getProp('hello', 'password'));
     }
 }

@@ -219,7 +219,7 @@ class SwaggerTestCase implements \JsonSerializable
     private function _getItems($data): array
     {
         if (!is_array($data[0])) {
-            return $this->_getProp($data[0]);
+            return $this->getProp($data[0]);
         }
         if (isset($data[0][0])) {
             return [
@@ -228,7 +228,7 @@ class SwaggerTestCase implements \JsonSerializable
             ];
         }
         foreach ($data[0] as $property => $value) {
-            $properties[$property] = $this->_getProp($value, $property);
+            $properties[$property] = $this->getProp($value, $property);
         }
         return [
             'type' => 'object',
@@ -269,7 +269,7 @@ class SwaggerTestCase implements \JsonSerializable
                 ];
             } else {
                 foreach ($json as $property => $value) {
-                    $properties[$property] = $this->_getProp($value, $property);
+                    $properties[$property] = $this->getProp($value, $property);
                 }
                 return [
                     'type' => 'object',
@@ -285,7 +285,7 @@ class SwaggerTestCase implements \JsonSerializable
         } else {
             // not json with data
             foreach ($this->getJson() as $property => $value) {
-                $properties[$property] = $this->_getProp($value, $property);
+                $properties[$property] = $this->getProp($value, $property);
             }
             return [
                 'type' => 'object',
@@ -305,7 +305,7 @@ class SwaggerTestCase implements \JsonSerializable
         $isArray = isset($post[0]);
         if ($isArray) {
             foreach ($post[0] as $property => $value) {
-                $properties[$property] = $this->_getProp($value, $property);
+                $properties[$property] = $this->getProp($value, $property);
             }
             return [
                 'type' => 'array',
@@ -314,7 +314,7 @@ class SwaggerTestCase implements \JsonSerializable
             ];
         } else {
             foreach ($post as $property => $value) {
-                $properties[$property] = $this->_getProp($value, $property);
+                $properties[$property] = $this->getProp($value, $property);
             }
             return [
                 'type' => 'object',
@@ -324,7 +324,7 @@ class SwaggerTestCase implements \JsonSerializable
         }
     }
 
-    private function _getProp($value, string $property = null): array
+    public function getProp($value, string $property = null, int $depth = 0): array
     {
         if (is_array($value)) {
             if ($value === []) {
@@ -335,12 +335,22 @@ class SwaggerTestCase implements \JsonSerializable
                     ]
                 ];
             } else {
-                $prop = [
-                    'type' => 'string',
-                    //'type' => 'object',
-                    //'example' => json_encode($value),
-                    'example' => str_replace('"', '`', json_encode($value, JSON_UNESCAPED_SLASHES)),
-                ];
+                if ($depth === 0) {
+                    $properties = [];
+                    foreach ($value as $property1 => $value1) {
+                        $properties[$property1] = $this->getProp($value1, $property1, 1);
+                    }
+                    $prop = [
+                        'type' => 'object',
+                        'properties' => $properties,
+                    ];
+                } else {
+                    $example = str_replace('"', '`', json_encode($value, JSON_UNESCAPED_SLASHES));
+                    $prop = [
+                        'type' => 'string',
+                        'example' => $example,
+                    ];
+                }
             }
         } else if (is_numeric($value)) {
             $prop = [
