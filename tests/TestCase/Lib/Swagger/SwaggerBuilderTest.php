@@ -22,15 +22,18 @@ class SwaggerBuilderTest extends TestCase
             'query' => [],
             'files' => [],
             'environment' => [
-                'REQUEST_METHOD' => 'GET',
+                'REQUEST_METHOD' => 'PATCH',
                 'QUERY_STRING' => '',
                 'REQUEST_URI' => '/testurl/3'
             ],
-            'post' => [],
+            'post' => [
+                'first' => 'posted_body'
+            ],
             'cookies' => []
         ];
         $request2 = $request1;
         $request2['query'] = ['my_param' => 'param_value'];
+        $request2['post'] = ['second' => 'posted_body'];
         $body = [
             'hello' => 'world',
         ];
@@ -42,7 +45,7 @@ class SwaggerBuilderTest extends TestCase
         $array = $builder->toArray();
         $expected = [
             '' => [
-                'get' => [
+                'patch' => [
                     'operationId' => (int) 1,
                     'summary' => '',
                     'description' => 'Run bare',
@@ -51,7 +54,7 @@ class SwaggerBuilderTest extends TestCase
                             'description' => 'Auth token',
                             'in' => 'header',
                             'name' => 'Authentication',
-                            'example' => 'Bearer xxxxxx',
+                            'example' => 'Bearer ****************',
                             'required' => true,
                             'schema' => [
                                 'type' => 'string'
@@ -99,6 +102,22 @@ class SwaggerBuilderTest extends TestCase
                                 ]
                             ]
                         ]
+                    ],
+                    'requestBody' => [
+                        'description' => '',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    'type' => 'object',
+                                    'properties' => [
+                                        'first' => [
+                                            'type' => 'string',
+                                            'example' => 'posted_body',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
                     ],
                     'security' => [
                         (int) 0 => [

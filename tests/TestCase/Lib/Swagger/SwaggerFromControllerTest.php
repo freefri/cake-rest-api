@@ -46,7 +46,7 @@ class SwaggerFromControllerTest extends TestCase
                             'description' => 'Auth token',
                             'in' => 'header',
                             'name' => 'Authentication',
-                            'example' => 'Bearer xxxxxx',
+                            'example' => 'Bearer ****************',
                             'required' => true,
                             'schema' => [
                                 'type' => 'string'

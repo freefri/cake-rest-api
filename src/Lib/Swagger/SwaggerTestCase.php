@@ -189,7 +189,7 @@ class SwaggerTestCase implements \JsonSerializable
                 'description' => 'Auth token',
                 'in' => 'header',
                 'name' => 'Authentication',
-                'example' => 'Bearer xxxxxx',
+                'example' => 'Bearer ****************',
                 'required' => true,
                 'schema' => ['type' => 'string'],
             ];
@@ -337,7 +337,7 @@ class SwaggerTestCase implements \JsonSerializable
                     'type' => 'string',
                     //'type' => 'object',
                     //'example' => json_encode($value),
-                    'example' => str_replace('"', '`', json_encode($value)),
+                    'example' => str_replace('"', '`', json_encode($value, JSON_UNESCAPED_SLASHES)),
                 ];
             }
         } else if (is_numeric($value)) {
