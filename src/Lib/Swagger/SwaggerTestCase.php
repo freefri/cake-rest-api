@@ -335,7 +335,8 @@ class SwaggerTestCase implements \JsonSerializable
                     ]
                 ];
             } else {
-                if ($depth === 0) {
+                $MAX_DEPTH = 10;
+                if ($depth < $MAX_DEPTH) {
                     if (isset($value[0])) {
                         return [
                             'type' => 'array',
@@ -344,7 +345,7 @@ class SwaggerTestCase implements \JsonSerializable
                     }
                     $properties = [];
                     foreach ($value as $property1 => $value1) {
-                        $properties[$property1] = $this->getProp($value1, $property1, 1);
+                        $properties[$property1] = $this->getProp($value1, $property1, $depth + 1);
                     }
                     $prop = [
                         'type' => 'object',

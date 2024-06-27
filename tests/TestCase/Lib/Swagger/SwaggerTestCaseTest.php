@@ -27,7 +27,7 @@ class SwaggerTestCaseTest extends TestCase
             ],
             'post' => [
                 'hello' => 'param',
-                'object' => ['something' => ['withBig' => 'depth']],
+                'object' => ['something' => ['with' => 'depth']],
             ],
             'cookies' => []
         ];
@@ -59,8 +59,13 @@ class SwaggerTestCaseTest extends TestCase
                     'type' => 'object',
                     'properties' => [
                         'something' => [
-                            'type' => 'string',
-                            'example' => '{`withBig`:`depth`}'
+                            'type' => 'object',
+                            'properties' => [
+                                'with' => [
+                                    'type' => 'string',
+                                    'example' => 'depth',
+                                ],
+                            ],
                         ],
                     ],
                 ]
@@ -186,8 +191,8 @@ class SwaggerTestCaseTest extends TestCase
         // object big depth
         $this->assertEquals([
             'type' => 'string',
-            'example' => '{`hello`:`world`}'
-        ], $test->getProp(['hello' => 'world'], 'prop', 1));
+            'example' => '{`huge`:`depth`}'
+        ], $test->getProp(['huge' => 'depth'], 'prop', 100));
         // numeric
         $this->assertEquals([
             'type' => 'number',
