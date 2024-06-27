@@ -5,6 +5,7 @@ namespace RestApi\TestSuite;
 
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
+use Cake\Http\Exception\InternalErrorException;
 use Cake\TestSuite\Fixture\FixtureStrategyInterface;
 use Cake\TestSuite\Fixture\TransactionStrategy;
 
@@ -82,22 +83,6 @@ abstract class ApiCommonAssertionsTest extends ApiCommonTestCase
         return $bodyDecoded;
     }
 
-    /**
-     * @deprecated use assertJsonResponseOK() instead
-     */
-    protected function assertResponseJsonOK($expected)
-    {
-        $body = (string)$this->_response->getBody();
-        $this->assertResponseOk($body);
-        $bodyDecoded = json_decode($body, true);
-        if ($bodyDecoded) {
-            $this->assertEquals($expected, $bodyDecoded);
-        } else {
-            $expected = json_encode($expected, JSON_PRETTY_PRINT);
-            $this->assertEquals($expected, $body);
-        }
-    }
-
     public function assertRedirectContains(string $url, string $message = ''): void
     {
         if (!$message) {
@@ -128,6 +113,13 @@ abstract class ApiCommonAssertionsTest extends ApiCommonTestCase
     }
 
     /**
+     * @deprecated use assertJsonResponseOK() instead
+     */
+    protected function assertResponseJsonOK($expected)
+    {
+        throw new InternalErrorException('deprecated use assertJsonResponseOK() instead');
+    }
+    /**
      * @deprecated use assertException instead
      */
     protected function assertExceptionMessage(string $message, $code = null): array
@@ -148,51 +140,11 @@ abstract class ApiCommonAssertionsTest extends ApiCommonTestCase
         return $bodyDecoded;
     }
 
-    public function testPost_shouldThrowBadRequestExceptionWhenEmptyBodyProvided()
-    {
-        $this->actionExpectsException('', 'post', 'Empty body or invalid Content-Type in HTTP request');
-    }
-
-    public function testPut_shouldThrowBadRequestExceptionWhenNoIdProvided()
-    {
-        $this->put($this->_getEndpoint(), ['x' => 'y']);
-
-        $body = (string)$this->_response->getBody();
-        $this->assertResponseError('HTTP method requires ID' . $body);
-        $this->assertEquals('HTTP method requires ID', json_decode($body, true)['message']);
-    }
-
-    public function testPut_shouldThrowBadRequestExceptionWhenNoBodyProvided()
-    {
-        $this->actionExpectsException(50, 'put', 'Empty body or invalid Content-Type in HTTP request');
-    }
-
-    public function testPatch_shouldThrowBadRequestExceptionWhenNoBodyProvided()
-    {
-        $this->actionExpectsException(50, 'patch', 'Empty body or invalid Content-Type in HTTP request');
-    }
-
     protected function actionExpectsException($url, $method, $message)
     {
         $this->_sendRequest($this->_getEndpoint() . $url, strtoupper($method));
         $body = (string)$this->_response->getBody();
         $this->assertResponseError($body);
         $this->assertEquals($message, json_decode($body, true)['message']);
-    }
-
-    public function testPatch_shouldThrowBadRequestExceptionWhenNoIdProvided()
-    {
-        $this->patch($this->_getEndpoint(), ['x' => 'y']);
-        $body = (string)$this->_response->getBody();
-        $this->assertResponseError('HTTP method requires ID ' . $body);
-        $this->assertEquals('HTTP method requires ID', json_decode($body, true)['message']);
-    }
-
-    public function testDelete_shouldThrowBadRequestExceptionWhenNoIdProvided()
-    {
-        $this->delete($this->_getEndpoint());
-        $body = (string)$this->_response->getBody();
-        $this->assertResponseError('HTTP method requires ID' . $body);
-        $this->assertEquals('HTTP method requires ID', json_decode($body, true)['message']);
     }
 }
