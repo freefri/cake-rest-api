@@ -147,6 +147,19 @@ class SwaggerTestCaseTest extends TestCase
                 'type' => 'object'
             ]
         ], $test->getProp([]));
+        // not empty array
+        $this->assertEquals([
+            'type' => 'array',
+            'items' => [
+                'type' => 'object',
+                'properties' => [
+                    'hello' => [
+                        'type' => 'string',
+                        'example' => 'world',
+                    ]
+                ]
+            ]
+        ], $test->getProp([['hello' => 'world']]));
         // object 0 depth
         $this->assertEquals([
             'type' => 'object',
@@ -157,6 +170,19 @@ class SwaggerTestCaseTest extends TestCase
                 ]
             ]
         ], $test->getProp(['hello' => 'world']));
+        // array 0 depth
+        $this->assertEquals([
+            'type' => 'array',
+            'items' => [
+                'type' => 'object',
+                'properties' => [
+                    'hello' => [
+                        'type' => 'string',
+                        'example' => 'world',
+                    ]
+                ]
+            ]
+        ], $test->getProp([['hello' => 'world']]));
         // object big depth
         $this->assertEquals([
             'type' => 'string',

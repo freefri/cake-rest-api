@@ -216,19 +216,19 @@ class SwaggerTestCase implements \JsonSerializable
         return array_merge($this->_getPathParams(), $this->_getQueryParams(), $this->_getHeaderParams());
     }
 
-    private function _getItems($data): array
+    private function _getItems($data, int $depth = 0): array
     {
         if (!is_array($data[0])) {
-            return $this->getProp($data[0]);
+            return $this->getProp($data[0], 0, $depth);
         }
         if (isset($data[0][0])) {
             return [
                 'type' => 'array',
-                'items' => $this->_getItems($data[0]),
+                'items' => $this->_getItems($data[0], $depth),
             ];
         }
         foreach ($data[0] as $property => $value) {
-            $properties[$property] = $this->getProp($value, $property);
+            $properties[$property] = $this->getProp($value, $property, $depth);
         }
         return [
             'type' => 'object',
@@ -336,6 +336,12 @@ class SwaggerTestCase implements \JsonSerializable
                 ];
             } else {
                 if ($depth === 0) {
+                    if (isset($value[0])) {
+                        return [
+                            'type' => 'array',
+                            'items' => $this->_getItems($value, $depth),
+                        ];
+                    }
                     $properties = [];
                     foreach ($value as $property1 => $value1) {
                         $properties[$property1] = $this->getProp($value1, $property1, 1);
