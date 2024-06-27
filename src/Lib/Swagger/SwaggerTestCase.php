@@ -353,7 +353,7 @@ class SwaggerTestCase implements \JsonSerializable
                 'example' => $value,
             ];
         } else {
-            if ($property === 'password') {
+            if ($property && in_array($property, ['password', 'access_token'])) {
                 $value = str_repeat('*', mb_strlen($value));
             }
             $prop = [
