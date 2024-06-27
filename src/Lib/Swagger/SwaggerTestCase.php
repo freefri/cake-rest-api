@@ -236,6 +236,53 @@ class SwaggerTestCase implements \JsonSerializable
         ];
     }
 
+    private function _getDataWithType($json): array
+    {
+        $isArray = isset($json[0]);
+        if ($isArray) {
+            $data = [
+                'type' => 'array',
+                'items' => $this->_getItems($json),
+            ];
+        } else {
+            if (is_bool($json)) {
+                $data = [
+                    'type' => 'boolean',
+                    'properties' => $json,
+                ];
+            } else {
+                $properties = [];
+                foreach ($json as $property => $value) {
+                    $properties[$property] = $this->getProp($value, $property);
+                }
+                $data = [
+                    'type' => 'object',
+                    'properties' => $properties,
+                ];
+            }
+        }
+        return $data;
+    }
+
+    private function _getDataObject($json)
+    {
+        $data = $this->_getDataWithType($json);
+        $ret = [
+            'type' => 'object',
+            'description' => $this->getDescription(),
+            'properties' => [
+                'data' => $data
+            ]
+        ];
+        $fullJson = $this->getJson();
+        foreach (array_keys($fullJson) as $arrayKey) {
+            if ($arrayKey !== 'data') {
+                $ret['properties'][$arrayKey] = $fullJson[$arrayKey];
+            }
+        }
+        return $ret;
+    }
+
     public function getResponseSchema(): ?array
     {
         if ($this->getJson() === null) {
@@ -244,44 +291,7 @@ class SwaggerTestCase implements \JsonSerializable
         $json = $this->getJson()['data'] ?? null;
         $properties = [];
         if ($json) {
-            $isArray = isset($json[0]);
-            if ($isArray) {
-                return [
-                    'type' => 'object',
-                    'description' => $this->getDescription(),
-                    'properties' => [
-                        'data' => [
-                            'type' => 'array',
-                            'items' => $this->_getItems($json),
-                        ]
-                    ],
-                ];
-            } else if (is_bool($json)) {
-                return [
-                    'type' => 'object',
-                    'description' => $this->getDescription(),
-                    'properties' => [
-                        'data' => [
-                            'type' => 'boolean',
-                            'properties' => $json,
-                        ]
-                    ],
-                ];
-            } else {
-                foreach ($json as $property => $value) {
-                    $properties[$property] = $this->getProp($value, $property);
-                }
-                return [
-                    'type' => 'object',
-                    'description' => $this->getDescription(),
-                    'properties' => [
-                        'data' => [
-                            'type' => 'object',
-                            'properties' => $properties,
-                        ]
-                    ],
-                ];
-            }
+            return $this->_getDataObject($json);
         } else {
             // not json with data
             foreach ($this->getJson() as $property => $value) {

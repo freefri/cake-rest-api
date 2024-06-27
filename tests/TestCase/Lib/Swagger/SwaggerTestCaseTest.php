@@ -32,11 +32,8 @@ class SwaggerTestCaseTest extends TestCase
             'cookies' => []
         ];
         $body = [
-            'error' => 'Forbidden',
-            'code' => 403,
-            'message' => 'Resource not allowed with this token',
-            'exception' => '\Exception',
-            'trigger' => 'somefile(231)',
+            'data' => ['hello' => 'world'],
+            'meta' => ['page' => 1],
         ];
         $res = $this->_getResponse($body, 403);
         $lastRoute = '/testurl_last/*';
@@ -72,6 +69,25 @@ class SwaggerTestCaseTest extends TestCase
             ]
         ];
         $this->assertEquals($expectedRequest, $test->getRequestSchema());
+        $expectedResponse = [
+            'type' => 'object',
+            'description' => 'Run',
+            'properties' => [
+                'data' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'hello' => [
+                            'type' => 'string',
+                            'example' => 'world'
+                        ]
+                    ]
+                ],
+                'meta' => [
+                    'page' => (int) 1
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedResponse, $test->getResponseSchema());
     }
 
     private function _getResponse(array $body, int $status = 200): Response
