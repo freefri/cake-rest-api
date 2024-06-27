@@ -17,6 +17,12 @@ class SwaggerReader
 
     public function getInfo(array $paths): array
     {
+        $serverUrl = ($_SERVER['HTTP_HOST'] ?? '');
+        if ($serverUrl) {
+            $serverUrl = 'https://' . $serverUrl;
+        } else {
+            $serverUrl = 'https://github.com/freefri/cake-rest-api/';
+        }
         return [
             'openapi' => '3.0.0',
             'info' => [
@@ -29,7 +35,7 @@ class SwaggerReader
                 ],
             ],
             'servers' => [
-                ['url' => 'https://github.com/freefri/cake-rest-api/']
+                ['url' => $serverUrl]
             ],
             'tags' => [],
             'paths' => $paths,
