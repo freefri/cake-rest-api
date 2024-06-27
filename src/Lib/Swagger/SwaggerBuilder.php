@@ -58,7 +58,7 @@ class SwaggerBuilder
             /** @var SwaggerTestCase $testCase */
             foreach ($md5_elem as $testCase) {
                 $req = $testCase->getRequestSchema();
-                if ($req) {
+                if ($req && $testCase->getStatusCode() < 400) {
                     $requestSchema[] = $req;
                 }
             }
@@ -68,7 +68,9 @@ class SwaggerBuilder
         }
         $description = '';
         $count = count($requestSchema);
-        if ($count > 1) {
+        if ($count === 1) {
+            $requestSchema = $requestSchema[0];
+        } else {
             $description = "Request body can match to any of the $count provided schemas";
             $requestSchema = [
                 'oneOf' => $requestSchema
