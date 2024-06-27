@@ -8,7 +8,7 @@ use Cake\Error\Debugger;
 use Cake\TestSuite\Fixture\FixtureStrategyInterface;
 use Cake\TestSuite\Fixture\TransactionStrategy;
 
-abstract class ApiCommonErrorsTest extends ApiCommonTestCase
+abstract class ApiCommonAssertionsTest extends ApiCommonTestCase
 {
     /**
      * @var string|null
