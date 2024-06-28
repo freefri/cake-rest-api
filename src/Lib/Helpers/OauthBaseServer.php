@@ -112,7 +112,8 @@ abstract class OauthBaseServer
     public function verifyAuthorizationAndGetToken(): AccessTokenEntity
     {
         $this->_oauthSetup->verifyAuthorization($this->silentVerificationPath());
-        return $this->_oauthSetup->getLastToken();
+        $this->token = $this->_oauthSetup->getLastToken();
+        return $this->token;
     }
 
     /**
