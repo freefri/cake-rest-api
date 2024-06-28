@@ -24,10 +24,10 @@ class RestApiSelectQuery extends SelectQuery
     public function handleTimeFilter(array $filters, string $field): self
     {
         $availableCriteria = [
-            'gte' => '<=',
-            'gt' => '<',
-            'lte' => '>=',
-            'lt' => '>',
+            'gte' => '>=',
+            'gt' => '>',
+            'lte' => '<=',
+            'lt' => '<',
         ];
         foreach ($availableCriteria as $criteria => $sqlCriteria) {
             $timeParam = $filters[$field . ':' . $criteria] ?? null;

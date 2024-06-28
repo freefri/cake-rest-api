@@ -26,29 +26,29 @@ class RestApiSelectQueryTest extends TestCase
     public function testHandleTimeFilter()
     {
         $filters = [
-            'initial_date1:gte' => '20-12-2023',
-            'initial_date2:gt' => '20-12-2023',
-            'initial_date3:lte' => '20-12-2023',
-            'initial_date4:lt' => '20-12-2023',
+            'greaterThanEq:gte' => '20-12-2023',
+            'greaterThan:gt' => '20-12-2023',
+            'lowerThanEq:lte' => '20-12-2023',
+            'lowerThan:lt' => '20-12-2023',
         ];
         $query = $this->_getQuery();
-        $query->handleTimeFilter($filters, 'initial_date1');
-        $this->assertEquals('initial_date1 <= :c0', $this->_getSql($query));
+        $query->handleTimeFilter($filters, 'greaterThanEq');
+        $this->assertEquals('greaterThanEq >= :c0', $this->_getSql($query));
 
 
         $query = $this->_getQuery();
-        $query->handleTimeFilter($filters, 'initial_date2');
-        $this->assertEquals('initial_date2 < :c0', $this->_getSql($query));
+        $query->handleTimeFilter($filters, 'greaterThan');
+        $this->assertEquals('greaterThan > :c0', $this->_getSql($query));
 
 
         $query = $this->_getQuery();
-        $query->handleTimeFilter($filters, 'initial_date3');
-        $this->assertEquals('initial_date3 >= :c0', $this->_getSql($query));
+        $query->handleTimeFilter($filters, 'lowerThanEq');
+        $this->assertEquals('lowerThanEq <= :c0', $this->_getSql($query));
 
 
         $query = $this->_getQuery();
-        $query->handleTimeFilter($filters, 'initial_date4');
-        $this->assertEquals('initial_date4 > :c0', $this->_getSql($query));
+        $query->handleTimeFilter($filters, 'lowerThan');
+        $this->assertEquals('lowerThan < :c0', $this->_getSql($query));
     }
 
     private function _getSql(RestApiSelectQuery $query)
