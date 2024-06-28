@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace RestApi\Model\ORM;
 
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\I18n\FrozenTime;
-use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use RestApi\Lib\Exception\SilentException;
 
@@ -13,10 +14,28 @@ class RestApiSelectQuery extends SelectQuery
 {
     const WITH_DELETED = 'with_deleted';
 
-    public function withDeleted(bool $includeDeleted): Query
+    public function withDeleted(bool $includeDeleted): self
     {
         $containOptions = $includeDeleted ? [self::WITH_DELETED] : [];
         $this->applyOptions($containOptions);
+        return $this;
+    }
+
+    public function handleTimeFilter(array $filters, string $field): self
+    {
+        $availableCriteria = [
+            'gte' => '<=',
+            'gt' => '<',
+            'lte' => '>=',
+            'lt' => '>',
+        ];
+        foreach ($availableCriteria as $criteria => $sqlCriteria) {
+            $timeParam = $filters[$field . ':' . $criteria] ?? null;
+            if ($timeParam) {
+                $where = [$field . ' ' . $sqlCriteria => $timeParam];
+                $this->where($where);
+            }
+        }
         return $this;
     }
 
