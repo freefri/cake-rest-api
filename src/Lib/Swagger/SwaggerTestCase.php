@@ -283,6 +283,11 @@ class SwaggerTestCase implements \JsonSerializable
         return $ret;
     }
 
+    public function getLocationHeader(): ?string
+    {
+        return $this->_response->getHeader('Location')[0] ?? null;
+    }
+
     public function getResponseSchema(): ?array
     {
         if ($this->getJson() === null) {

@@ -97,6 +97,88 @@ class SwaggerBuilderTest extends TestCase
         $this->assertEquals($expected, $array);
     }
 
+    public function testToArray_withRedirection()
+    {
+        $swagger = new SwaggerFromController();
+        $controller = new Controller();
+        $request1 = [
+            'url' => '/testurl/3',
+            'session' => null,
+            'query' => [],
+            'files' => [],
+            'environment' => [
+                'REQUEST_METHOD' => 'GET',
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/testurl/3'
+            ],
+            'cookies' => []
+        ];
+        $location = null;
+        $res = new Response([
+            'status' => 301,
+            'type' => 'application/json',
+            'headers' => ['Location' => [null]]
+        ]);
+        $swagger->addToSwagger($controller, $request1, $res);
+
+        $builder = new SwaggerBuilder($swagger);
+        $array = $builder->toArray();
+        $expected = [
+            '' => [
+                'get' => [
+                    'operationId' => (int) 1,
+                    'summary' => '',
+                    'description' => 'Run bare',
+                    'parameters' => [
+                        [
+                            'description' => 'Auth token',
+                            'in' => 'header',
+                            'name' => 'Authentication',
+                            'example' => 'Bearer ****************',
+                            'required' => true,
+                            'schema' => [
+                                'type' => 'string'
+                            ]
+                        ],
+                        [
+                            'description' => 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                            'in' => 'header',
+                            'name' => 'Accept-Language',
+                            'example' => 'en',
+                            'required' => false,
+                            'schema' => [
+                                'type' => 'string'
+                            ]
+                        ],
+                    ],
+                    'tags' => [
+                        (int) 0 => ''
+                    ],
+                    'responses' => [
+                        (int) 301 => [
+                            'description' => 'Redirect. Moved Permanently',
+                            'headers' => [
+                                'Location' => [
+                                    'description' => 'Run bare',
+                                    'schema' => [
+                                        'type' => 'string',
+                                        'example' => $location,
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    'security' => [
+                        (int) 0 => [
+                            'bearerAuth' => []
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $array);
+    }
+
     public function testToArray_addingMultipleRequestWithDifferentParamsShouldSumarizeTheParams()
     {
         $swagger = new SwaggerFromController();

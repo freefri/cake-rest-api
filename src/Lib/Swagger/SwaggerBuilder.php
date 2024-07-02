@@ -113,6 +113,21 @@ class SwaggerBuilder
             }
             $existingResponses[$code] = ['description' => $description];
             return $existingResponses;
+        } else if ($code == 301 || $code == 302) {
+            $description = 'Redirect. ' . $elem->getStatusDescription();
+            $existingResponses[$code] = [
+                'description' => $description,
+                'headers' => [
+                    'Location' => [
+                        'description' => $elem->getDescription(),
+                        'schema' => [
+                            'type' => 'string',
+                            'example' => $elem->getLocationHeader(),
+                        ],
+                    ]
+                ]
+            ];
+            return $existingResponses;
         }
         $json = 'application/json';
         $responseToAdd = $elem->getResponseSchema();
