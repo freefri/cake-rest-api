@@ -2,6 +2,8 @@
 
 namespace RestApi\Lib\Swagger;
 
+use Cake\Http\Exception\InternalErrorException;
+
 class SwaggerBuilder
 {
     private SwaggerFromController $_data;
@@ -29,7 +31,7 @@ class SwaggerBuilder
                     'summary' => '',
                     'description' => $firstTestCase->getDescription(),
                     'parameters' => $this->_getParamsInRoute($code_md5_elem),
-                    'tags' => $firstTestCase->getTags(),
+                    'tags' => $this->_getFirstNoErrorTags($code_md5_elem),
                     'responses' => [],
                 ];
                 $sec = $firstTestCase->getSecurity();
@@ -49,6 +51,20 @@ class SwaggerBuilder
             }
         }
         return $toRet;
+    }
+
+    public function _getFirstNoErrorTags(array $selectedRouteMethod): array
+    {
+        foreach ($selectedRouteMethod as $md5_elem) {
+            /** @var SwaggerTestCase $testCase */
+            foreach ($md5_elem as $testCase) {
+                $tags = $testCase->getTags();
+                if ($tags != ['Error']) {
+                    return $tags;
+                }
+            }
+        }
+        throw new InternalErrorException('Object structure is not valid ' . json_encode($selectedRouteMethod));
     }
 
     public function _getRequestBodyInRoute(array $selectedRouteMethod): array
