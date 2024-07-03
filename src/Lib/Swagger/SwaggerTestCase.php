@@ -250,6 +250,11 @@ class SwaggerTestCase implements \JsonSerializable
                     'type' => 'boolean',
                     'properties' => $json,
                 ];
+            } else if (is_numeric($json)) {
+                $data = [
+                    'type' => 'number',
+                    'example' => $json + 0,
+                ];
             } else {
                 $properties = [];
                 foreach ($json as $property => $value) {
