@@ -83,9 +83,15 @@ class SwaggerTestCaseTest extends TestCase
                     ]
                 ],
                 'meta' => [
-                    'page' => (int) 1
-                ]
-            ]
+                    'type' => 'object',
+                    'properties' => [
+                        'page' => [
+                            'type' => 'number',
+                            'example' => 1
+                        ],
+                    ],
+                ],
+            ],
         ];
         $this->assertEquals($expectedResponse, $test->getResponseSchema());
     }

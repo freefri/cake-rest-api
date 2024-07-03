@@ -277,7 +277,7 @@ class SwaggerTestCase implements \JsonSerializable
         $fullJson = $this->getJson();
         foreach (array_keys($fullJson) as $arrayKey) {
             if ($arrayKey !== 'data') {
-                $ret['properties'][$arrayKey] = $fullJson[$arrayKey];
+                $ret['properties'][$arrayKey] = $this->_getDataWithType($fullJson[$arrayKey]);
             }
         }
         return $ret;
