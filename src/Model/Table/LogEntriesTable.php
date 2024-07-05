@@ -4,14 +4,24 @@ declare(strict_types = 1);
 
 namespace RestApi\Model\Table;
 
+use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Behavior\TimestampBehavior;
+use Cake\ORM\Table;
 use RestApi\Model\Entity\LogEntry;
 
-class LogEntriesTable extends RestApiTable
+class LogEntriesTable extends Table
 {
     public function initialize(array $config): void
     {
         $this->addBehavior(TimestampBehavior::class);
+    }
+
+    public static function load(): self
+    {
+        $alias = 'RestApi.LogEntries';
+        /** @var self $table */
+        $table = FactoryLocator::get('Table')->get($alias);
+        return $table;
     }
 
     protected function computeEnv()
@@ -19,6 +29,10 @@ class LogEntriesTable extends RestApiTable
         $env = $_SERVER['APPLICATION_ENV'] ?? 'unknownEnv';
         if (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
             $env = 'localhost';
+        }
+        $version = $_SERVER['TAG_VERSION'] ?? '';
+        if ($version) {
+            $env .= '_' . $version;
         }
         //$env .= '_' . Configure::version();
         return $env;
