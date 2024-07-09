@@ -269,14 +269,14 @@ class SwaggerTestCaseTest extends TestCase
     {
         $controller = new Controller();
         $request = [
-            'url' => '/testurl_last/343-fgdd/path',
+            'url' => '/testurl_last/343-fgdd/path/321',
             'session' => null,
             'query' => [],
             'files' => [],
             'environment' => [
                 'REQUEST_METHOD' => 'PATCH',
                 'QUERY_STRING' => '',
-                'REQUEST_URI' => '/testurl_last/343-fgdd/path'
+                'REQUEST_URI' => '/testurl_last/343-fgdd/path/321'
             ],
             'post' => [
                 'hello' => 'param',
@@ -301,6 +301,16 @@ class SwaggerTestCaseTest extends TestCase
                 'required' => true,
                 'schema' => [
                     'type' => 'string'
+                ]
+            ],
+            [
+                'description' => 'ID in URL',
+                'in' => 'path',
+                'name' => 'entity_id',
+                'example' => 321,
+                'required' => true,
+                'schema' => [
+                    'type' => 'integer'
                 ]
             ],
             [

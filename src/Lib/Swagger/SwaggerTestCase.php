@@ -10,6 +10,7 @@ use RestApi\Controller\RestApiErrorController;
 
 class SwaggerTestCase implements \JsonSerializable
 {
+    private const ENTITY_BRACES = '{entity_id}';
     private Controller $_controller;
     private array $_request;
     private Response $_response;
@@ -61,7 +62,7 @@ class SwaggerTestCase implements \JsonSerializable
         if (count($explodedUrl) >= 2) {
             $last = array_pop($explodedUrl);
             if ($last && strpos($last, '/') === false) {
-                $this->_cachedRoute = $mainRoute . '{entity_id}';
+                $this->_cachedRoute = $mainRoute . self::ENTITY_BRACES;
             }
         }
         return $this->_cachedRoute;
@@ -145,6 +146,7 @@ class SwaggerTestCase implements \JsonSerializable
         foreach ($matches[0] as $param) {
             $paramExample = $map[$param] ?? null;
             $paramType = is_numeric($paramExample) ? 'integer' : 'string';
+            $paramExample = is_numeric($paramExample) ? (int)$paramExample : $paramExample;
             $paramWithoutBraces = substr($param, 1, strlen($param) - 2);
             $toAdd = [
                 'description' => 'ID in URL',
@@ -166,10 +168,14 @@ class SwaggerTestCase implements \JsonSerializable
         $matchedRoute = $this->_getMatchedRoute();
         $explodedMatchedRoute = explode('/', $matchedRoute);
         $url = $this->getRequest()['url'];
+        $explodedUrl = explode('/', $url);
         $map = [];
-        foreach (explode('/', $url) as $k => $urlElem) {
-            $routeParam = $explodedMatchedRoute[$k] ?? null;
+        foreach ($explodedMatchedRoute as $k => $routeParam) {
+            $urlElem = $explodedUrl[$k] ?? null;
             if ($urlElem !== $routeParam) {
+                if ($routeParam === '*') {
+                    $routeParam = self::ENTITY_BRACES;
+                }
                 $map[$routeParam] = $urlElem;
             }
         }
