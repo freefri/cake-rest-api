@@ -16,14 +16,14 @@ class SwaggerTestCaseTest extends TestCase
     {
         $controller = new Controller();
         $request = [
-            'url' => '/testurl/3',
+            'url' => '/testurl_last/3/path',
             'session' => null,
             'query' => [],
             'files' => [],
             'environment' => [
                 'REQUEST_METHOD' => 'PATCH',
                 'QUERY_STRING' => '',
-                'REQUEST_URI' => '/testurl/3'
+                'REQUEST_URI' => '/testurl_last/3/path'
             ],
             'post' => [
                 'hello' => 'param',
@@ -36,13 +36,46 @@ class SwaggerTestCaseTest extends TestCase
             'meta' => ['page' => 1],
         ];
         $res = $this->_getResponse($body, 403);
-        $lastRoute = '/testurl_last/*';
+        $lastRoute = '/testurl_last/{eventID}/path/*';
         $test = new SwaggerTestCase($controller, $request, $res, $lastRoute);
 
         $this->assertEquals('patch', $test->getMethod());
         $this->assertEquals('403', $test->getStatusCodeString());
-        $this->assertEquals('/testurl_last/', $test->getRoute());
+        $this->assertEquals('/testurl_last/{eventID}/path/', $test->getRoute());
         $this->assertEquals('Run', $test->getDescription());
+        $expectedParams = [
+            [
+                'description' => 'ID in URL',
+                'in' => 'path',
+                'name' => 'eventID',
+                'example' => '3',
+                'required' => true,
+                'schema' => [
+                    'type' => 'integer'
+                ]
+            ],
+            [
+                'description' => 'Auth token',
+                'in' => 'header',
+                'name' => 'Authentication',
+                'example' => 'Bearer ****************',
+                'required' => true,
+                'schema' => [
+                    'type' => 'string'
+                ]
+            ],
+            [
+                'description' => 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                'in' => 'header',
+                'name' => 'Accept-Language',
+                'example' => 'en',
+                'required' => false,
+                'schema' => [
+                    'type' => 'string'
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedParams, $test->getParams());
         $this->assertEquals([['bearerAuth' => []]], $test->getSecurity());
         $expectedRequest = [
             'type' => 'object',
@@ -230,5 +263,67 @@ class SwaggerTestCaseTest extends TestCase
             'type' => 'string',
             'example' => '*****'
         ], $test->getProp('hello', 'password'));
+    }
+
+    public function testGetParams()
+    {
+        $controller = new Controller();
+        $request = [
+            'url' => '/testurl_last/343-fgdd/path',
+            'session' => null,
+            'query' => [],
+            'files' => [],
+            'environment' => [
+                'REQUEST_METHOD' => 'PATCH',
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/testurl_last/343-fgdd/path'
+            ],
+            'post' => [
+                'hello' => 'param',
+                'object' => ['something' => ['with' => 'depth']],
+            ],
+            'cookies' => []
+        ];
+        $body = [
+            'data' => ['hello' => 'world'],
+            'meta' => ['page' => 1],
+        ];
+        $res = $this->_getResponse($body, 403);
+        $lastRoute = '/testurl_last/{eventID}/path/*';
+        $test = new SwaggerTestCase($controller, $request, $res, $lastRoute);
+
+        $expectedParams = [
+            [
+                'description' => 'ID in URL',
+                'in' => 'path',
+                'name' => 'eventID',
+                'example' => '343-fgdd',
+                'required' => true,
+                'schema' => [
+                    'type' => 'string'
+                ]
+            ],
+            [
+                'description' => 'Auth token',
+                'in' => 'header',
+                'name' => 'Authentication',
+                'example' => 'Bearer ****************',
+                'required' => true,
+                'schema' => [
+                    'type' => 'string'
+                ]
+            ],
+            [
+                'description' => 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                'in' => 'header',
+                'name' => 'Accept-Language',
+                'example' => 'en',
+                'required' => false,
+                'schema' => [
+                    'type' => 'string'
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedParams, $test->getParams());
     }
 }

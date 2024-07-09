@@ -140,18 +140,40 @@ class SwaggerTestCase implements \JsonSerializable
         if (!isset($matches[0][0])) {
             return [];
         }
+        $map = $this->_getRouteParamsMap();
         $toRet = [];
         foreach ($matches[0] as $param) {
+            $paramExample = $map[$param] ?? null;
+            $paramType = is_numeric($paramExample) ? 'integer' : 'string';
             $paramWithoutBraces = substr($param, 1, strlen($param) - 2);
-            $toRet[] = [
-                'description' => '',
+            $toAdd = [
+                'description' => 'ID in URL',
                 'in' => 'path',
                 'name' => $paramWithoutBraces,
                 'required' => true,
-                'schema' => ['type' => 'integer'],
+                'schema' => ['type' => $paramType],
             ];
+            if ($paramExample) {
+                $toAdd['example'] = $paramExample;
+            }
+            $toRet[] = $toAdd;
         }
         return $toRet;
+    }
+
+    private function _getRouteParamsMap(): array
+    {
+        $matchedRoute = $this->_getMatchedRoute();
+        $explodedMatchedRoute = explode('/', $matchedRoute);
+        $url = $this->getRequest()['url'];
+        $map = [];
+        foreach (explode('/', $url) as $k => $urlElem) {
+            $routeParam = $explodedMatchedRoute[$k] ?? null;
+            if ($urlElem !== $routeParam) {
+                $map[$routeParam] = $urlElem;
+            }
+        }
+        return $map;
     }
 
     private function _getQueryParams(): array
