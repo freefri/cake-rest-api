@@ -421,6 +421,7 @@ class SwaggerTestCase implements \JsonSerializable
             $securedAnonymizedVariables = [
                 'password',
                 'access_token',
+                'login_challenge',
                 'client_assertion',
                 'client_id',
                 'vp_token'

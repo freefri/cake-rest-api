@@ -212,7 +212,13 @@ class OauthAccessTokensTable extends RestApiTable implements
         if (!$code) {
             return false;
         }
-        $code['expires'] = strtotime($code['expires']);
+        /** @var FrozenTime $expires */
+        $expires = $code->expires;
+        if ($expires->isPast()) {
+            return false;
+        }
+        $code = $code->toArray();
+        $code['expires'] = $expires->getTimestamp();
         return $code;
     }
 
@@ -220,28 +226,32 @@ class OauthAccessTokensTable extends RestApiTable implements
 
     private function _findAuthorizationCodes($code)
     {
-        return $this->_oauthAuthorizationCodes[$code] ?? [];
+        return $this->OauthAuthorizationCodes->find()->where(['authorization_code' => $code])->firstOrFail();
     }
 
     public function setAuthorizationCode($authorization_code, $client_id, $user_id, $redirect_uri, $expires, $scope = null): bool
     {
-        //if (func_num_args() > 6) {
-        //    throw new NotImplementedException('See /OAuth2/Storage/Pdo');
-        //}
-        $save = compact('authorization_code', 'client_id', 'user_id', 'redirect_uri', 'expires', 'scope');
-        return $this->_saveAuthorizationCodes($save);
+        $entity = $this->OauthAuthorizationCodes->newEmptyEntity();
+        $entity->authorization_code = $authorization_code;
+        $entity->client_id = $client_id;
+        $entity->user_id = $user_id;
+        $entity->redirect_uri = $redirect_uri;
+        $entity->expires = $expires;
+        $entity->scope = $scope;
+        return $this->_saveAuthorizationCodes($entity);
     }
 
-    private function _saveAuthorizationCodes($toSave): bool
+    private function _saveAuthorizationCodes($entity): bool
     {
-        $this->_oauthAuthorizationCodes[$toSave['authorization_code']] = $toSave;
+        $this->OauthAuthorizationCodes->saveOrFail($entity);
         return true;
-        //return !!$this->OauthAuthorizationCodes->save(['OauthAuthorizationCodes' => $toSave]);
     }
 
     public function expireAuthorizationCode($code)
     {
-        throw new NotImplementedException('See /OAuth2/Storage/Pdo');
+        $entity = $this->_findAuthorizationCodes($code);
+        $entity->expires = new FrozenTime();
+        $this->OauthAuthorizationCodes->saveOrFail($entity);
     }
 
     public function getUserDetails($username)

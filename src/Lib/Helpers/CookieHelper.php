@@ -48,6 +48,17 @@ class CookieHelper
         return $this->writeCookie($key, $storedValue, $expires);
     }
 
+    public function writeLoginChallenge(array $valueToStore, $expires = 20): Cookie
+    {
+        return $this->writeWithName($this->getLoginChallengeName(), json_encode($valueToStore), $expires);
+    }
+
+    public function decryptLoginChallenge(string $encrypted): array
+    {
+        $decrypted = $this->_decrypt($encrypted);
+        return json_decode($decrypted, true, JSON_UNESCAPED_SLASHES);
+    }
+
     protected function writeCookie(string $key, string $storedValue, $expires = null): Cookie
     {
         $encryptedToken = openssl_encrypt(
@@ -85,6 +96,11 @@ class CookieHelper
         return env('REMEMBER_NAME_API', 'rememberapi2');
     }
 
+    protected function getLoginChallengeName(): string
+    {
+        return env('COOKIE_LOGIN_CHALLENGE', 'loginchallenge');
+    }
+
     protected function getEncriptMethod()
     {
         return self::ENCRIPT_METHOD;
@@ -94,6 +110,13 @@ class CookieHelper
     {
         $key = $this->_getCookieName() . '.' . $cookieName;
         return $this->readCookie($key, $request);
+    }
+
+    public function popLoginChallenge(ServerRequest $request): array
+    {
+        $res = json_decode($this->readByName($this->getLoginChallengeName(), $request), true, JSON_UNESCAPED_SLASHES);
+        $this->writeLoginChallenge(['t' => time()], 1);
+        return $res;
     }
 
     public function readApi2Remember(ServerRequest $request)
