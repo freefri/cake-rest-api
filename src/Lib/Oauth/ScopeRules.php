@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace RestApi\Lib\Oauth;
 
 use Cake\Http\Exception\ForbiddenException;
