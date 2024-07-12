@@ -102,9 +102,10 @@ class AuthorizationCodeGrantPkceFlow
             $cookieChallenge = $CookieHelper->writeLoginChallenge($newCookie);
             $response = $response->withCookie($cookieChallenge);
         }
-        $AuthorizationCode = new AuthorizationCode($OauthTable);
         $challengeMethod = AuthorizationCodeGrantPkceFlow::codeChallengeMethod();
-        $code = $AuthorizationCode->createAuthorizationCode($clientId, $uid, $redirectUri, null, $challengeMethod);
+        $AuthorizationCode = new AuthorizationCode($OauthTable);
+        $code = $AuthorizationCode->createAuthorizationCode(
+            $clientId, $uid, $redirectUri, $data['scope'] ?? null, $challengeMethod);
         $toRet = [
             'code' => $code,
             'redirect_uri' => $redirectUri,
@@ -130,7 +131,7 @@ class AuthorizationCodeGrantPkceFlow
         }
         $authCode = $OauthTable->getAuthorizationCode($data['code']);
         if (!$authCode) {
-            throw new BadRequestException('Invalid authorization code');
+            throw new BadRequestException('Invalid authorization code ' . $authCode);
         }
         $hash = hash('sha256', $codeVerifier);
         if ($codeChallenge !== $hash) {
@@ -147,7 +148,9 @@ class AuthorizationCodeGrantPkceFlow
 
         $token = $OauthTable->createBearerToken($authCode['user_id'], $clientId, $this->_secsToExpire($data));
         $OauthTable->expireAuthorizationCode($data['code']);
-        $token['refresh_token'] = null;
+        if (str_contains($authCode['scope'] ?? null, 'offline_access')) {
+            $token['refresh_token'] = null;
+        }
         return $token;
     }
 }
