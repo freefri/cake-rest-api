@@ -37,10 +37,15 @@ class CookieHelper
         return $this->_getConfig()[2];
     }
 
-    public function writeApi2Remember($accessToken, $expires = null): Cookie
+    public function writeApi2Remember(string $accessToken, $expires = null): Cookie
     {
-        $key = $this->_getCookieName() . '[' . $this->getRememberName() . ']';
-        return $this->writeCookie($key, $accessToken, $expires);
+        return $this->writeWithName($this->getRememberName(), $accessToken, $expires);
+    }
+
+    public function writeWithName(string $cookieName, string $storedValue, $expires = null): Cookie
+    {
+        $key = $this->_getCookieName() . '[' . $cookieName . ']';
+        return $this->writeCookie($key, $storedValue, $expires);
     }
 
     protected function writeCookie(string $key, string $storedValue, $expires = null): Cookie
@@ -49,7 +54,7 @@ class CookieHelper
             $storedValue,
             $this->getEncriptMethod(),
             $this->_getEncryptKey(),
-            null,
+            0,
             $this->_getEncryptIv()
         );
         if (!$expires) {
@@ -85,6 +90,12 @@ class CookieHelper
         return self::ENCRIPT_METHOD;
     }
 
+    public function readByName(string $cookieName, ServerRequest $request): string
+    {
+        $key = $this->_getCookieName() . '.' . $cookieName;
+        return $this->readCookie($key, $request);
+    }
+
     public function readApi2Remember(ServerRequest $request)
     {
         $key = $this->_getCookieName() . '.' . $this->getRememberName();
@@ -94,11 +105,19 @@ class CookieHelper
     protected function readCookie(string $key, ServerRequest $request)
     {
         $token = $request->getCookie($key);
+        if (!$token) {
+            return '';
+        }
+        return $this->_decrypt($token);
+    }
+
+    private function _decrypt($string)
+    {
         return openssl_decrypt(
-            $token,
+            $string,
             $this->getEncriptMethod(),
             $this->_getEncryptKey(),
-            null,
+            0,
             $this->_getEncryptIv()
         );
     }
@@ -106,7 +125,7 @@ class CookieHelper
     public function popApi2Remember(ServerRequest $request)
     {
         $token = $this->readApi2Remember($request);
-        $this->writeApi2Remember(time(), 1);
+        $this->writeApi2Remember((string)time(), 1);
         return $token;
     }
 }
