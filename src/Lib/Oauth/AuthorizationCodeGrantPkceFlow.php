@@ -27,7 +27,7 @@ class AuthorizationCodeGrantPkceFlow
         $redirectUri = $request->getQuery('redirect_uri');
         $codeChallengeMethod = $request->getQuery('code_challenge_method');
         $codeChallenge = $request->getQuery('code_challenge');
-        if (strtolower($responseType) !== 'code') {
+        if (!$responseType || strtolower($responseType) !== 'code') {
             throw new BadRequestException('Only Authorization Code Grant (PKCE) Flow is allowed');
         }
         if ($codeChallengeMethod !== $this->codeChallengeMethod()) {
