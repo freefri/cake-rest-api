@@ -31,7 +31,7 @@ class SwaggerReader
                 'description' => 'API Rest',
                 'termsOfService' => 'https://github.com/freefri/cake-rest-api/',
                 'contact' => [
-                    'email' => 'freefri@freefri.es'
+                    'email' => 'cake-rest-api@freefri.es'
                 ],
             ],
             'servers' => [
