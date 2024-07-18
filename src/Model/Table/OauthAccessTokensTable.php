@@ -229,8 +229,17 @@ class OauthAccessTokensTable extends RestApiTable implements
         return $this->OauthAuthorizationCodes->find()->where(['authorization_code' => $code])->firstOrFail();
     }
 
-    public function setAuthorizationCode($authorization_code, $client_id, $user_id, $redirect_uri, $expires, $scope = null): bool
-    {
+    public function setAuthorizationCode(
+        $authorization_code,
+        $client_id,
+        $user_id,
+        $redirect_uri,
+        $expires,
+        $scope = null,
+        $n = null,
+        $codeChallenge = null,
+        $codeChallengeMethod = null
+    ): bool {
         $entity = $this->OauthAuthorizationCodes->newEmptyEntity();
         $entity->authorization_code = $authorization_code;
         $entity->client_id = $client_id;
@@ -238,6 +247,8 @@ class OauthAccessTokensTable extends RestApiTable implements
         $entity->redirect_uri = $redirect_uri;
         $entity->expires = $expires;
         $entity->scope = $scope;
+        $entity->code_challenge = $codeChallenge;
+        $entity->code_challenge_method = $codeChallengeMethod;
         return $this->_saveAuthorizationCodes($entity);
     }
 
