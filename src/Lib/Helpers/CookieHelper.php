@@ -116,13 +116,6 @@ class CookieHelper
         return $this->readCookie($key, $request);
     }
 
-    public function popLoginChallenge(ServerRequest $request): array
-    {
-        $res = json_decode($this->readByName($this->getLoginChallengeName(), $request), true, JSON_UNESCAPED_SLASHES);
-        $this->writeLoginChallenge(['t' => time()], 1);
-        return $res;
-    }
-
     public function readApi2Remember(ServerRequest $request)
     {
         $key = $this->_getCookieName() . '.' . $this->getRememberName();
