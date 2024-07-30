@@ -245,7 +245,7 @@ class OauthAccessTokensTable extends RestApiTable implements
         $entity->client_id = $client_id;
         $entity->user_id = $user_id;
         $entity->redirect_uri = $redirect_uri;
-        $entity->expires = $expires;
+        $entity->expires = new FrozenTime($expires);
         $entity->scope = $scope;
         $entity->code_challenge = $codeChallenge;
         $entity->code_challenge_method = $codeChallengeMethod;
