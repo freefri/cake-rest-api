@@ -424,7 +424,8 @@ class SwaggerTestCase implements \JsonSerializable
                 'login_challenge',
                 'client_assertion',
                 'client_id',
-                'vp_token'
+                'vp_token',
+                'X-Amz-Signature',
             ];
             if ($property && in_array($property, $securedAnonymizedVariables)) {
                 $value = str_repeat('*', mb_strlen($value));
