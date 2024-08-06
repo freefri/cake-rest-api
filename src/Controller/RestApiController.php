@@ -5,6 +5,7 @@ namespace RestApi\Controller;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
+use Cake\Core\Configure;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
@@ -382,8 +383,7 @@ abstract class RestApiController extends Controller
         }
 
         $name = $this->_sanitizeFilename($file->getClientFilename());
-        $tmpName = TMP . $name;
-        $file->moveTo($tmpName);
+        $tmpName = $this->moveTo($file, TMP . $name);
         return [
             'name' => $name,
             'type' => $file->getClientMediaType(),
@@ -391,5 +391,15 @@ abstract class RestApiController extends Controller
             'error' => $file->getError(),
             'size' => $file->getSize(),
         ];
+    }
+
+    protected function moveTo(UploadedFile $file, string $tmpName): string
+    {
+        if (Configure::read('RestApi.skipMoveFileOnUpload')) {
+            return $file->getStream()->getMetadata('uri');
+        } else {
+            $file->moveTo($tmpName);
+            return $tmpName;
+        }
     }
 }
