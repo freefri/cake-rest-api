@@ -25,6 +25,8 @@
     "source": "https://github.com/freefri/cake-rest-api"
   },
   "require": {
+    "symfony/service-contracts": "^2.5.3",
+
     "php": ">=7.4 || >=8.0",
     "ext-mbstring": "*",
     "ext-json": "*",

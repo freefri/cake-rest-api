@@ -4,6 +4,8 @@ services:
   php-fpm:
     image: public.ecr.aws/ct-nilus/base-images:nginx-php-dev-v18-focal-7.4
     command: bash -c "php-fpm7.4 && nginx -g 'daemon off;'"
+    #image: public.ecr.aws/ct-nilus/base-images:nginx-php-dev-v20-jammy-8.1
+    #command: bash -c "php-fpm8.1 && nginx -g 'daemon off;'"
 #    ports:
 #      - '80:80'
 #      - '443:443'
