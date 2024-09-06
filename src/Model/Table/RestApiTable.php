@@ -9,6 +9,7 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Http\Exception\InternalErrorException;
+use Cake\Log\Log;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
@@ -209,6 +210,17 @@ abstract class RestApiTable extends Table
             $driver->enableAutoQuoting($oldState);
         }
         return $res;
+    }
+
+    protected function _insert(EntityInterface $entity, array $data)
+    {
+        try {
+            return parent::_insert($entity, $data);
+        } catch (\PDOException $e) {
+            Log::write('error', 'RestApiTable _insert PDOException: `' . $this->_alias . '` Table. '
+                . $e->getMessage() . " \n\n" . json_encode($data));
+            throw $e;
+        }
     }
 
     public function findById($id): Query
