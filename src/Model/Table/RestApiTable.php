@@ -217,6 +217,7 @@ abstract class RestApiTable extends Table
         try {
             return parent::_insert($entity, $data);
         } catch (\PDOException $e) {
+            debug($data);
             Log::write('error', 'RestApiTable _insert PDOException: `' . $this->_alias . '` Table. '
                 . $e->getMessage() . " \n\n" . json_encode($data));
             throw $e;
