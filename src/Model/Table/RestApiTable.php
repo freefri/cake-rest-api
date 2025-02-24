@@ -63,6 +63,11 @@ abstract class RestApiTable extends Table
         return substr($name, 0, -1 * strlen('Table'));
     }
 
+    public static final function field(string $field): string
+    {
+        return self::name() . '.' . $field;
+    }
+
     public static function nameWithPlugin()
     {
         $namespaceSplit = namespaceSplit(get_called_class());
