@@ -68,7 +68,7 @@ class OauthHelper
             $err = 'Verify authorization error: ' .
                 $this->response->getParameter('error_description');
             $code = $this->response->getStatusCode();
-            if (($_SERVER['REQUEST_URI'] ?? '') === '/api/v2/me') {
+            if (($_SERVER['REQUEST_URI'] ?? '') === $silentPath) {
                 throw new SilentException($err, $code);
             } else {
                 throw new InternalErrorException($err, $code);
