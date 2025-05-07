@@ -50,7 +50,11 @@ class SwaggerTestCase implements \JsonSerializable
             return $this->_cachedRoute;
         }
         $matchedRoute = $this->_getMatchedRoute();
-        $mainRoute = str_replace('*', '', $matchedRoute);
+        if ($matchedRoute) {
+            $mainRoute = str_replace('*', '', $matchedRoute);
+        } else {
+            $mainRoute = '';
+        }
         $exploded = explode('/', $mainRoute);
         $lastInRoute = array_pop($exploded);
         if ($lastInRoute === '') {
