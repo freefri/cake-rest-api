@@ -8,6 +8,8 @@ use Cake\ORM\Query;
 
 class PaginationHelper
 {
+    private ServerRequest $request;
+
     public function __construct(ServerRequest $req)
     {
         $this->request = $req;

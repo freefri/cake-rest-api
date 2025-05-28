@@ -116,7 +116,7 @@ class RestApiSelectQuery extends SelectQuery
             } else {
                 $value = 'null';
             }
-            $replaced = preg_replace('/' . $name . '/', $value, $replaced, 1);
+            $replaced = preg_replace('/' . $name . '/', (string)$value, $replaced, 1);
         }
         $toRet = [
             '(help)' => $res['(help)'],

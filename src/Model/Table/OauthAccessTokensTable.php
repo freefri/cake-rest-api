@@ -21,7 +21,7 @@ use RestApi\Model\Entity\OauthAccessToken;
  * @property RestApiTable $OauthClients
  * @property RestApiTable $Users
  */
-class OauthAccessTokensTable extends RestApiTable implements
+#[\AllowDynamicProperties] class OauthAccessTokensTable extends RestApiTable implements
     PublicKeyInterface, ClientCredentialsInterface, AccessTokenInterface,
     AuthorizationCodeInterface, UserCredentialsInterface
 {
