@@ -32,7 +32,7 @@
     "ext-json": "*",
     "cakephp/cakephp": "^4.4 || ^5.2",
     "cakephp/migrations": "^3.2 || ^4.6",
-    "eduplex-api/cake-api-swagger": "^0.1.4",
+    "eduplex-api/cake-api-swagger": "^0.2.0",
     "bshaffer/oauth2-server-php": "~1.14",
     "composer/composer": "^2.0"
   },
