@@ -27,7 +27,7 @@ use RestApi\Model\Entity\OauthAccessToken;
 {
     const CACHE_GROUP = 'acl';
 
-    protected $_entityClass = OauthAccessToken::class;
+    protected ?string $_entityClass = OauthAccessToken::class;
 
     public function initialize(array $config): void
     {

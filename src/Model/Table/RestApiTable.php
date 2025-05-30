@@ -28,7 +28,7 @@ abstract class RestApiTable extends Table
 {
     use SoftDeleteTrait;
 
-    protected $_validatorClass = RestApiValidator::class;
+    protected string $_validatorClass = RestApiValidator::class;
 
     public function __construct(array $config = [])
     {
@@ -184,7 +184,7 @@ abstract class RestApiTable extends Table
     public function selectQuery(): SelectQuery
     {
         try {
-            return new RestApiSelectQuery($this->getConnection(), $this);
+            return new RestApiSelectQuery($this);
         } catch (MissingConnectionException $e) {
             $this->_createMysqlFromConfig($e);
             throw $e;
@@ -217,7 +217,7 @@ abstract class RestApiTable extends Table
         return $res;
     }
 
-    protected function _insert(EntityInterface $entity, array $data)
+    protected function _insert(EntityInterface $entity, array $data): EntityInterface|false
     {
         try {
             return parent::_insert($entity, $data);
@@ -243,7 +243,7 @@ abstract class RestApiTable extends Table
         return $res;
     }
 
-    public function __call($method, $args)
+    public function __call($method, $args): mixed
     {
         try {
             return parent::__call($method, $args);
