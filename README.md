@@ -1,6 +1,6 @@
 # RestApi package for CakePHP
 
-Rest API for CakePHP 4.x
+Rest API for CakePHP 5.x
 
 ## Configuration
 

@@ -6,6 +6,7 @@ namespace RestApi\Test\TestCase\Lib\Swagger;
 
 use Cake\Controller\Controller;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use RestApi\Lib\Swagger\SwaggerBuilder;
 use RestApi\Lib\Swagger\SwaggerFromController;
@@ -15,7 +16,8 @@ class SwaggerBuilderTest extends TestCase
     public function testToArray_addingSingleGetRequest()
     {
         $swagger = new SwaggerFromController();
-        $controller = new Controller();
+        $request = new ServerRequest();
+        $controller = new Controller($request);
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,
@@ -100,7 +102,8 @@ class SwaggerBuilderTest extends TestCase
     public function testToArray_withRedirection()
     {
         $swagger = new SwaggerFromController();
-        $controller = new Controller();
+        $request = new ServerRequest();
+        $controller = new Controller($request);
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,
@@ -182,7 +185,8 @@ class SwaggerBuilderTest extends TestCase
     public function testToArray_addingMultipleRequestWithDifferentParamsShouldSumarizeTheParams()
     {
         $swagger = new SwaggerFromController();
-        $controller = new Controller();
+        $request = new ServerRequest();
+        $controller = new Controller($request);
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,
@@ -322,7 +326,8 @@ class SwaggerBuilderTest extends TestCase
     public function testToArray_skippingRequestBodyFromErrorResponses()
     {
         $swagger = new SwaggerFromController();
-        $controller = new Controller();
+        $request = new ServerRequest();
+        $controller = new Controller($request);
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,

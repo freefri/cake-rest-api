@@ -6,6 +6,7 @@ namespace RestApi\Test\TestCase\Lib\Swagger;
 
 use Cake\Controller\Controller;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use RestApi\Lib\Swagger\SwaggerFromController;
 
@@ -14,7 +15,8 @@ class SwaggerFromControllerTest extends TestCase
     public function testGetClassByType_shouldGetClass()
     {
         $swagger = new SwaggerFromController();
-        $controller = new Controller();
+        $request = new ServerRequest();
+        $controller = new Controller($request);
         $request = [
             'url' => '/testurl/3',
             'session' => null,

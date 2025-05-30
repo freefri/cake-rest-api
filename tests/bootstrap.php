@@ -32,6 +32,7 @@ require_once $root . '/vendor/autoload.php';
  * and define the data required by your plugin here.
  */
 require_once $root . '/vendor/cakephp/cakephp/tests/bootstrap.php';
+require_once $root . DS . 'vendor' . DS . 'cakephp' . DS . 'cakephp' . DS . 'src' . DS . 'Core' . DS . 'functions_global.php';
 
 if (file_exists($root . '/config/bootstrap.php')) {
     require $root . '/config/bootstrap.php';
