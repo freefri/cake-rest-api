@@ -25,13 +25,19 @@ class SwaggerBuilder
         $toRet = [];
         foreach ($this->_data->buildMatrix() as $route => $method_code_md5_elem) {
             foreach ($method_code_md5_elem as $method => $code_md5_elem) {
+                $tags = $this->_getFirstNoErrorTags($code_md5_elem);
+                if (substr($route, -1) === '/') {
+                    $list = 'List';
+                } else {
+                    $list = '';
+                }
                 $firstTestCase = $this->_getFirstTestCaseInRoute($code_md5_elem);
                 $operation = [
-                    'operationId' => $this->_operation++,
+                    'operationId' => $method . $list . $tags[0],
                     'summary' => '',
                     'description' => $firstTestCase->getDescription(),
                     'parameters' => $this->_getParamsInRoute($code_md5_elem),
-                    'tags' => $this->_getFirstNoErrorTags($code_md5_elem),
+                    'tags' => $tags,
                     'responses' => [],
                 ];
                 $sec = $firstTestCase->getSecurity();

@@ -17,7 +17,7 @@ class SwaggerBuilderTest extends TestCase
     {
         $swagger = new SwaggerFromController();
         $request = new ServerRequest();
-        $controller = new Controller($request);
+        $controller = new Controller($request, null, 'Pets');
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,
@@ -41,7 +41,7 @@ class SwaggerBuilderTest extends TestCase
         $expected = [
             '' => [
                 'get' => [
-                    'operationId' => (int) 1,
+                    'operationId' => 'getPets',
                     'summary' => '',
                     'description' => 'Run bare',
                     'parameters' => [
@@ -67,7 +67,7 @@ class SwaggerBuilderTest extends TestCase
                         ],
                     ],
                     'tags' => [
-                        (int) 0 => ''
+                        (int) 0 => 'Pets'
                     ],
                     'responses' => [
                         (int) 200 => [
@@ -103,7 +103,7 @@ class SwaggerBuilderTest extends TestCase
     {
         $swagger = new SwaggerFromController();
         $request = new ServerRequest();
-        $controller = new Controller($request);
+        $controller = new Controller($request, null, 'Pets');
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,
@@ -129,7 +129,7 @@ class SwaggerBuilderTest extends TestCase
         $expected = [
             '' => [
                 'get' => [
-                    'operationId' => (int) 1,
+                    'operationId' => 'getPets',
                     'summary' => '',
                     'description' => 'Run bare',
                     'parameters' => [
@@ -155,7 +155,7 @@ class SwaggerBuilderTest extends TestCase
                         ],
                     ],
                     'tags' => [
-                        (int) 0 => ''
+                        (int) 0 => 'Pets'
                     ],
                     'responses' => [
                         (int) 301 => [
@@ -186,7 +186,7 @@ class SwaggerBuilderTest extends TestCase
     {
         $swagger = new SwaggerFromController();
         $request = new ServerRequest();
-        $controller = new Controller($request);
+        $controller = new Controller($request, null, 'Pets');
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,
@@ -220,7 +220,7 @@ class SwaggerBuilderTest extends TestCase
         $expected = [
             '' => [
                 'patch' => [
-                    'operationId' => (int) 1,
+                    'operationId' => 'patchPets',
                     'summary' => '',
                     'description' => 'Run bare',
                     'parameters' => [
@@ -256,7 +256,7 @@ class SwaggerBuilderTest extends TestCase
                         ],
                     ],
                     'tags' => [
-                        (int) 0 => ''
+                        (int) 0 => 'Pets'
                     ],
                     'responses' => [
                         (int) 200 => [
@@ -327,7 +327,7 @@ class SwaggerBuilderTest extends TestCase
     {
         $swagger = new SwaggerFromController();
         $request = new ServerRequest();
-        $controller = new Controller($request);
+        $controller = new Controller($request, null, 'Pets');
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,
@@ -362,7 +362,7 @@ class SwaggerBuilderTest extends TestCase
         $expected = [
             '' => [
                 'patch' => [
-                    'operationId' => (int) 1,
+                    'operationId' => 'patchPets',
                     'summary' => '',
                     'description' => 'Run bare',
                     'parameters' => [
@@ -398,7 +398,7 @@ class SwaggerBuilderTest extends TestCase
                         ],
                     ],
                     'tags' => [
-                        (int) 0 => ''
+                        (int) 0 => 'Pets'
                     ],
                     'responses' => [
                         200 => [

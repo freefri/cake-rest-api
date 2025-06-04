@@ -16,7 +16,7 @@ class SwaggerFromControllerTest extends TestCase
     {
         $swagger = new SwaggerFromController();
         $request = new ServerRequest();
-        $controller = new Controller($request);
+        $controller = new Controller($request, null, 'Pets');
         $request = [
             'url' => '/testurl/3',
             'session' => null,
@@ -39,7 +39,7 @@ class SwaggerFromControllerTest extends TestCase
         $expected = [
             '' => [
                 'get' => [
-                    'operationId' => (int) 1,
+                    'operationId' => 'getPets',
                     'summary' => '',
                     'description' => 'Run bare',
                     'security' => [['bearerAuth' => []]],
@@ -66,7 +66,7 @@ class SwaggerFromControllerTest extends TestCase
                         ],
                     ],
                     'tags' => [
-                        ''
+                        'Pets'
                     ],
                     'responses' => [
                         200 => [
