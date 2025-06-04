@@ -15,7 +15,6 @@ use Throwable;
 
 class ExceptionRenderer extends WebExceptionRenderer
 {
-
     protected function _template(Throwable $exception, string $method, int $code): string
     {
         $isHttpCode = $code >= 400 && $code < 600;

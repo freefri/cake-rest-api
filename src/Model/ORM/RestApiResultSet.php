@@ -17,8 +17,12 @@ class RestApiResultSet extends ResultSetFactory
         if ($query) {
             $data = $this->collectData($query);
 
+            $repo = $query->getRepository();
             if (is_array($results)) {
                 foreach ($results as $i => $row) {
+                    if (method_exists($repo, 'getCustomEntityClass')) {
+                        $data['entityClass'] = $repo->getCustomEntityClass($row, $data['primaryAlias']);
+                    }
                     $results[$i] = $this->groupResult($row, $data);
                 }
 

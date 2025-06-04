@@ -8,6 +8,7 @@ use Cake\Database\StatementInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\ResultSetFactory;
 use RestApi\Lib\Exception\SilentException;
 
 class RestApiSelectQuery extends SelectQuery
@@ -39,36 +40,27 @@ class RestApiSelectQuery extends SelectQuery
         return $this;
     }
 
-    public function triggerBeforeFind(): void
+//    public function triggerBeforeFind(): void
+//    {
+//        if (!$this->_beforeFindFired && $this->_type === 'select') {
+//            parent::triggerBeforeFind();
+//            $repository = $this->getRepository();
+//            $options = $this->getOptions();
+//            if (!is_array($options) || !in_array(self::WITH_DELETED, $options)) {
+//                /** @var \RestApi\Model\Table\RestApiTable $repository */
+//                $fieldName = $repository->getSoftDeleteField();
+//                if ($fieldName) {
+//                    $aliasedField = $repository->aliasField($fieldName);
+//                    $this->andWhere($aliasedField . ' IS NULL');
+//                }
+//            }
+//        }
+//    }
+
+
+    public function resultSetFactory(): ResultSetFactory
     {
-        if (!$this->_beforeFindFired && $this->_type === 'select') {
-            parent::triggerBeforeFind();
-            $repository = $this->getRepository();
-            $options = $this->getOptions();
-            if (!is_array($options) || !in_array(self::WITH_DELETED, $options)) {
-                /** @var \RestApi\Model\Table\RestApiTable $repository */
-                $fieldName = $repository->getSoftDeleteField();
-                if ($fieldName) {
-                    $aliasedField = $repository->aliasField($fieldName);
-                    $this->andWhere($aliasedField . ' IS NULL');
-                }
-            }
-        }
-    }
-
-    protected function _execute(): ResultSetInterface
-    {
-        $this->triggerBeforeFind();
-        if ($this->_results) {
-            $decorator = $this->_decoratorClass();
-
-            /** @var \Cake\Datasource\ResultSetInterface */
-            return new $decorator($this->_results);
-        }
-
-        $statement = $this->getEagerLoader()->loadExternal($this, $this->execute());
-
-        return new RestApiResultSet($this, $statement);
+        return $this->resultSetFactory ??= new RestApiResultSet();
     }
 
     public function firstOrSilent(string $message)
@@ -83,7 +75,7 @@ class RestApiSelectQuery extends SelectQuery
     public function execute(): StatementInterface
     {
         try {
-            $statement = $this->_connection->run($this);
+            $this->_statement = $this->_connection->run($this);
         } catch (\InvalidArgumentException $e) {
             $search = 'Cannot convert value of type';
             if (substr($e->getMessage(), 0, strlen($search)) === $search) {
@@ -93,10 +85,8 @@ class RestApiSelectQuery extends SelectQuery
             }
             throw $e;
         }
-        $this->_iterator = $this->_decorateStatement($statement);
         $this->_dirty = false;
-
-        return $this->_iterator;
+        return $this->_statement;
     }
 
     public function __debugInfo(): array
@@ -109,7 +99,7 @@ class RestApiSelectQuery extends SelectQuery
                 if (!is_numeric($value)) {
                     if ($value instanceof FrozenTime) {
                         $value = '"' . $value->toIso8601String() . '"';
-                    } else  {
+                    } else {
                         $value = '"' . $value . '"';
                     }
                 }
