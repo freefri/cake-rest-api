@@ -13,8 +13,8 @@ trait SoftDeleteTrait
         } catch (InternalErrorException $e) {
             return null;
         }
-
     }
+
     private function _getSoftDeleteField(): string
     {
         if (isset($this->softDeleteField)) {
@@ -43,8 +43,8 @@ trait SoftDeleteTrait
 
     public function softDeleteAll(array $condition): int
     {
-        $query = $this->query();
-        $statement = $query->update()
+        $query = $this->updateQuery();
+        $statement = $query->update($this->getTable())
             ->set([$this->_getSoftDeleteField() => date('Y-m-d H:i:s')])
             ->where($condition);
         return $statement->execute()->rowCount();

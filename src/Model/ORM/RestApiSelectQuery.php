@@ -40,23 +40,22 @@ class RestApiSelectQuery extends SelectQuery
         return $this;
     }
 
-//    public function triggerBeforeFind(): void
-//    {
-//        if (!$this->_beforeFindFired && $this->_type === 'select') {
-//            parent::triggerBeforeFind();
-//            $repository = $this->getRepository();
-//            $options = $this->getOptions();
-//            if (!is_array($options) || !in_array(self::WITH_DELETED, $options)) {
-//                /** @var \RestApi\Model\Table\RestApiTable $repository */
-//                $fieldName = $repository->getSoftDeleteField();
-//                if ($fieldName) {
-//                    $aliasedField = $repository->aliasField($fieldName);
-//                    $this->andWhere($aliasedField . ' IS NULL');
-//                }
-//            }
-//        }
-//    }
-
+    public function triggerBeforeFind(): void
+    {
+        if (!$this->_beforeFindFired && $this->_type === 'select') {
+            parent::triggerBeforeFind();
+            $repository = $this->getRepository();
+            $options = $this->getOptions();
+            if (!is_array($options) || !in_array(self::WITH_DELETED, $options)) {
+                /** @var \RestApi\Model\Table\RestApiTable $repository */
+                $fieldName = $repository->getSoftDeleteField();
+                if ($fieldName) {
+                    $aliasedField = $repository->aliasField($fieldName);
+                    $this->andWhere($aliasedField . ' IS NULL');
+                }
+            }
+        }
+    }
 
     public function resultSetFactory(): ResultSetFactory
     {
