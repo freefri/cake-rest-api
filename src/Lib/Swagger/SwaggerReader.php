@@ -52,15 +52,15 @@ class SwaggerReader
 
     public function readFiles(string $directory): array
     {
-        $paths = $this->_readFiles($directory);
-        $counter = 1;
-        foreach ($paths as &$path) {
-            foreach ($path as &$method) {
-                $method['operationId'] = '' . $counter;
-                $counter++;
-            }
-        }
-        return $paths;
+        return $this->_readFiles($directory);
+        //$counter = 1;
+        //foreach ($paths as &$path) {
+        //    foreach ($path as &$method) {
+        //        $method['operationId'] = '' . $counter;
+        //        $counter++;
+        //    }
+        //}
+        //return $paths;
     }
 
     private function _readFiles(string $dir): array
