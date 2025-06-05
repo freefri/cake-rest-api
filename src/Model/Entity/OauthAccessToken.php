@@ -9,7 +9,7 @@ use Cake\I18n\FrozenTime;
  */
 class OauthAccessToken extends RestApiEntity
 {
-    protected $_accessible = [
+    protected array $_accessible = [
         '*' => false,
         'access_token' => true,
         'client_id' => true,

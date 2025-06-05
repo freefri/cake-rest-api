@@ -9,7 +9,7 @@ namespace RestApi\Model\Entity;
  */
 class LogEntry extends RestApiEntity
 {
-    protected $_accessible = [
+    protected array $_accessible = [
         '*' => false,
         'id' => false,
         'type' => true,
