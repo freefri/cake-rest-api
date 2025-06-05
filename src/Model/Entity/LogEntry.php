@@ -18,5 +18,5 @@ class LogEntry extends RestApiEntity
         'environment' => true
     ];
 
-    protected $_hidden = ['server'];
+    protected array $_hidden = ['server'];
 }
