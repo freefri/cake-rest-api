@@ -8,7 +8,7 @@ use Throwable;
 
 class DetailedException extends HttpException
 {
-    protected $_defaultCode = 400;
+    protected int $_defaultCode = 400;
 
     public function __construct(?string $message = null, ?int $code = null, ?Throwable $previous = null)
     {

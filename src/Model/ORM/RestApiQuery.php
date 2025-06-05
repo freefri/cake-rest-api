@@ -131,7 +131,7 @@ class RestApiQuery extends Query
                 if (!is_numeric($value)) {
                     if ($value instanceof FrozenTime) {
                         $value = '"' . $value->toIso8601String() . '"';
-                    } else  {
+                    } else {
                         $value = '"' . $value . '"';
                     }
                 }
