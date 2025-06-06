@@ -9,6 +9,8 @@ use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 use RestApi\Lib\Swagger\SwaggerBuilder;
 use RestApi\Lib\Swagger\SwaggerFromController;
+use RestApi\Model\Entity\LogEntry;
+use RestApi\Model\Entity\RestApiEntity;
 
 class SwaggerBuilderTest extends TestCase
 {
@@ -29,14 +31,17 @@ class SwaggerBuilderTest extends TestCase
             'cookies' => []
         ];
         $body = [
-            'hello' => 'world',
+            'data' => [
+                RestApiEntity::CLASS_NAME => LogEntry::class,
+                'id' => 1,
+            ],
         ];
         $res = $this->_getResponse($body, 200);
         $swagger->addToSwagger($controller, $request1, $res);
 
         $builder = new SwaggerBuilder($swagger);
         $array = $builder->toArray();
-        $expected = [
+        $paths = [
             '' => [
                 'get' => [
                     'operationId' => (int) 1,
@@ -73,14 +78,7 @@ class SwaggerBuilderTest extends TestCase
                             'content' => [
                                 'application/json' => [
                                     'schema' => [
-                                        'type' => 'object',
-                                        'description' => 'Run bare',
-                                        'properties' => [
-                                            'hello' => [
-                                                'type' => 'string',
-                                                'example' => 'world'
-                                            ]
-                                        ]
+                                        '$ref' => '#/components/schemas/RestApiNsLogEntry'
                                     ]
                                 ]
                             ]
@@ -94,7 +92,27 @@ class SwaggerBuilderTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals($expected, $array);
+
+        $expectedSchemas = [
+            'ResRestApiNsLogEntry' => [
+                'type' => 'object',
+                'properties' => [
+                    'data' => [
+                        '$ref' => '#/components/schemas/RestApiNsLogEntry',
+                    ],
+                ],
+            ],
+            'RestApiNsLogEntry' => [
+                'type' => 'object',
+                'properties' => [
+                    'id' => [
+                        'type' => 'number',
+                        'example' => 1,
+                    ],
+                ],
+            ],
+        ];
+        $this->assertEquals(['paths' => $paths, 'components' => $expectedSchemas], $array);
     }
 
     public function testToArray_withRedirection()
@@ -176,7 +194,7 @@ class SwaggerBuilderTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals($expected, $array);
+        $this->assertEquals(['paths' => $expected, 'components' => []], $array);
     }
 
     public function testToArray_addingMultipleRequestWithDifferentParamsShouldSumarizeTheParams()
@@ -316,7 +334,7 @@ class SwaggerBuilderTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals($expected, $array);
+        $this->assertEquals(['paths' => $expected, 'components' => []], $array);
     }
 
     public function testToArray_skippingRequestBodyFromErrorResponses()
@@ -460,7 +478,7 @@ class SwaggerBuilderTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals($expected, $array);
+        $this->assertEquals(['paths' => $expected, 'components' => []], $array);
     }
 
     private function _getResponse(array $body, int $status = 200): Response
