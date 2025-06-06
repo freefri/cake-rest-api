@@ -4,12 +4,10 @@ declare(strict_types = 1);
 
 namespace RestApi\Model\Entity;
 
-use Cake\ORM\Entity;
-
 /**
  * @property mixed|string $server
  */
-class LogEntry extends Entity
+class LogEntry extends RestApiEntity
 {
     protected $_accessible = [
         '*' => false,

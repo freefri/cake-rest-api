@@ -2,13 +2,12 @@
 namespace RestApi\Model\Entity;
 
 use Cake\I18n\FrozenTime;
-use Cake\ORM\Entity;
 
 /**
  * @property FrozenTime expires
  * @property mixed access_token
  */
-class OauthAccessToken extends Entity
+class OauthAccessToken extends RestApiEntity
 {
     protected $_accessible = [
         '*' => false,
