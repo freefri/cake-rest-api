@@ -8,6 +8,8 @@ class SwaggerBuilder
 {
     private SwaggerFromController $_data;
     private int $_operation = 1;
+    /** @var StandardSchemas[] */
+    private array $componentSchemas = [];
 
     public function __construct(SwaggerFromController $data)
     {
@@ -54,6 +56,21 @@ class SwaggerBuilder
                     }
                     $toRet[$firstTestCase->getRoute()][$firstTestCase->getMethod()] = $operation;
                 }
+            }
+        }
+        return [
+            'paths' => $toRet,
+            'components' => $this->_getComponentSchemas(),
+        ];
+    }
+
+    private function _getComponentSchemas(): array
+    {
+        $toRet = [];
+        foreach ($this->componentSchemas as $componentSchema) {
+            $schemas = $componentSchema->getSchemas();
+            foreach ($schemas as $ref => $entity) {
+                $toRet[$ref] = $entity;
             }
         }
         return $toRet;
@@ -153,6 +170,7 @@ class SwaggerBuilder
         }
         $json = 'application/json';
         $responseToAdd = $elem->getResponseSchema();
+        $this->componentSchemas[] = $elem->getComponentSchemas();
         if ($responseToAdd === null) {
             return $existingResponses;
         }

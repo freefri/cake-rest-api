@@ -17,6 +17,7 @@ class SwaggerTestCase implements \JsonSerializable
     private \Exception $_exception;
     private string $_cachedRoute = '';
     private $_lastRoute;
+    private StandardSchemas $schemas;
 
     public function __construct(Controller $controller, array $request, Response $res, string $lastRoute = null)
     {
@@ -25,6 +26,7 @@ class SwaggerTestCase implements \JsonSerializable
         $this->_response = $res;
         $this->_lastRoute = $lastRoute;
         $this->_exception = new \Exception('');
+        $this->schemas = new StandardSchemas();
     }
 
     public function getDescription(): string
@@ -249,62 +251,19 @@ class SwaggerTestCase implements \JsonSerializable
         return array_merge($this->_getPathParams(), $this->_getQueryParams(), $this->_getHeaderParams());
     }
 
-    private function _getItems($data, int $depth = 0): array
+    public function getComponentSchemas(): StandardSchemas
     {
-        if (!is_array($data[0])) {
-            return $this->getProp($data[0], 0, $depth);
-        }
-        if (isset($data[0][0])) {
-            return [
-                'type' => 'array',
-                'items' => $this->_getItems($data[0], $depth),
-            ];
-        }
-        foreach ($data[0] as $property => $value) {
-            $properties[$property] = $this->getProp($value, $property, $depth);
-        }
-        return [
-            'type' => 'object',
-            'properties' => $properties,
-        ];
+        return $this->schemas;
     }
 
-    private function _getDataWithType($json): array
+    private function _getDataObject($json, array $parentJson = null)
     {
-        $isArray = isset($json[0]);
-        if ($isArray) {
-            $data = [
-                'type' => 'array',
-                'items' => $this->_getItems($json),
-            ];
-        } else {
-            if (is_bool($json)) {
-                $data = [
-                    'type' => 'boolean',
-                    'properties' => $json,
-                ];
-            } else if (is_numeric($json)) {
-                $data = [
-                    'type' => 'number',
-                    'example' => $json + 0,
-                ];
-            } else {
-                $properties = [];
-                foreach ($json ?? [] as $property => $value) {
-                    $properties[$property] = $this->getProp($value, $property);
-                }
-                $data = [
-                    'type' => 'object',
-                    'properties' => $properties,
-                ];
-            }
-        }
-        return $data;
-    }
+        $data = TypeParser::getDataWithType($json);
 
-    private function _getDataObject($json)
-    {
-        $data = $this->_getDataWithType($json);
+        $standardResponse = $this->schemas->processStandardEntitySchema($json, $parentJson, $data);
+        if ($standardResponse) {
+            return $standardResponse;
+        }
         $ret = [
             'type' => 'object',
             'description' => $this->getDescription(),
@@ -315,7 +274,7 @@ class SwaggerTestCase implements \JsonSerializable
         $fullJson = $this->getJson();
         foreach (array_keys($fullJson) as $arrayKey) {
             if ($arrayKey !== 'data') {
-                $ret['properties'][$arrayKey] = $this->_getDataWithType($fullJson[$arrayKey]);
+                $ret['properties'][$arrayKey] = TypeParser::getDataWithType($fullJson[$arrayKey]);
             }
         }
         return $ret;
@@ -328,16 +287,17 @@ class SwaggerTestCase implements \JsonSerializable
 
     public function getResponseSchema(): ?array
     {
-        if ($this->getJson() === null) {
+        $fullJson = $this->getJson();
+        if ($fullJson === null) {
             return null;
         }
-        $json = $this->getJson()['data'] ?? null;
+        $json = $fullJson['data'] ?? null;
         $properties = [];
         if ($json) {
-            return $this->_getDataObject($json);
+            return $this->_getDataObject($json, $fullJson);
         } else {
             // not json with data
-            foreach ($this->getJson() as $property => $value) {
+            foreach ($fullJson as $property => $value) {
                 $properties[$property] = $this->getProp($value, $property);
             }
             return [
@@ -363,7 +323,7 @@ class SwaggerTestCase implements \JsonSerializable
             return [
                 'type' => 'array',
                 'description' => $this->getDescription(),
-                'items' => $this->_getItems($post),
+                'items' => TypeParser::getItems($post),
             ];
         } else {
             foreach ($post as $property => $value) {
@@ -379,68 +339,7 @@ class SwaggerTestCase implements \JsonSerializable
 
     public function getProp($value, string $property = null, int $depth = 0): array
     {
-        if (is_array($value)) {
-            if ($value === []) {
-                $prop = [
-                    'type' => 'array',
-                    'items' => [
-                        'type' => 'object'
-                    ]
-                ];
-            } else {
-                $MAX_DEPTH = 10;
-                if ($depth < $MAX_DEPTH) {
-                    if (isset($value[0])) {
-                        return [
-                            'type' => 'array',
-                            'items' => $this->_getItems($value, $depth),
-                        ];
-                    }
-                    $properties = [];
-                    foreach ($value as $property1 => $value1) {
-                        $properties[$property1] = $this->getProp($value1, $property1, $depth + 1);
-                    }
-                    $prop = [
-                        'type' => 'object',
-                        'properties' => $properties,
-                    ];
-                } else {
-                    $example = str_replace('"', '`', json_encode($value, JSON_UNESCAPED_SLASHES));
-                    $prop = [
-                        'type' => 'string',
-                        'example' => $example,
-                    ];
-                }
-            }
-        } else if (is_numeric($value)) {
-            $prop = [
-                'type' => 'number',
-                'example' => $value + 0,
-            ];
-        } else if ($value === true || $value === false) {
-            $prop = [
-                'type' => 'boolean',
-                'example' => $value,
-            ];
-        } else {
-            $securedAnonymizedVariables = [
-                'password',
-                'access_token',
-                'login_challenge',
-                'client_assertion',
-                'client_id',
-                'vp_token',
-                'X-Amz-Signature',
-            ];
-            if ($property && in_array($property, $securedAnonymizedVariables)) {
-                $value = str_repeat('*', mb_strlen($value));
-            }
-            $prop = [
-                'type' => 'string',
-                'example' => ''.$value,
-            ];
-        }
-        return $prop;
+        return TypeParser::getProp($value, $property, $depth);
     }
 
     public function getControllerName(): string

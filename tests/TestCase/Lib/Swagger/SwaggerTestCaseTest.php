@@ -10,6 +10,8 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use RestApi\Controller\RestApiController;
 use RestApi\Lib\Swagger\SwaggerTestCase;
+use RestApi\Model\Entity\LogEntry;
+use RestApi\Model\Entity\RestApiEntity;
 
 class SwaggerTestCaseTest extends TestCase
 {
@@ -129,6 +131,149 @@ class SwaggerTestCaseTest extends TestCase
             ],
         ];
         $this->assertEquals($expectedResponse, $test->getResponseSchema());
+    }
+
+    public function testCreateWithEntityClass()
+    {
+        $controller = new Controller();
+        $request = [
+            'url' => '/testurl_last/3/path',
+            'session' => null,
+            'query' => [],
+            'files' => [],
+            'environment' => [
+                'REQUEST_METHOD' => 'PATCH',
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/testurl_last/3/path'
+            ],
+            'post' => [
+                'hello' => 'param',
+                'object' => ['something' => ['with' => 'depth']],
+            ],
+            'cookies' => []
+        ];
+        $body = [
+            'data' => [RestApiEntity::CLASS_NAME => LogEntry::class, 'hello' => 'world'],
+            'total' => 52,
+            'limit' => 10,
+            '_links' => []
+        ];
+        $res = $this->_getResponse($body, 403);
+        $lastRoute = '/testurl_last/{eventID}/path/*';
+        $test = new SwaggerTestCase($controller, $request, $res, $lastRoute);
+
+        $this->assertEquals('patch', $test->getMethod());
+        $this->assertEquals('403', $test->getStatusCodeString());
+        $this->assertEquals('/testurl_last/{eventID}/path/', $test->getRoute());
+        $this->assertEquals('Run', $test->getDescription());
+        $expectedParams = [
+            [
+                'description' => 'ID in URL',
+                'in' => 'path',
+                'name' => 'eventID',
+                'example' => '3',
+                'required' => true,
+                'schema' => [
+                    'type' => 'integer'
+                ]
+            ],
+            [
+                'description' => 'Auth token',
+                'in' => 'header',
+                'name' => 'Authentication',
+                'example' => 'Bearer ****************',
+                'required' => true,
+                'schema' => [
+                    'type' => 'string'
+                ]
+            ],
+            [
+                'description' => 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                'in' => 'header',
+                'name' => 'Accept-Language',
+                'example' => 'en',
+                'required' => false,
+                'schema' => [
+                    'type' => 'string'
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedParams, $test->getParams());
+        $this->assertEquals([['bearerAuth' => []]], $test->getSecurity());
+        $expectedRequest = [
+            'type' => 'object',
+            'description' => 'Run',
+            'properties' => [
+                'hello' => [
+                    'type' => 'string',
+                    'example' => 'param'
+                ],
+                'object' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'something' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'with' => [
+                                    'type' => 'string',
+                                    'example' => 'depth',
+                                ],
+                            ],
+                        ],
+                    ],
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedRequest, $test->getRequestSchema());
+        $this->assertEquals(['$ref' => '#/components/schemas/RestApiNsLogEntry'], $test->getResponseSchema());
+        $expectedSchemas = [
+            'PageRestApiNsLogEntry' => [
+                'type' => 'object',
+                'properties' => [
+                    'data' => [
+                        '$ref' => '#/components/schemas/RestApiNsLogEntry'
+                    ],
+                    'total' => [
+                        'type' => 'number',
+                        'example' => (int) 52
+                    ],
+                    'limit' => [
+                        'type' => 'number',
+                        'example' => (int) 10
+                    ],
+                    '_links' => [
+                        '$ref' => '#/components/schemas/PaginationLinks'
+                    ]
+                ]
+            ],
+            '#/components/schemas/PaginationLinks' => [
+                'type' => 'object',
+                'properties' => [
+                    'self' => [
+                        'type' => 'string',
+                        'example' => ''
+                    ],
+                    'next' => [
+                        'type' => 'string',
+                        'example' => ''
+                    ],
+                    'prev' => [
+                        'type' => 'string',
+                        'example' => ''
+                    ]
+                ]
+            ],
+            'RestApiNsLogEntry' => [
+                'type' => 'object',
+                'properties' => [
+                    'hello' => [
+                        'type' => 'string',
+                        'example' => 'world'
+                    ]
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedSchemas, $test->getComponentSchemas()->getSchemas());
     }
 
     private function _getResponse(array $body, int $status = 200): Response
