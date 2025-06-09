@@ -132,6 +132,7 @@ abstract class ApiCommonAssertionsTest extends ApiCommonTestCase
         $this->assertEquals($message, $bodyDecoded['message']);
         return $bodyDecoded;
     }
+
     protected function assertValidationErrorMessage(array $message): array
     {
         $body = $this->_getBodyAsString();

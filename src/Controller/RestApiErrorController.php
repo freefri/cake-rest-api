@@ -2,12 +2,15 @@
 
 namespace RestApi\Controller;
 
+use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Http\Response;
 use RestApi\Controller\Component\ApiRestCorsComponent;
 
 class RestApiErrorController extends Controller
 {
+    public ?Component $ApiCors = null;
+
     public function initialize(): void
     {
         ApiRestCorsComponent::load($this);

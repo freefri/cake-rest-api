@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace RestApi\Lib\Swagger;
 
 use Cake\Core\Configure;
-use PHPUnit\Runner\AfterLastTestHook;
+use PHPUnit\Event\TestSuite\Finished;
+use PHPUnit\Event\TestSuite\FinishedSubscriber;
 use RestApi\Lib\RestPlugin;
 
-class PHPUnitExtension implements AfterLastTestHook
+class PHPUnitExtension implements FinishedSubscriber
 {
-    public function executeAfterLastTest(): void
+    public function notify(Finished $event): void
     {
         $reader = new SwaggerReader(true);
         $paths = $reader->readFiles($this->getDirectory());

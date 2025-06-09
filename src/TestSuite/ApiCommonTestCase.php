@@ -49,4 +49,9 @@ abstract class ApiCommonTestCase extends ApiCommonIntegrationTestCase
         self::newSwaggerFromController();
         parent::tearDownAfterClass();
     }
+
+    public function configRequest(array $data): void
+    {
+        $this->_request = $data + $this->_request;
+    }
 }

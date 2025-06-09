@@ -26,6 +26,7 @@ abstract class OauthBaseServer
             $this->{'_' . $key} = $value;
         }
     }
+
     protected abstract function loadStorage(): OauthAccessTokensTable;
 
     public function setupOauth(Controller $controller)

@@ -46,7 +46,6 @@ class OauthHelper
         unset($_GET['access_token']);
         // add the server to the silex "container" so we can use it
         $this->request = Request::createFromGlobals();
-
         $authorization = $controller->getRequest()->getEnv('HTTP_AUTHORIZATION');
         if ($authorization) {
             $this->request->headers['AUTHORIZATION'] = explode(',', $authorization)[0];
@@ -89,6 +88,7 @@ class OauthHelper
     {
         return $this->server;
     }
+
     public function getRequest(): Request
     {
         return $this->request;

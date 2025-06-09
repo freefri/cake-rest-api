@@ -106,8 +106,7 @@ use RestApi\Model\Entity\OauthAccessToken;
         if ($res !== null) {
             return $res;
         }
-        $toret = $this->OauthPublicKeys->find('all', ['conditions' => ['client_id' => $id]])
-            ->first();
+        $toret = $this->OauthPublicKeys->find()->where(['client_id' => $id])->first();
         Cache::write($cacheKey, $toret, self::CACHE_GROUP);
         return $toret;
     }
@@ -119,8 +118,7 @@ use RestApi\Model\Entity\OauthAccessToken;
         if ($cached !== null) {
             return $cached;
         }
-        $toret = $this->OauthClients->find('all', ['conditions' => ['client_id' => $client_id]])
-            ->first();
+        $toret = $this->OauthClients->find()->where(['client_id' => $client_id])->first();
         if (!isset($toret['client_id'])) {
             Cache::write($cacheKey, false, self::CACHE_GROUP);
             return false;
@@ -166,7 +164,8 @@ use RestApi\Model\Entity\OauthAccessToken;
             return $cached;
         }
         /** @var OauthAccessToken $r */
-        $r = $this->find('all', ['conditions' => ['access_token' => $oauth_token]])
+        $r = $this->find()
+            ->where(['access_token' => $oauth_token])
             ->first();
         if (isset($r['expires'])) {
             $toRet = $r->toArray();
