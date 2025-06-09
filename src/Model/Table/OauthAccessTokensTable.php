@@ -311,8 +311,9 @@ use RestApi\Model\Entity\OauthAccessToken;
         return $res;
     }
 
-    public function checkUserAccessToken ($userId, $token) {
-        $userToken =$this->find()
+    public function checkUserAccessToken($userId, $token): void
+    {
+        $userToken = $this->find()
             ->where(['user_id' => $userId, 'access_token' => $token])
             ->first();
         if (!$userToken) {
@@ -336,7 +337,7 @@ use RestApi\Model\Entity\OauthAccessToken;
     public function getValidAccessToken(): string
     {
         /** @var OauthAccessToken $oauthAccessToken */
-        $oauthAccessToken =  $this->find()
+        $oauthAccessToken = $this->find()
             ->where(['expires >' => new FrozenTime('+1 hour') ])
             ->first();
         return $oauthAccessToken->access_token;

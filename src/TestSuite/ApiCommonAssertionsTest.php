@@ -119,6 +119,7 @@ abstract class ApiCommonAssertionsTest extends ApiCommonTestCase
     {
         throw new InternalErrorException('deprecated use assertJsonResponseOK() instead');
     }
+
     /**
      * @deprecated use assertException instead
      */
