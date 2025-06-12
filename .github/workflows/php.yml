@@ -17,11 +17,11 @@ permissions:
 jobs:
     test:
 
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-24.04
         strategy:
             fail-fast: false
             matrix:
-                php-version: [ '7.4' ]
+                php-version: [ '8.3' ]
                 db-type: [ mysql ]
         services:
             memcached:
