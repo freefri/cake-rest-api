@@ -289,7 +289,7 @@ class SwaggerTestCase implements \JsonSerializable
                 ];
             } else {
                 $properties = [];
-                foreach ($json as $property => $value) {
+                foreach ($json ?? [] as $property => $value) {
                     $properties[$property] = $this->getProp($value, $property);
                 }
                 $data = [
