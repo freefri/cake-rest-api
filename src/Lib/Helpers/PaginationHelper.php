@@ -47,6 +47,7 @@ class PaginationHelper
         }
         return $filters;
     }
+
     public static function calculateOffset($page, $resultsPerPage = 10)
     {
         return self::_calculateOfsset($page, $resultsPerPage);

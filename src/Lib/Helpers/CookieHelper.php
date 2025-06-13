@@ -79,7 +79,8 @@ class CookieHelper
             $expires = Configure::read('App.Conf.defaultExpirationCookie');
         }
         if (!$expires) {
-            throw new InternalErrorException('Default cookie expiration is mandatory, define: App.Conf.defaultExpirationCookie');
+            throw new InternalErrorException(
+                'Default cookie expiration is mandatory, define: App.Conf.defaultExpirationCookie');
         }
         $expirationTime = new FrozenTime("+ $expires seconds", new DateTimeZone('GMT'));
         $this->cookie = new Cookie(
