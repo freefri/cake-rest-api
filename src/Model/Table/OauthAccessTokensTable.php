@@ -60,7 +60,7 @@ use RestApi\Model\Entity\OauthAccessToken;
 
     public function deleteAccessTokensCacheByUserId($userId)
     {
-        $tokens = $this->find('all', ['conditions' => ['user_id' => $userId]]);
+        $tokens = $this->find()->where(['user_id' => $userId]);
         foreach ($tokens as $token) {
             $cacheKey = $this->_getAccessTokenCacheKey($token['access_token']);
             Cache::delete($cacheKey, self::CACHE_GROUP);
@@ -266,7 +266,7 @@ use RestApi\Model\Entity\OauthAccessToken;
 
     public function getUserDetails($username)
     {
-        $user = $this->Users->find('all', ['conditions' => ['email' => $username]])
+        $user = $this->Users->find()->where(['email' => $username])
             ->first();
         if (!isset($user['id'])) {
             return [];
