@@ -119,6 +119,7 @@ abstract class ApiCommonAssertionsTest extends ApiCommonTestCase
     {
         throw new InternalErrorException('deprecated use assertJsonResponseOK() instead');
     }
+
     /**
      * @deprecated use assertException instead
      */
@@ -132,6 +133,7 @@ abstract class ApiCommonAssertionsTest extends ApiCommonTestCase
         $this->assertEquals($message, $bodyDecoded['message']);
         return $bodyDecoded;
     }
+
     protected function assertValidationErrorMessage(array $message): array
     {
         $body = $this->_getBodyAsString();

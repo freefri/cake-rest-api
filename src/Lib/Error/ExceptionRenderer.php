@@ -15,7 +15,6 @@ use Throwable;
 
 class ExceptionRenderer extends WebExceptionRenderer
 {
-
     protected function _template(Throwable $exception, string $method, int $code): string
     {
         $isHttpCode = $code >= 400 && $code < 600;
@@ -114,7 +113,8 @@ class ExceptionRenderer extends WebExceptionRenderer
         return $toRet;
     }
 
-    private function _isHttps() {
+    private function _isHttps()
+    {
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
             || isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
             && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'

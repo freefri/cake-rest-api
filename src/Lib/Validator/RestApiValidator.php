@@ -43,6 +43,7 @@ class RestApiValidator extends Validator
             'message' => $message
         ]);
     }
+
     public function _validateIban($value, array $context)
     {
         return Iban::validateIban($value);
@@ -55,6 +56,7 @@ class RestApiValidator extends Validator
             'message' => $message
         ]);
     }
+
     public function _validateBic($value, array $context)
     {
         return Iban::validateBic($value);
@@ -67,6 +69,7 @@ class RestApiValidator extends Validator
             'message' => $message
         ]);
     }
+
     public function _validateEmoji($value, array $context): bool
     {
         return Emoji::validateEmoji($value);

@@ -312,8 +312,9 @@ use RestApi\Model\Entity\OauthAccessToken;
         return $res;
     }
 
-    public function checkUserAccessToken ($userId, $token) {
-        $userToken =$this->find()
+    public function checkUserAccessToken($userId, $token)
+    {
+        $userToken = $this->find()
             ->where(['user_id' => $userId, 'access_token' => $token])
             ->first();
         if (!$userToken) {

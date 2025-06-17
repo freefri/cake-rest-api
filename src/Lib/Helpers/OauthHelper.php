@@ -89,6 +89,7 @@ class OauthHelper
     {
         return $this->server;
     }
+
     public function getRequest(): Request
     {
         return $this->request;

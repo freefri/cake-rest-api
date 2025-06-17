@@ -82,7 +82,7 @@ class Iban
     public static function validateBic($value): bool
     {
         $toRet = false;
-        $value= str_replace(' ','', strtoupper(trim($value)));
+        $value = str_replace(' ', '', strtoupper(trim($value)));
 
         if (preg_match('/^[0-9A-Z]{4}[A-Z]{2}[0-9A-Z]{2}([0-9A-Z]{3})?\z/i', $value)) {
             $toRet = true;

@@ -13,8 +13,8 @@ trait SoftDeleteTrait
         } catch (InternalErrorException $e) {
             return null;
         }
-
     }
+
     private function _getSoftDeleteField(): string
     {
         if (isset($this->softDeleteField)) {
