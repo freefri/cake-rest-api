@@ -7,6 +7,7 @@ namespace RestApi\Test\TestCase\Lib\Swagger;
 use Cake\Controller\Controller;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Text;
 use RestApi\Lib\Swagger\SwaggerBuilder;
 use RestApi\Lib\Swagger\SwaggerFromController;
 use RestApi\Model\Entity\LogEntry;
@@ -31,10 +32,7 @@ class SwaggerBuilderTest extends TestCase
             'cookies' => []
         ];
         $body = [
-            'data' => [
-                RestApiEntity::CLASS_NAME => LogEntry::class,
-                'id' => 1,
-            ],
+            'data' => $this->_getRequestData(),
         ];
         $res = $this->_getResponse($body, 200);
         $swagger->addToSwagger($controller, $request1, $res);
@@ -44,7 +42,7 @@ class SwaggerBuilderTest extends TestCase
         $paths = [
             '' => [
                 'get' => [
-                    'operationId' => (int) 1,
+                    'operationId' => 'get',
                     'summary' => '',
                     'description' => 'Run bare',
                     'parameters' => [
@@ -78,7 +76,7 @@ class SwaggerBuilderTest extends TestCase
                             'content' => [
                                 'application/json' => [
                                     'schema' => [
-                                        '$ref' => '#/components/schemas/RestApiNsLogEntry'
+                                        '$ref' => '#/components/schemas/ResRestApiNsLogEntry'
                                     ]
                                 ]
                             ]
@@ -98,7 +96,7 @@ class SwaggerBuilderTest extends TestCase
                 'type' => 'object',
                 'properties' => [
                     'data' => [
-                        '$ref' => '#/components/schemas/RestApiNsLogEntry',
+                        '$ref' => '#/components/schemas/ResRestApiNsLogEntry',
                     ],
                 ],
             ],
@@ -109,10 +107,19 @@ class SwaggerBuilderTest extends TestCase
                         'type' => 'number',
                         'example' => 1,
                     ],
+                    'something' => [
+                        '$ref' => '#/components/schemas/ResRestApiNsLogEntry',
+                    ],
+                    'many' => [
+                        'type' => 'array',
+                        'items' => [
+                            '$ref' => '#/components/schemas/ResRestApiNsLogEntry',
+                        ],
+                    ],
                 ],
             ],
         ];
-        $this->assertEquals(['paths' => $paths, 'components' => $expectedSchemas], $array);
+        $this->assertEquals(['paths' => $paths, 'componentSchemas' => $expectedSchemas], $array);
     }
 
     public function testToArray_withRedirection()
@@ -194,7 +201,7 @@ class SwaggerBuilderTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals(['paths' => $expected, 'components' => []], $array);
+        $this->assertEquals(['paths' => $expected, 'componentSchemas' => []], $array);
     }
 
     public function testToArray_addingMultipleRequestWithDifferentParamsShouldSumarizeTheParams()
@@ -334,7 +341,7 @@ class SwaggerBuilderTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals(['paths' => $expected, 'components' => []], $array);
+        $this->assertEquals(['paths' => $expected, 'componentSchemas' => []], $array);
     }
 
     public function testToArray_skippingRequestBodyFromErrorResponses()
@@ -478,7 +485,7 @@ class SwaggerBuilderTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals(['paths' => $expected, 'components' => []], $array);
+        $this->assertEquals(['paths' => $expected, 'componentSchemas' => []], $array);
     }
 
     private function _getResponse(array $body, int $status = 200): Response
@@ -488,5 +495,23 @@ class SwaggerBuilderTest extends TestCase
             'type' => 'application/json',
             'body' => json_encode($body)
         ]);
+    }
+
+    private function _getRequestData(): array
+    {
+        return [
+            RestApiEntity::CLASS_NAME => LogEntry::class,
+            'id' => 1,
+            'something' => [
+                RestApiEntity::CLASS_NAME => LogEntry::class,
+                'id' => 1,
+            ],
+            'many' => [
+                [
+                    RestApiEntity::CLASS_NAME => LogEntry::class,
+                    'id' => 1,
+                ]
+            ]
+        ];
     }
 }

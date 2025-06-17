@@ -2,38 +2,47 @@
 
 namespace RestApi\Lib\Swagger;
 
-use RestApi\Model\Entity\RestApiEntity;
-
 class TypeParser
 {
-    public static function getDataWithType($json): array
+    public static function getDataWithType($json, string $testDescription = null): array
     {
-        $isArray = isset($json[0]);
+        $isArray = is_array($json) && isset($json[0]);
         if ($isArray) {
             $data = [
                 'type' => 'array',
                 'items' => self::getItems($json),
             ];
         } else {
-            if (is_bool($json)) {
+            if ($json === null) {
                 $data = [
-                    'type' => 'boolean',
-                    'properties' => $json,
+                    'type' => 'string',
+                    'nullable' => true,
+                    'example' => $json,
                 ];
+            } else if (is_bool($json)) {
+                $data = self::_boolean($json);
             } else if (is_numeric($json)) {
                 $data = [
                     'type' => 'number',
                     'example' => $json + 0,
                 ];
+            } else if (is_string($json)) {
+                $data = [
+                    'type' => 'string',
+                    'example' => $json,
+                ];
+            } else if ($json === []) {
+                $data = self::_any('Any object'); // anything
             } else {
                 $properties = [];
                 foreach ($json as $property => $value) {
                     $properties[$property] = self::getProp($value, $property);
                 }
-                $data = [
-                    'type' => 'object',
-                    'properties' => $properties,
-                ];
+                if ($testDescription == 'Get list filtered by bookable no services with sessions cities trainers') {
+                    debug('sdklfj');
+                }
+                $description = $testDescription ? 'Generic object when: ' . $testDescription : 'Generic object.';
+                $data = self::object($properties, $description);
             }
         }
         return $data;
@@ -45,9 +54,7 @@ class TypeParser
             if ($value === []) {
                 $prop = [
                     'type' => 'array',
-                    'items' => [
-                        'type' => 'object'
-                    ]
+                    'items' => self::_any('Empty array'),
                 ];
             } else {
                 $MAX_DEPTH = 10;
@@ -62,10 +69,7 @@ class TypeParser
                     foreach ($value as $property1 => $value1) {
                         $properties[$property1] = self::getProp($value1, $property1, $depth + 1);
                     }
-                    $prop = [
-                        'type' => 'object',
-                        'properties' => $properties,
-                    ];
+                    $prop = self::object($properties, 'objectInArray');
                 } else {
                     $example = str_replace('"', '`', json_encode($value, JSON_UNESCAPED_SLASHES));
                     $prop = [
@@ -80,10 +84,7 @@ class TypeParser
                 'example' => $value + 0,
             ];
         } else if ($value === true || $value === false) {
-            $prop = [
-                'type' => 'boolean',
-                'example' => $value,
-            ];
+            $prop = self::_boolean($value);
         } else {
             $securedAnonymizedVariables = [
                 'password',
@@ -119,9 +120,35 @@ class TypeParser
         foreach ($data[0] as $property => $value) {
             $properties[$property] = self::getProp($value, $property, $depth);
         }
-        return [
+        return self::object($properties, 'getItems');
+    }
+
+    public static function object(array $properties, string $description = null): array
+    {
+        $res = [
             'type' => 'object',
             'properties' => $properties,
+        ];
+        if ($description !== null) {
+            $res['description'] = $description;
+        }
+        return $res;
+    }
+
+    public static function _any(string $description = null): array
+    {
+        return [
+            'type' => 'object',
+            'description' => $description,
+            'additionalProperties' => true,
+        ];
+    }
+
+    private static function _boolean(bool $example)
+    {
+        return [
+            'type' => 'boolean',
+            'example' => $example,
         ];
     }
 }
