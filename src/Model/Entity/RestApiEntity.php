@@ -16,6 +16,12 @@ class RestApiEntity extends Entity
         return 'App\Model\Entity\\';
     }
 
+    public function toChild(string $c, array $array)
+    {
+        $array[RestApiEntity::CLASS_NAME] = $c;
+        return $array;
+    }
+
     protected function _get_c(): string
     {
         return str_replace($this->getClassNamespace(), '', get_called_class());

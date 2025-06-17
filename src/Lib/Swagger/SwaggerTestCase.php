@@ -17,6 +17,7 @@ class SwaggerTestCase implements \JsonSerializable
     private \Exception $_exception;
     private string $_cachedRoute = '';
     private $_lastRoute;
+    private $_json;
     private StandardSchemas $schemas;
 
     public function __construct(Controller $controller, array $request, Response $res, string $lastRoute = null)
@@ -116,7 +117,8 @@ class SwaggerTestCase implements \JsonSerializable
         if (isset($json['data'][0])) {
             $json['data'] = [$json['data'][0]];
         }
-        return $json;
+        $this->_json = $json;
+        return $this->_json;
     }
 
     public function toMd5(): string
@@ -256,30 +258,6 @@ class SwaggerTestCase implements \JsonSerializable
         return $this->schemas;
     }
 
-    private function _getDataObject($json, array $parentJson = null)
-    {
-        $data = TypeParser::getDataWithType($json);
-
-        $standardResponse = $this->schemas->processStandardEntitySchema($json, $parentJson, $data);
-        if ($standardResponse) {
-            return $standardResponse;
-        }
-        $ret = [
-            'type' => 'object',
-            'description' => $this->getDescription(),
-            'properties' => [
-                'data' => $data
-            ]
-        ];
-        $fullJson = $this->getJson();
-        foreach (array_keys($fullJson) as $arrayKey) {
-            if ($arrayKey !== 'data') {
-                $ret['properties'][$arrayKey] = TypeParser::getDataWithType($fullJson[$arrayKey]);
-            }
-        }
-        return $ret;
-    }
-
     public function getLocationHeader(): ?string
     {
         return $this->_response->getHeader('Location')[0] ?? null;
@@ -291,21 +269,7 @@ class SwaggerTestCase implements \JsonSerializable
         if ($fullJson === null) {
             return null;
         }
-        $json = $fullJson['data'] ?? null;
-        $properties = [];
-        if ($json) {
-            return $this->_getDataObject($json, $fullJson);
-        } else {
-            // not json with data
-            foreach ($fullJson as $property => $value) {
-                $properties[$property] = $this->getProp($value, $property);
-            }
-            return [
-                'type' => 'object',
-                'description' => $this->getDescription(),
-                'properties' => $properties,
-            ];
-        }
+        return $this->schemas->getResponseSchemas($fullJson, $this->getDescription());
     }
 
     public function getRequestSchema(): ?array

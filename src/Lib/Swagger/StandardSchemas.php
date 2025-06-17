@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace RestApi\Lib\Swagger;
 
 use RestApi\Model\Entity\RestApiEntity;
 
 class StandardSchemas
 {
+    public const string PAGINATION_LINKS = 'PaginationLinks';
     private array $schemas = [];
 
     public function getSchemas(): array
@@ -13,66 +16,54 @@ class StandardSchemas
         return $this->schemas;
     }
 
-    public function processStandardEntitySchema($json, ?array $parentJson, array $data): ?array
+    public function getResponseSchemas(array $obj, string $testDescription = null): array
     {
-        $entityType = $this->_getEntityType($json);
+        $entity = new StandardEntity($obj);
+        $entityType = $entity->getInternalType();
         if ($entityType) {
-            if (isset($parentJson['total']) && isset($parentJson['limit']) && isset($parentJson['_links'])) {
-                $resEntityType = $this->page($entityType);
-                $this->schemas[$resEntityType] = [
-                    'type' => 'object',
-                    'properties' => [
-                        'data' => [
-                            '$ref' => '#/components/schemas/' . $entityType,
-                        ],
-                        'total' => TypeParser::getDataWithType($parentJson['total']),
-                        'limit' => TypeParser::getDataWithType($parentJson['limit']),
-                        '_links' => [
-                            '$ref' => '#/components/schemas/PaginationLinks',
-                        ],
-                    ],
-                ];
-                $this->schemas['#/components/schemas/PaginationLinks'] = [
-                    'type' => 'object',
-                    'properties' => [
-                        'self' => [
-                            'type' => 'string',
-                            'example' => $parentJson['_links']['self'] ?? '',
-                        ],
-                        'next' => [
-                            'type' => 'string',
-                            'example' => $parentJson['_links']['next'] ?? '',
-                        ],
-                        'prev' => [
-                            'type' => 'string',
-                            'example' => $parentJson['_links']['prev'] ?? '',
-                        ],
-                    ],
+            $entity = new StandardEntity($obj);
+            if ($entity->isPaginationWrapper()) {
+                $obj['_links'][RestApiEntity::CLASS_NAME] = self::PAGINATION_LINKS;
+                $obj[RestApiEntity::CLASS_NAME] = $this->page($entityType);
+            } else if ($entity->isDataResult()) {
+                $obj[RestApiEntity::CLASS_NAME] = $this->res($entityType);
+            }
+            return $this->parseProperties($obj);
+        }
+        return TypeParser::getDataWithType($obj, $testDescription);
+    }
+
+    private function _addPropertyToSchema(StandardEntity $entity, string $property, array $parsedProperties): void
+    {
+        $entityType = $entity->type();
+        if (!isset($this->schemas[$entityType])) {
+            $this->schemas[$entityType] = TypeParser::object([], $entity->getDescription());
+        }
+        $this->schemas[$entityType]['properties'][$property] = $parsedProperties;
+    }
+
+    private function parseProperties(mixed $data): array
+    {
+        $entity = new StandardEntity($data);
+        if ($entity->type()) {
+            unset($data[RestApiEntity::CLASS_NAME]);
+            foreach ($data as $property => $value) {
+                $parsedProperties = $this->parseProperties($value);
+                $this->_addPropertyToSchema($entity, $property, $parsedProperties);
+            }
+            return [
+                '$ref' => '#/components/schemas/' . $entity->type(),
+            ];
+        } else {
+            if (is_array($data) && isset($data[0])) {
+                return [
+                    'type' => 'array',
+                    'items' => $this->parseProperties($data[0]),
                 ];
             } else {
-                if (array_keys($parentJson) === ['data']) {
-                    $resEntityType = $this->res($entityType);
-                    $this->schemas[$resEntityType] = [
-                        'type' => 'object',
-                        'properties' => [
-                            'data' => [
-                                '$ref' => '#/components/schemas/' . $entityType,
-                            ]
-                        ],
-                    ];
-                } else {
-                    $resEntityType = null;
-                }
-            }
-            if ($resEntityType) {
-                unset($data['properties'][RestApiEntity::CLASS_NAME]);
-                $this->schemas[$entityType] = $data;
-                return [
-                    '$ref' => '#/components/schemas/' . $entityType
-                ];
+                return TypeParser::getDataWithType($data);
             }
         }
-        return null;
     }
 
     private function res(string $s): string
@@ -82,16 +73,6 @@ class StandardSchemas
 
     private function page(string $s): string
     {
-        return 'Page' . $s;
-    }
-
-    private function _getEntityType($json): ?string
-    {
-        $res = $json[RestApiEntity::CLASS_NAME] ?? null;
-        if ($res) {
-            $res = str_replace('\Model\Entity', '', $res);
-            $res = str_replace('\\', 'Ns', $res);
-        }
-        return $res;
+        return 'Paginated' . $s;
     }
 }

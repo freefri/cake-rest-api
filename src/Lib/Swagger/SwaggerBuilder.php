@@ -60,7 +60,7 @@ class SwaggerBuilder
         }
         return [
             'paths' => $toRet,
-            'components' => $this->_getComponentSchemas(),
+            'componentSchemas' => $this->_getComponentSchemas(),
         ];
     }
 
