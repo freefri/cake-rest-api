@@ -339,7 +339,7 @@ use RestApi\Model\Entity\OauthAccessToken;
         /** @var OauthAccessToken $oauthAccessToken */
         $oauthAccessToken = $this->find()
             ->where(['expires >' => new FrozenTime('+1 hour') ])
-            ->first();
+            ->firstOrFail();
         return $oauthAccessToken->access_token;
     }
 }
