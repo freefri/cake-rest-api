@@ -4,6 +4,7 @@ namespace RestApi\Lib\Validator;
 
 class Emoji
 {
+    // phpcs:ignore
     private static $_emojiRegex = '/^([*#0-9](?>\\xEF\\xB8\\x8F)?\\xE2\\x83\\xA3|\\xC2[\\xA9\\xAE]|\\xE2..'
     . '(\\xF0\\x9F\\x8F[\\xBB-\\xBF])?'
     . '(?>\\xEF\\xB8\\x8F)?|\\xE3(?>\\x80[\\xB0\\xBD]|\\x8A[\\x97\\x99])(?>\\xEF\\xB8\\x8F)?|\\xF0\\x9F(?>'
