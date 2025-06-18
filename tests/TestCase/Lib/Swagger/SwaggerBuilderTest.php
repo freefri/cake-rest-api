@@ -56,7 +56,7 @@ class SwaggerBuilderTest extends TestCase
                             ]
                         ],
                         [
-                            'description' => 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                            'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
                             'in' => 'header',
                             'name' => 'Accept-Language',
                             'example' => 'en',
@@ -144,7 +144,7 @@ class SwaggerBuilderTest extends TestCase
                             ]
                         ],
                         [
-                            'description' => 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                            'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
                             'in' => 'header',
                             'name' => 'Accept-Language',
                             'example' => 'en',
@@ -235,7 +235,7 @@ class SwaggerBuilderTest extends TestCase
                             ]
                         ],
                         [
-                            'description' => 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                            'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
                             'in' => 'header',
                             'name' => 'Accept-Language',
                             'example' => 'en',
@@ -377,7 +377,7 @@ class SwaggerBuilderTest extends TestCase
                             ]
                         ],
                         [
-                            'description' => 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                            'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
                             'in' => 'header',
                             'name' => 'Accept-Language',
                             'example' => 'en',

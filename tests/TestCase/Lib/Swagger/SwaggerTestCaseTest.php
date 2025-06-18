@@ -67,7 +67,7 @@ class SwaggerTestCaseTest extends TestCase
                 ]
             ],
             [
-                'description' => 'ISO 639-1 2 letter language code (en, es, de, ar, etc.)',
+                'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
                 'in' => 'header',
                 'name' => 'Accept-Language',
                 'example' => 'en',
@@ -327,7 +327,7 @@ class SwaggerTestCaseTest extends TestCase
                 ]
             ],
             [
-                'description' => 'ISO 639-1 2 letter language code (en, es, de, ar, etc.)',
+                'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
                 'in' => 'header',
                 'name' => 'Accept-Language',
                 'example' => 'en',
