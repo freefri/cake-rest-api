@@ -93,8 +93,8 @@ abstract class ApiCommonAssertionsTest extends ApiCommonTestCase
 
     protected function assertResponse204NoContent()
     {
-        $this->assertEquals(204, $this->_response->getStatusCode());
-        $this->assertEquals('', $this->_response->getBody());
+        $this->assertEquals(204, $this->_response->getStatusCode(), $this->_getBodyAsString());
+        $this->assertEquals('', $this->_response->getBody(), $this->_getBodyAsString());
     }
 
     protected function assertException(string $type, $code = null, $message = null): array
