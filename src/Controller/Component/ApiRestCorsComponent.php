@@ -44,7 +44,7 @@ class ApiRestCorsComponent extends Component
         return $cors;
     }
 
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): void
     {
         /** @var Controller $controller */
         $controller = $event->getSubject();
@@ -75,7 +75,8 @@ class ApiRestCorsComponent extends Component
                     ->maxAge(3600);
                 $response = $responseBuilder->build();
                 $controller->setResponse($response);
-                return $response;
+                $event->setResult($response);
+                return;
             }
             $response = $responseBuilder->build();
             $controller->setResponse($response);
