@@ -65,6 +65,9 @@ jobs:
               if: matrix.db-type == 'mysql' || matrix.db-type == 'mariadb'
               run: while ! `mysqladmin ping -h 127.0.0.1 --silent`; do printf 'Waiting for MySQL...\n'; sleep 2; done;
 
+            - name: Run phpcs
+              run: composer run-script cs-check
+
             - name: Run PHPUnit
               env:
                   CACHE_DEFAULT_URL: ${{ format('memcached://127.0.0.1:{0}', job.services.memcached.ports['11211']) }}

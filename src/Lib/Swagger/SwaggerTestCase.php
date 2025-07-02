@@ -229,7 +229,8 @@ class SwaggerTestCase implements \JsonSerializable
         $acceptLanguage = Configure::read('Swagger.acceptLanguage');
         if ($acceptLanguage !== false) {
             if (!$acceptLanguage) {
-                $acceptLanguage = 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)';
+                $acceptLanguage
+                    = 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)';
             }
             $toRet[] = [
                 'description' => $acceptLanguage,

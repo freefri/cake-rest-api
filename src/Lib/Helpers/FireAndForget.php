@@ -46,9 +46,9 @@ class FireAndForget
         $headers = [
             "POST {$path} HTTP/1.1",
             "Host: {$host}",
-            "Content-Type: application/json",
+            'Content-Type: application/json',
             "Content-Length: {$contentLength}",
-            "Connection: Close"
+            'Connection: Close'
         ];
 
         foreach ($extraHeaders as $key => $value) {

@@ -361,8 +361,8 @@ abstract class RestApiController extends Controller
 
     private function _sanitize($filename): string
     {
-        $match = array("/\s+/", "/[^a-zA-Z0-9\-]/", "/-+/", "/^-+/", "/-+$/");
-        $replace = array("-", "", "-", "", "");
+        $match = array('/\s+/', '/[^a-zA-Z0-9\-]/', '/-+/', '/^-+/', '/-+$/');
+        $replace = array('-', '', '-', '', '');
         $string = preg_replace($match, $replace, $filename);
         return strtolower($string);
     }

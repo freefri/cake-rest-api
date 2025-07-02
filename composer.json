@@ -61,6 +61,7 @@
     }
   },
   "scripts": {
-    "test": "phpunit --colors=always"
+      "cs-check": "phpcs --colors -p --standard=phpcs.xml src/ tests/",
+      "test": "phpunit --colors=always"
   }
 }
