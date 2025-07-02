@@ -33,4 +33,9 @@ class RestApiEntity extends Entity
         }
         return parent::jsonSerialize();
     }
+
+    public function toJsonArray(): array
+    {
+        return json_decode(json_encode($this), true);
+    }
 }
