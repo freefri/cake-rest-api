@@ -27,7 +27,7 @@
   "require": {
     "symfony/service-contracts": "^2.5.3",
 
-    "php": ">=7.4 || >=8.0",
+    "php": ">=8.0",
     "ext-mbstring": "*",
     "ext-json": "*",
     "cakephp/cakephp": "^4.4 || ^5.2",

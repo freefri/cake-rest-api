@@ -10,8 +10,7 @@ use RestApi\Model\Table\LogEntriesTable;
 
 class DatabaseLog extends BaseLog
 {
-    /** @var LogEntriesTable */
-    public $LogEntries;
+    public ?LogEntriesTable $LogEntries = null;
 
     public static function cls()
     {
@@ -21,13 +20,21 @@ class DatabaseLog extends BaseLog
     public function __construct($options = [])
     {
         parent::__construct($options);
-        $this->LogEntries = LogEntriesTable::load();
     }
 
-    public function log($level, $message, array $context = [])
+    protected function getLogTable(): LogEntriesTable
     {
+        if (!$this->LogEntries) {
+            $this->LogEntries = LogEntriesTable::load();
+        }
+        return $this->LogEntries;
+    }
+
+    public function log($level, string|\Stringable $message, array $context = []): void
+    {
+        $table = $this->getLogTable();
         try {
-            return $this->LogEntries->saveLog($level, $message, $context);
+            $table->saveLog($level, $message, $context);
         } catch (\Exception $e) {
             if (strpos($message, "\n") !== false) {
                 $message = explode("\n", $message);
