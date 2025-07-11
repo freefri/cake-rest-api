@@ -195,13 +195,19 @@ class StandardSchemasTest extends TestCase
             'RestApiNsLogEntry' => $this->getRestApiNsLogEntry(),
             'ResRestApiNsLogEntry' => [
                 'type' => 'object',
+                'description' => 'Data wrapper for RestApiNsLogEntry',
+                'required' => [
+                    'data',
+                ],
                 'properties' => [
                     'data' => [
-                        '$ref' => '#/components/schemas/RestApiNsLogEntry'
+                        ['$ref' => '#/components/schemas/RestApiNsLogEntry']
                     ],
                     'other' => [
-                        'type' => 'number',
-                        'example' => (int)1
+                        [
+                            'type' => 'number',
+                            'example' => (int)1
+                        ]
                     ]
                 ]
             ]
@@ -212,19 +218,32 @@ class StandardSchemasTest extends TestCase
     {
         return [
             'type' => 'object',
+            'description' => 'Entity RestApiNsLogEntry',
             'properties' => [
                 'id' => [
-                    'type' => 'number',
-                    'example' => (int)1
+                    [
+                        'type' => 'number',
+                        'example' => (int)1
+                    ],
+                    [
+                        'type' => 'number',
+                        'example' => (int)1
+                    ],
+                    [
+                        'type' => 'number',
+                        'example' => (int)1
+                    ],
                 ],
                 'something' => [
-                    '$ref' => '#/components/schemas/RestApiNsLogEntry'
+                    ['$ref' => '#/components/schemas/RestApiNsLogEntry']
                 ],
                 'many' => [
-                    'type' => 'array',
-                    'items' => [
-                        '$ref' => '#/components/schemas/RestApiNsLogEntry'
-                    ],
+                    [
+                        'type' => 'array',
+                        'items' => [
+                            '$ref' => '#/components/schemas/RestApiNsLogEntry'
+                        ],
+                    ]
                 ]
             ]
         ];

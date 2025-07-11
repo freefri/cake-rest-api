@@ -417,14 +417,14 @@ class SwaggerTestCaseTest extends TestCase
         $request = new ServerRequest();
         $controller = new Controller($request);
         $request = [
-            'url' => '/testurl_last/343-fgdd/path/321',
+            'url' => '/testurl_last/343-fgdd/pathentities/321',
             'session' => null,
             'query' => [],
             'files' => [],
             'environment' => [
                 'REQUEST_METHOD' => 'PATCH',
                 'QUERY_STRING' => '',
-                'REQUEST_URI' => '/testurl_last/343-fgdd/path/321'
+                'REQUEST_URI' => '/testurl_last/343-fgdd/pathentities/321'
             ],
             'post' => [
                 'hello' => 'param',
@@ -437,7 +437,7 @@ class SwaggerTestCaseTest extends TestCase
             'meta' => ['page' => 1],
         ];
         $res = $this->_getResponse($body, 403);
-        $lastRoute = '/testurl_last/{eventID}/path/*';
+        $lastRoute = '/testurl_last/{eventID}/pathentities/*';
         $test = new SwaggerTestCase($controller, $request, $res, $lastRoute);
 
         $expectedParams = [
@@ -454,7 +454,7 @@ class SwaggerTestCaseTest extends TestCase
             [
                 'description' => 'ID in URL',
                 'in' => 'path',
-                'name' => 'entity_id',
+                'name' => 'pathentityID',
                 'example' => 321,
                 'required' => true,
                 'schema' => [

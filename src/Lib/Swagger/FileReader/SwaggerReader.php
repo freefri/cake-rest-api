@@ -1,6 +1,6 @@
 <?php
 
-namespace RestApi\Lib\Swagger;
+namespace RestApi\Lib\Swagger\FileReader;
 
 use Cake\Http\Exception\NotFoundException;
 
@@ -50,12 +50,12 @@ class SwaggerReader
         ];
     }
 
-    public function readFiles(string $directory): array
+    public function readFiles(string $directory, FileReader $reader): array
     {
-        return $this->_readFiles($directory);
+        return $this->_readFiles($directory, $reader);
     }
 
-    private function _readFiles(string $dir): array
+    private function _readFiles(string $dir, FileReader $reader): array
     {
         if (!is_dir($dir)) {
             if ($this->_createDirectoryIfNotExists) {
@@ -64,15 +64,16 @@ class SwaggerReader
                 throw new NotFoundException('Swagger directory not found ' . $dir);
             }
         }
-        $files = [];
         foreach (glob($dir . '*') as $fileName) {
-            if (!str_contains($fileName, self::FULL_SWAGGER_JSON) && filesize($fileName) > 0) {
+            $isSchemaDir = is_dir($fileName);
+            $isFullSwaggerJsonFile = str_contains($fileName, self::FULL_SWAGGER_JSON);
+            if (!$isSchemaDir && !$isFullSwaggerJsonFile && filesize($fileName) > 0) {
                 $handle = fopen($fileName, 'r') or die('cannot open the file to add swagger '.$fileName);
                 $contents = fread($handle, filesize($fileName));
                 fclose($handle);
-                $files = $files + json_decode($contents, true);
+                $reader->add(json_decode($contents, true));
             }
         }
-        return $files;
+        return $reader->toArray();
     }
 }

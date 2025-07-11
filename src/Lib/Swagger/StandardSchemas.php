@@ -38,8 +38,12 @@ class StandardSchemas
         $entityType = $entity->type();
         if (!isset($this->schemas[$entityType])) {
             $this->schemas[$entityType] = TypeParser::object([], $entity->getDescription());
+            $required = $entity->getRequired();
+            if ($required) {
+                $this->schemas[$entityType]['required'] = $required;
+            }
         }
-        $this->schemas[$entityType]['properties'][$property] = $parsedProperties;
+        $this->schemas[$entityType]['properties'][$property][] = $parsedProperties;
     }
 
     private function parseProperties(mixed $data): array

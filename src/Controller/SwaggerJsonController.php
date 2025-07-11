@@ -6,7 +6,10 @@ namespace RestApi\Controller;
 
 use Cake\Core\Configure;
 use RestApi\Lib\RestPlugin;
-use RestApi\Lib\Swagger\SwaggerReader;
+use RestApi\Lib\Swagger\FileReader\PathReader;
+use RestApi\Lib\Swagger\FileReader\SchemaReader;
+use RestApi\Lib\Swagger\FileReader\SwaggerReader;
+use RestApi\Lib\Swagger\SwaggerFromController;
 
 class SwaggerJsonController extends \Swagger\Controller\SwaggerUiController
 {
@@ -28,8 +31,9 @@ class SwaggerJsonController extends \Swagger\Controller\SwaggerUiController
     {
         $dir = $this->getDirectory();
         $reader = $this->getReader();
-        $paths = $reader->readFiles($dir);
-        $content = $this->getContent($reader, $paths);
+        $paths = $reader->readFiles($dir, new PathReader());
+        $componentSchemas = $reader->readFiles($dir . SwaggerFromController::SCHEMA_DIR . DS, new SchemaReader());
+        $content = $this->getContent($reader, $paths, $componentSchemas);
 
         $this->response = $this->response->withType('application/json');
         $this->response = $this->response->withStringBody(json_encode($content));
@@ -53,7 +57,7 @@ class SwaggerJsonController extends \Swagger\Controller\SwaggerUiController
         return new $readerClass();
     }
 
-    protected function getContent(SwaggerReader $reader, array $paths): array
+    protected function getContent(SwaggerReader $reader, array $paths, array $schemas = []): array
     {
         return $reader->getInfo($paths);
     }

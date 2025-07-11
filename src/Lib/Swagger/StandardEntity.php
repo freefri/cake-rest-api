@@ -52,6 +52,16 @@ class StandardEntity
         return $res;
     }
 
+    public function getRequired(): array
+    {
+        if ($this->isPaginationWrapper()) {
+            return $this->_paginationProps();
+        } else if ($this->isDataResult()) {
+            return $this->_dataResultProps();
+        }
+        return [];
+    }
+
     public function getDescription(): string
     {
         if ($this->isPaginationWrapper()) {
@@ -66,14 +76,19 @@ class StandardEntity
         return 'Entity ' . $this->type();
     }
 
-    public function isPaginationWrapper(): bool
+    private function _paginationProps(): array
     {
-        $props = [
+        return [
             'data',
             'total',
             'limit',
             '_links',
         ];
+    }
+
+    public function isPaginationWrapper(): bool
+    {
+        $props = $this->_paginationProps();
         foreach ($props as $prop) {
             if (!isset($this->data[$prop])) {
                 return false;
@@ -82,8 +97,19 @@ class StandardEntity
         return true;
     }
 
+    private function _dataResultProps(): array
+    {
+        return ['data'];
+    }
+
     public function isDataResult(): bool
     {
-        return isset($this->data['data']);
+        $props = $this->_dataResultProps();
+        foreach ($props as $prop) {
+            if (!isset($this->data[$prop])) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -6,6 +6,9 @@ use Cake\Http\Exception\InternalErrorException;
 
 class SwaggerBuilder
 {
+    public const string SCHEMAS = 'componentSchemas';
+    public const string PATHS = 'paths';
+
     private SwaggerFromController $_data;
     private int $_operation = 1;
     /** @var StandardSchemas[] */
@@ -59,8 +62,8 @@ class SwaggerBuilder
             }
         }
         return [
-            'paths' => $toRet,
-            'componentSchemas' => $this->_getComponentSchemas(),
+            SwaggerBuilder::PATHS => $toRet,
+            SwaggerBuilder::SCHEMAS => $this->_getComponentSchemas(),
         ];
     }
 

@@ -45,7 +45,7 @@ abstract class ApiCommonTestCase extends ApiCommonIntegrationTestCase
         $class = explode('\\', get_called_class());
         $className = array_pop($class);
 
-        self::$_swagger->writeFile($className);
+        self::$_swagger->writeFiles($className);
         self::newSwaggerFromController();
         parent::tearDownAfterClass();
     }

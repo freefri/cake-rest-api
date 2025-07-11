@@ -69,7 +69,7 @@ class SwaggerTestCase implements \JsonSerializable
         if (count($explodedUrl) >= 2) {
             $last = array_pop($explodedUrl);
             if ($last && strpos($last, '/') === false) {
-                $this->_cachedRoute = $mainRoute . self::ENTITY_BRACES;
+                $this->_cachedRoute = $mainRoute . $this->_lastEntityIdName($lastInRoute);
             }
         }
         return $this->_cachedRoute;
@@ -177,17 +177,30 @@ class SwaggerTestCase implements \JsonSerializable
         $explodedMatchedRoute = explode('/', $matchedRoute);
         $url = $this->getRequest()['url'];
         $explodedUrl = explode('/', $url);
+        $previousUrlElem = '';
         $map = [];
         foreach ($explodedMatchedRoute as $k => $routeParam) {
             $urlElem = $explodedUrl[$k] ?? null;
             if ($urlElem !== $routeParam) {
                 if ($routeParam === '*') {
-                    $routeParam = self::ENTITY_BRACES;
+                    $routeParam = $this->_lastEntityIdName($previousUrlElem);
                 }
                 $map[$routeParam] = $urlElem;
+            } else {
+                if ($urlElem) {
+                    $previousUrlElem = $urlElem;
+                }
             }
         }
         return $map;
+    }
+
+    private function _lastEntityIdName(string $last): string
+    {
+        if ($last) {
+            return '{' . Inflector::singularize($last) . 'ID}';
+        }
+        return self::ENTITY_BRACES;
     }
 
     private function _getQueryParams(): array

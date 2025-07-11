@@ -7,6 +7,7 @@ use Cake\Http\Response;
 
 class SwaggerFromController implements \JsonSerializable
 {
+    public const string SCHEMA_DIR = 'component-schemas';
     private array $_map = [];
 
     public function addToSwagger(Controller $controller, array $request, Response $res)
@@ -70,7 +71,7 @@ class SwaggerFromController implements \JsonSerializable
         return $this->_toArray();
     }
 
-    private function _writeSingleTestJsonFile(string $name): string
+    private function _writeSingleTestJsonFile(string $name, array $content): string
     {
         $dir = PHPUnitExtension::getDirectory();
         if (!is_dir($dir)) {
@@ -78,13 +79,14 @@ class SwaggerFromController implements \JsonSerializable
         }
         $filename = $dir . $name . '.json';
         $handle = fopen($filename, 'w') or die('cannot open the file to add swagger '.$filename);
-        fwrite($handle, json_encode($this->_toArray(), JSON_PRETTY_PRINT + JSON_UNESCAPED_SLASHES));
+        fwrite($handle, json_encode($content, JSON_PRETTY_PRINT + JSON_UNESCAPED_SLASHES));
         fclose($handle);
         return $filename;
     }
 
-    public function writeFile(string $name)
+    public function writeFiles(string $name): void
     {
-        return $this->_writeSingleTestJsonFile($name);
+        $this->_writeSingleTestJsonFile($name, $this->_toArray()[SwaggerBuilder::PATHS]);
+        $this->_writeSingleTestJsonFile(self::SCHEMA_DIR . DS . $name, $this->_toArray()[SwaggerBuilder::SCHEMAS]);
     }
 }

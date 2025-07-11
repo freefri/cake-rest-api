@@ -7,13 +7,18 @@ use Cake\Core\Configure;
 use PHPUnit\Event\TestSuite\Finished;
 use PHPUnit\Event\TestSuite\FinishedSubscriber;
 use RestApi\Lib\RestPlugin;
+use RestApi\Lib\Swagger\FileReader\PathReader;
+use RestApi\Lib\Swagger\FileReader\SwaggerReader;
 
 class PHPUnitExtension implements FinishedSubscriber
 {
     public function notify(Finished $event): void
     {
         $reader = new SwaggerReader(true);
+        // not implemented
         $paths = $reader->readFiles($this->getDirectory());
+        $paths = $reader->readFiles($this->getDirectory(), new PathReader());
+        //$schemas = $reader->readFiles($this->getDirectory(), new SchemaReader());
         $this->_writeFile($reader->getInfo($paths));
     }
 
