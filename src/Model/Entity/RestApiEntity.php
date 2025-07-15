@@ -18,7 +18,9 @@ class RestApiEntity extends Entity
 
     public function toChild(string $c, array $array)
     {
-        $array[RestApiEntity::CLASS_NAME] = $c;
+        if ($this->hasIdentifyEntities()) {
+            $array[RestApiEntity::CLASS_NAME] = $c;
+        }
         return $array;
     }
 
