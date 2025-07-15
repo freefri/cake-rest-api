@@ -9,6 +9,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use RestApi\Lib\Swagger\SwaggerFromController;
+use RestApi\Lib\Swagger\SwaggerTestCase;
 
 class SwaggerFromControllerTest extends TestCase
 {
@@ -55,7 +56,7 @@ class SwaggerFromControllerTest extends TestCase
                                 ]
                             ],
                             (int) 1 => [
-                                'description' => 'ISO 639-1 2 letter language code (en, es, de, ar, etc.)',
+                                'description' => SwaggerTestCase::acceptLanguage(),
                                 'in' => 'header',
                                 'name' => 'Accept-Language',
                                 'example' => 'en',
