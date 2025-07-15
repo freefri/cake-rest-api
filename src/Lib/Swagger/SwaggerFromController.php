@@ -86,7 +86,8 @@ class SwaggerFromController implements \JsonSerializable
 
     public function writeFiles(string $name): void
     {
-        $this->_writeSingleTestJsonFile($name, $this->_toArray()[SwaggerBuilder::PATHS]);
-        $this->_writeSingleTestJsonFile(self::SCHEMA_DIR . DS . $name, $this->_toArray()[SwaggerBuilder::SCHEMAS]);
+        $toArray = $this->_toArray();
+        $this->_writeSingleTestJsonFile($name, $toArray[SwaggerBuilder::PATHS]);
+        $this->_writeSingleTestJsonFile(self::SCHEMA_DIR . DS . $name, $toArray[SwaggerBuilder::SCHEMAS]);
     }
 }

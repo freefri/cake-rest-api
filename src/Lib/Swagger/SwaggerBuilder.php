@@ -63,20 +63,40 @@ class SwaggerBuilder
         }
         return [
             SwaggerBuilder::PATHS => $toRet,
-            SwaggerBuilder::SCHEMAS => $this->_getComponentSchemas(),
+            SwaggerBuilder::SCHEMAS => $this->getComponentSchemas(),
         ];
     }
 
-    private function _getComponentSchemas(): array
+    public function getComponentSchemas(): array
     {
         $toRet = [];
         foreach ($this->componentSchemas as $componentSchema) {
             $schemas = $componentSchema->getSchemas();
-            foreach ($schemas as $ref => $entity) {
-                $toRet[$ref] = $entity;
+            foreach ($schemas as $entityName => $entityDescription) {
+                foreach ($entityDescription as $key => $values) {
+                    if ($key === 'properties') {
+                        foreach ($values as $propertyName => $propertyDescription) {
+                            if (!isset($toRet[$entityName][$key][$propertyName])) {
+                                $toRet[$entityName][$key][$propertyName] = $propertyDescription;
+                            } else {
+                                $toRet[$entityName][$key][$propertyName] = array_merge(
+                                    $toRet[$entityName][$key][$propertyName],
+                                    $propertyDescription
+                                );
+                            }
+                        }
+                    } else {
+                        $toRet[$entityName][$key] = $values;
+                    }
+                }
             }
         }
         return $toRet;
+    }
+
+    public function addSchemas(StandardSchemas $s): void
+    {
+        $this->componentSchemas[] = $s;
     }
 
     public function _getFirstNoErrorTags(array $selectedRouteMethod): array
@@ -173,7 +193,7 @@ class SwaggerBuilder
         }
         $json = 'application/json';
         $responseToAdd = $elem->getResponseSchema();
-        $this->componentSchemas[] = $elem->getComponentSchemas();
+        $this->addSchemas($elem->getComponentSchemas());
         if ($responseToAdd === null) {
             return $existingResponses;
         }

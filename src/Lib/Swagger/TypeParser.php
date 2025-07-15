@@ -38,9 +38,6 @@ class TypeParser
                 foreach ($json as $property => $value) {
                     $properties[$property] = self::getProp($value, $property);
                 }
-                if ($testDescription == 'Get list filtered by bookable no services with sessions cities trainers') {
-                    debug('sdklfj');
-                }
                 $description = $testDescription ? 'Generic object when: ' . $testDescription : 'Generic object.';
                 $data = self::object($properties, $description);
             }

@@ -8,7 +8,7 @@ use Cake\Controller\Controller;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Text;
+use RestApi\Lib\Swagger\StandardSchemas;
 use RestApi\Lib\Swagger\SwaggerBuilder;
 use RestApi\Lib\Swagger\SwaggerFromController;
 use RestApi\Model\Entity\LogEntry;
@@ -518,5 +518,83 @@ class SwaggerBuilderTest extends TestCase
                 ]
             ]
         ];
+    }
+
+    public function testGetComponentSchemas()
+    {
+        $swagger = new SwaggerFromController();
+        $builder = new SwaggerBuilder($swagger);
+        $schemas1 = new StandardSchemas();
+        $s1 = ['Event' => [
+            'type' => 'object',
+            'properties' => [
+                'id' => [
+                    (int) 0 => [
+                        'type' => 'number',
+                        'example' => (int) 50
+                    ]
+                ],
+                '_links' => [
+                    (int) 0 => [
+                        '$ref' => '#/components/schemas/LinksSeller'
+                    ]
+                ]
+            ],
+        ]];
+        $schemas1->setSchemas($s1);
+        $builder->addSchemas($schemas1);
+
+        $schemas2 = new StandardSchemas();
+        $s2 = ['Event' => [
+            'type' => 'object',
+            'properties' => [
+                'id' => [
+                    (int) 0 => [
+                        'type' => 'number',
+                        'example' => (int) 50
+                    ]
+                ],
+                '_links' => [
+                    (int) 0 => [
+                        'type' => 'object',
+                        'description' => 'Any object',
+                        'additionalProperties' => true
+                    ]
+                ]
+            ],
+        ]];
+        $schemas2->setSchemas($s2);
+        $builder->addSchemas($schemas2);
+
+        $res = $builder->getComponentSchemas();
+
+        $expected = [
+            'Event' => [
+                'type' => 'object',
+                'properties' => [
+                    'id' => [
+                        [
+                            'type' => 'number',
+                            'example' => (int) 50
+                        ],
+                        [
+                            'type' => 'number',
+                            'example' => (int) 50
+                        ]
+                    ],
+                    '_links' => [
+                        [
+                            '$ref' => '#/components/schemas/LinksSeller'
+                        ],
+                        [
+                            'type' => 'object',
+                            'description' => 'Any object',
+                            'additionalProperties' => true
+                        ],
+                    ]
+                ],
+            ]
+        ];
+        $this->assertEquals($expected, $res);
     }
 }

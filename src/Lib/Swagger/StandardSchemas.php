@@ -16,6 +16,11 @@ class StandardSchemas
         return $this->schemas;
     }
 
+    public function setSchemas(array $schemas): void
+    {
+        $this->schemas = $schemas;
+    }
+
     public function getResponseSchemas(array $obj, string $testDescription = null): array
     {
         $entity = new StandardEntity($obj);

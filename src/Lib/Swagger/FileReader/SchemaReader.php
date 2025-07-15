@@ -44,13 +44,24 @@ class SchemaReader implements FileReader
         }
     }
 
+    private function _getMainCounterAmount(array $contents): int
+    {
+        $properties = array_keys($contents['properties']);
+        if (count($properties) === 1) {
+            $mainCounter = $properties[0];
+        } else {
+            $mainCounter = 'id';
+        }
+        return count($contents['properties'][$mainCounter] ?? []);
+    }
+
     public function toArray(): array
     {
         $toRet = $this->merge();
         foreach ($toRet as &$contents) {
-            $idAmount = count($contents['properties']['id'] ?? []);
+            $mainCounterAmount = $this->_getMainCounterAmount($contents);
             foreach ($contents['properties'] as $propertyName => &$contentArray) {
-                if ($idAmount !== 0 && $idAmount === count($contentArray)) {
+                if ($mainCounterAmount !== 0 && $mainCounterAmount === count($contentArray)) {
                     $hasNullable = false;
                     foreach ($contentArray as $c) {
                         if ($c['nullable'] ?? false) {
@@ -58,7 +69,9 @@ class SchemaReader implements FileReader
                         }
                     }
                     if (!$hasNullable) {
-                        $contents['required'][] = $propertyName;
+                        if (!isset($contents['required'][0]) || !in_array($propertyName, $contents['required'])) {
+                            $contents['required'][] = $propertyName;
+                        }
                     }
                 }
                 $contentArray = $this->_getNewContent($contentArray, $propertyName);
