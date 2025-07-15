@@ -230,6 +230,19 @@ class SwaggerTestCase implements \JsonSerializable
         return $this->_controller->isPublicController();
     }
 
+    public static function acceptLanguage(): bool|string
+    {
+        $acceptLanguage = Configure::read('Swagger.acceptLanguage');
+        if ($acceptLanguage === false) {
+            return false;
+        }
+        if (!$acceptLanguage) {
+            $acceptLanguage
+                = 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)';
+        }
+        return $acceptLanguage;
+    }
+
     private function _getHeaderParams(): array
     {
         $toRet = [];
@@ -243,12 +256,8 @@ class SwaggerTestCase implements \JsonSerializable
                 'schema' => ['type' => 'string'],
             ];
         }
-        $acceptLanguage = Configure::read('Swagger.acceptLanguage');
+        $acceptLanguage = $this->acceptLanguage();
         if ($acceptLanguage !== false) {
-            if (!$acceptLanguage) {
-                $acceptLanguage
-                    = 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)';
-            }
             $toRet[] = [
                 'description' => $acceptLanguage,
                 'in' => 'header',

@@ -69,7 +69,7 @@ class SwaggerTestCaseTest extends TestCase
                 ]
             ],
             [
-                'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                'description' => SwaggerTestCase::acceptLanguage(),
                 'in' => 'header',
                 'name' => 'Accept-Language',
                 'example' => 'en',
@@ -91,9 +91,11 @@ class SwaggerTestCaseTest extends TestCase
                 ],
                 'object' => [
                     'type' => 'object',
+                    'description' => 'objectInArray',
                     'properties' => [
                         'something' => [
                             'type' => 'object',
+                            'description' => 'objectInArray',
                             'properties' => [
                                 'with' => [
                                     'type' => 'string',
@@ -108,10 +110,11 @@ class SwaggerTestCaseTest extends TestCase
         $this->assertEquals($expectedRequest, $test->getRequestSchema());
         $expectedResponse = [
             'type' => 'object',
-            'description' => 'Run',
+            'description' => 'Generic object when: Run',
             'properties' => [
                 'data' => [
                     'type' => 'object',
+                    'description' => 'objectInArray',
                     'properties' => [
                         'hello' => [
                             'type' => 'string',
@@ -121,10 +124,11 @@ class SwaggerTestCaseTest extends TestCase
                 ],
                 'meta' => [
                     'type' => 'object',
+                    'description' => 'objectInArray',
                     'properties' => [
                         'page' => [
                             'type' => 'number',
-                            'example' => 1
+                            'example' => 1,
                         ],
                     ],
                 ],
@@ -135,7 +139,8 @@ class SwaggerTestCaseTest extends TestCase
 
     public function testCreateWithEntityClass()
     {
-        $controller = new Controller();
+        $request = new ServerRequest();
+        $controller = new Controller($request, 'Pets');
         $request = [
             'url' => '/testurl_last/3/path',
             'session' => null,
@@ -188,7 +193,7 @@ class SwaggerTestCaseTest extends TestCase
                 ]
             ],
             [
-                'description' => 'Language letter code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                'description' => SwaggerTestCase::acceptLanguage(),
                 'in' => 'header',
                 'name' => 'Accept-Language',
                 'example' => 'en',
@@ -210,9 +215,11 @@ class SwaggerTestCaseTest extends TestCase
                 ],
                 'object' => [
                     'type' => 'object',
+                    'description' => 'objectInArray',
                     'properties' => [
                         'something' => [
                             'type' => 'object',
+                            'description' => 'objectInArray',
                             'properties' => [
                                 'with' => [
                                     'type' => 'string',
@@ -225,51 +232,52 @@ class SwaggerTestCaseTest extends TestCase
             ]
         ];
         $this->assertEquals($expectedRequest, $test->getRequestSchema());
-        $this->assertEquals(['$ref' => '#/components/schemas/RestApiNsLogEntry'], $test->getResponseSchema());
+        $this->assertEquals(['$ref' => '#/components/schemas/PaginatedRestApiNsLogEntry'], $test->getResponseSchema());
         $expectedSchemas = [
-            'PageRestApiNsLogEntry' => [
-                'type' => 'object',
-                'properties' => [
-                    'data' => [
-                        '$ref' => '#/components/schemas/RestApiNsLogEntry'
-                    ],
-                    'total' => [
-                        'type' => 'number',
-                        'example' => (int) 52
-                    ],
-                    'limit' => [
-                        'type' => 'number',
-                        'example' => (int) 10
-                    ],
-                    '_links' => [
-                        '$ref' => '#/components/schemas/PaginationLinks'
-                    ]
-                ]
-            ],
-            '#/components/schemas/PaginationLinks' => [
-                'type' => 'object',
-                'properties' => [
-                    'self' => [
-                        'type' => 'string',
-                        'example' => ''
-                    ],
-                    'next' => [
-                        'type' => 'string',
-                        'example' => ''
-                    ],
-                    'prev' => [
-                        'type' => 'string',
-                        'example' => ''
-                    ]
-                ]
-            ],
             'RestApiNsLogEntry' => [
                 'type' => 'object',
                 'properties' => [
                     'hello' => [
-                        'type' => 'string',
-                        'example' => 'world'
+                        (int) 0 => [
+                            'type' => 'string',
+                            'example' => 'world'
+                        ]
                     ]
+                ],
+                'description' => 'Entity RestApiNsLogEntry'
+            ],
+            'PaginatedRestApiNsLogEntry' => [
+                'type' => 'object',
+                'properties' => [
+                    'data' => [
+                        (int) 0 => [
+                            '$ref' => '#/components/schemas/RestApiNsLogEntry'
+                        ]
+                    ],
+                    'total' => [
+                        (int) 0 => [
+                            'type' => 'number',
+                            'example' => (int) 52
+                        ]
+                    ],
+                    'limit' => [
+                        (int) 0 => [
+                            'type' => 'number',
+                            'example' => (int) 10
+                        ]
+                    ],
+                    '_links' => [
+                        (int) 0 => [
+                            '$ref' => '#/components/schemas/PaginationLinks'
+                        ]
+                    ]
+                ],
+                'description' => 'Paginated RestApiNsLogEntry',
+                'required' => [
+                    (int) 0 => 'data',
+                    (int) 1 => 'total',
+                    (int) 2 => 'limit',
+                    (int) 3 => '_links'
                 ]
             ]
         ];
@@ -351,7 +359,9 @@ class SwaggerTestCaseTest extends TestCase
         $this->assertEquals([
             'type' => 'array',
             'items' => [
-                'type' => 'object'
+                'type' => 'object',
+                'description' => 'Empty array',
+                'additionalProperties' => true,
             ]
         ], $test->getProp([]));
         // not empty array
@@ -359,6 +369,7 @@ class SwaggerTestCaseTest extends TestCase
             'type' => 'array',
             'items' => [
                 'type' => 'object',
+                'description' => 'getItems',
                 'properties' => [
                     'hello' => [
                         'type' => 'string',
@@ -370,6 +381,7 @@ class SwaggerTestCaseTest extends TestCase
         // object 0 depth
         $this->assertEquals([
             'type' => 'object',
+            'description' => 'objectInArray',
             'properties' => [
                 'hello' => [
                     'type' => 'string',
@@ -382,6 +394,7 @@ class SwaggerTestCaseTest extends TestCase
             'type' => 'array',
             'items' => [
                 'type' => 'object',
+                'description' => 'getItems',
                 'properties' => [
                     'hello' => [
                         'type' => 'string',
@@ -472,7 +485,7 @@ class SwaggerTestCaseTest extends TestCase
                 ]
             ],
             [
-                'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                'description' => SwaggerTestCase::acceptLanguage(),
                 'in' => 'header',
                 'name' => 'Accept-Language',
                 'example' => 'en',

@@ -16,7 +16,7 @@ class SwaggerFromControllerTest extends TestCase
     {
         $swagger = new SwaggerFromController();
         $request = new ServerRequest();
-        $controller = new Controller($request, null, 'Pets');
+        $controller = new Controller($request, 'Pets');
         $request = [
             'url' => '/testurl/3',
             'session' => null,
@@ -37,58 +37,65 @@ class SwaggerFromControllerTest extends TestCase
         $swagger->addToSwagger($controller, $request, $res);
 
         $expected = [
-            '' => [
-                'get' => [
-                    'operationId' => 'getPets',
-                    'summary' => '',
-                    'description' => 'Run bare',
-                    'security' => [['bearerAuth' => []]],
-                    'parameters' => [
-                        [
-                            'description' => 'Auth token',
-                            'in' => 'header',
-                            'name' => 'Authentication',
-                            'example' => 'Bearer ****************',
-                            'required' => true,
-                            'schema' => [
-                                'type' => 'string'
+            'paths' => [
+                '' => [
+                    'get' => [
+                        'operationId' => 'getPets',
+                        'summary' => '',
+                        'description' => 'Run bare',
+                        'parameters' => [
+                            (int) 0 => [
+                                'description' => 'Auth token',
+                                'in' => 'header',
+                                'name' => 'Authentication',
+                                'example' => 'Bearer ****************',
+                                'required' => true,
+                                'schema' => [
+                                    'type' => 'string'
+                                ]
+                            ],
+                            (int) 1 => [
+                                'description' => 'ISO 639-1 2 letter language code (en, es, de, ar, etc.)',
+                                'in' => 'header',
+                                'name' => 'Accept-Language',
+                                'example' => 'en',
+                                'required' => false,
+                                'schema' => [
+                                    'type' => 'string'
+                                ]
                             ]
                         ],
-                        [
-                            'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
-                            'in' => 'header',
-                            'name' => 'Accept-Language',
-                            'example' => 'en',
-                            'required' => false,
-                            'schema' => [
-                                'type' => 'string'
-                            ]
+                        'tags' => [
+                            (int) 0 => 'Pets'
                         ],
-                    ],
-                    'tags' => [
-                        'Pets'
-                    ],
-                    'responses' => [
-                        200 => [
-                            'description' => 'OK',
-                            'content' => [
-                                'application/json' => [
-                                    'schema' => [
-                                        'type' => 'object',
-                                        'description' => 'Run bare',
-                                        'properties' => [
-                                            'hello' => [
-                                                'type' => 'string',
-                                                'example' => 'world'
-                                            ]
+                        'responses' => [
+                            (int) 200 => [
+                                'description' => 'OK',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            'type' => 'object',
+                                            'properties' => [
+                                                'hello' => [
+                                                    'type' => 'string',
+                                                    'example' => 'world'
+                                                ]
+                                            ],
+                                            'description' => 'Generic object when: Run bare'
                                         ]
                                     ]
                                 ]
                             ]
+                        ],
+                        'security' => [
+                            (int) 0 => [
+                                'bearerAuth' => []
+                            ]
                         ]
                     ]
                 ]
-            ]
+            ],
+            'componentSchemas' => []
         ];
         $this->assertEquals($expected, $swagger->jsonSerialize());
 
@@ -103,13 +110,13 @@ class SwaggerFromControllerTest extends TestCase
         $swagger->addToSwagger($controller, $request, $res);
 
         $expected2 = $expected;
-        $expected2['']['get']['responses'][403] = [
+        $expected2['paths']['']['get']['responses'][403] = [
             'description' => 'Forbidden',
             'content' => [
                 'application/json' => [
                     'schema' => [
                         'type' => 'object',
-                        'description' => 'Run bare',
+                        'description' => 'Generic object when: Run bare',
                         'properties' => [
                             'error' => [
                                 'type' => 'string',

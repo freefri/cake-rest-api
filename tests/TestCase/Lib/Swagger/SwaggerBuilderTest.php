@@ -11,16 +11,22 @@ use Cake\TestSuite\TestCase;
 use RestApi\Lib\Swagger\StandardSchemas;
 use RestApi\Lib\Swagger\SwaggerBuilder;
 use RestApi\Lib\Swagger\SwaggerFromController;
+use RestApi\Lib\Swagger\SwaggerTestCase;
 use RestApi\Model\Entity\LogEntry;
 use RestApi\Model\Entity\RestApiEntity;
 
 class SwaggerBuilderTest extends TestCase
 {
+    private function _getLangIso()
+    {
+        return SwaggerTestCase::acceptLanguage();
+    }
+
     public function testToArray_addingSingleGetRequest()
     {
         $swagger = new SwaggerFromController();
         $request = new ServerRequest();
-        $controller = new Controller($request, null, 'Pets');
+        $controller = new Controller($request, 'Pets');
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,
@@ -59,7 +65,7 @@ class SwaggerBuilderTest extends TestCase
                             ]
                         ],
                         [
-                            'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                            'description' => $this->_getLangIso(),
                             'in' => 'header',
                             'name' => 'Accept-Language',
                             'example' => 'en',
@@ -94,32 +100,53 @@ class SwaggerBuilderTest extends TestCase
         ];
 
         $expectedSchemas = [
-            'ResRestApiNsLogEntry' => [
-                'type' => 'object',
-                'properties' => [
-                    'data' => [
-                        '$ref' => '#/components/schemas/ResRestApiNsLogEntry',
-                    ],
-                ],
-            ],
             'RestApiNsLogEntry' => [
                 'type' => 'object',
                 'properties' => [
                     'id' => [
-                        'type' => 'number',
-                        'example' => 1,
+                        (int) 0 => [
+                            'type' => 'number',
+                            'example' => (int) 1
+                        ],
+                        (int) 1 => [
+                            'type' => 'number',
+                            'example' => (int) 1
+                        ],
+                        (int) 2 => [
+                            'type' => 'number',
+                            'example' => (int) 1
+                        ]
                     ],
                     'something' => [
-                        '$ref' => '#/components/schemas/ResRestApiNsLogEntry',
+                        (int) 0 => [
+                            '$ref' => '#/components/schemas/RestApiNsLogEntry'
+                        ]
                     ],
                     'many' => [
-                        'type' => 'array',
-                        'items' => [
-                            '$ref' => '#/components/schemas/ResRestApiNsLogEntry',
-                        ],
-                    ],
+                        (int) 0 => [
+                            'type' => 'array',
+                            'items' => [
+                                '$ref' => '#/components/schemas/RestApiNsLogEntry'
+                            ]
+                        ]
+                    ]
                 ],
+                'description' => 'Entity RestApiNsLogEntry'
             ],
+            'ResRestApiNsLogEntry' => [
+                'type' => 'object',
+                'properties' => [
+                    'data' => [
+                        (int) 0 => [
+                            '$ref' => '#/components/schemas/RestApiNsLogEntry'
+                        ]
+                    ]
+                ],
+                'description' => 'Data wrapper for RestApiNsLogEntry',
+                'required' => [
+                    (int) 0 => 'data'
+                ]
+            ]
         ];
         $this->assertEquals(['paths' => $paths, 'componentSchemas' => $expectedSchemas], $array);
     }
@@ -128,7 +155,7 @@ class SwaggerBuilderTest extends TestCase
     {
         $swagger = new SwaggerFromController();
         $request = new ServerRequest();
-        $controller = new Controller($request, null, 'Pets');
+        $controller = new Controller($request, 'Pets');
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,
@@ -169,7 +196,7 @@ class SwaggerBuilderTest extends TestCase
                             ]
                         ],
                         [
-                            'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                            'description' => $this->_getLangIso(),
                             'in' => 'header',
                             'name' => 'Accept-Language',
                             'example' => 'en',
@@ -211,7 +238,7 @@ class SwaggerBuilderTest extends TestCase
     {
         $swagger = new SwaggerFromController();
         $request = new ServerRequest();
-        $controller = new Controller($request, null, 'Pets');
+        $controller = new Controller($request, 'Pets');
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,
@@ -260,7 +287,7 @@ class SwaggerBuilderTest extends TestCase
                             ]
                         ],
                         [
-                            'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                            'description' => $this->_getLangIso(),
                             'in' => 'header',
                             'name' => 'Accept-Language',
                             'example' => 'en',
@@ -290,7 +317,7 @@ class SwaggerBuilderTest extends TestCase
                                 'application/json' => [
                                     'schema' => [
                                         'type' => 'object',
-                                        'description' => 'Run bare',
+                                        'description' => 'Generic object when: Run bare',
                                         'properties' => [
                                             'hello' => [
                                                 'type' => 'string',
@@ -352,7 +379,7 @@ class SwaggerBuilderTest extends TestCase
     {
         $swagger = new SwaggerFromController();
         $request = new ServerRequest();
-        $controller = new Controller($request, null, 'Pets');
+        $controller = new Controller($request, 'Pets');
         $request1 = [
             'url' => '/testurl/3',
             'session' => null,
@@ -402,7 +429,7 @@ class SwaggerBuilderTest extends TestCase
                             ]
                         ],
                         [
-                            'description' => 'ISO 639-1 2 letter language code (depending on setup: en, es, de, ar, eng, spa, es_AR, en_US)',
+                            'description' => $this->_getLangIso(),
                             'in' => 'header',
                             'name' => 'Accept-Language',
                             'example' => 'en',
@@ -432,7 +459,7 @@ class SwaggerBuilderTest extends TestCase
                                 'application/json' => [
                                     'schema' => [
                                         'type' => 'object',
-                                        'description' => 'Run bare',
+                                        'description' => 'Generic object when: Run bare',
                                         'properties' => [
                                             'hello' => [
                                                 'type' => 'string',
@@ -449,7 +476,7 @@ class SwaggerBuilderTest extends TestCase
                                 'application/json' => [
                                     'schema' => [
                                         'type' => 'object',
-                                        'description' => 'Run bare',
+                                        'description' => 'Generic object when: Run bare',
                                         'properties' => [
                                             'hello' => [
                                                 'type' => 'string',

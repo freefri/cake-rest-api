@@ -48,47 +48,62 @@ class StandardSchemasTest extends TestCase
 
         $res = $schemas->getResponseSchemas($data);
         $expected = [
-            'type' => 'object',
-            'properties' => [
-                '$ref' => '#/components/schemas/PageRestApiNsLogEntry'
-            ]
+            '$ref' => '#/components/schemas/PaginatedRestApiNsLogEntry'
         ];
         $this->assertEquals($expected, $res);
         $expectedSchemas = [
             'RestApiNsLogEntry' => $this->getRestApiNsLogEntry(),
-            'PageRestApiNsLogEntry' => [
-                'type' => 'object',
-                'properties' => [
-                    'data' => [
-                        'type' => 'array',
-                        'items' => [
-                            '$ref' => '#/components/schemas/RestApiNsLogEntry'
-                        ],
-                    ],
-                    'total' => [
-                        'type' => 'number',
-                        'example' => 1
-                    ],
-                    'limit' => [
-                        'type' => 'number',
-                        'example' => 2
-                    ],
-                    '_links' => [
-                        '$ref' => '#/components/schemas/PaginationLinks'
-                    ],
-                ]
-            ],
             'PaginationLinks' => [
                 'type' => 'object',
+                'description' => 'Pagination links.',
                 'properties' => [
                     'self' => [
-                        'type' => 'string',
-                        'example' => 'https://example.com/self',
+                        [
+                            'type' => 'string',
+                            'example' => 'https://example.com/self',
+                        ]
                     ],
                     'next' => [
-                        'type' => 'string',
-                        'example' => 'https://example.com/next',
+                        [
+                            'type' => 'string',
+                            'example' => 'https://example.com/next',
+                        ]
                     ]
+                ]
+            ],
+            'PaginatedRestApiNsLogEntry' => [
+                'type' => 'object',
+                'description' => 'Paginated RestApiNsLogEntry',
+                'required' => [
+                    'data',
+                    'total',
+                    'limit',
+                    '_links',
+                ],
+                'properties' => [
+                    'data' => [
+                        [
+                            'type' => 'array',
+                            'items' => [
+                                '$ref' => '#/components/schemas/RestApiNsLogEntry'
+                            ],
+                        ]
+                    ],
+                    'total' => [
+                        [
+                            'type' => 'number',
+                            'example' => 1
+                        ]
+                    ],
+                    'limit' => [
+                        [
+                            'type' => 'number',
+                            'example' => 2
+                        ]
+                    ],
+                    '_links' => [
+                        ['$ref' => '#/components/schemas/PaginationLinks']
+                    ],
                 ]
             ],
         ];
@@ -108,14 +123,54 @@ class StandardSchemasTest extends TestCase
         $res = $schemas->getResponseSchemas($data);
         $expected = [
             'type' => 'object',
+            'description' => 'Generic object.',
             'properties' => [
                 'any' => [
-                    'type' => 'object',
-                    'properties' => [
-                        'simple' => [
-                            'type' => 'number',
-                            'example' => 1
-                        ]
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'object',
+                        'properties' => [
+                            '_c' => [
+                                'type' => 'string',
+                                'example' => 'RestApi\Model\Entity\LogEntry',
+                            ],
+                            'id' => [
+                                'type' => 'number',
+                                'example' => 1,
+                            ],
+                            'something' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    '_c' => [
+                                        'type' => 'string',
+                                        'example' => 'RestApi\Model\Entity\LogEntry',
+                                    ],
+                                    'id' => [
+                                        'type' => 'number',
+                                        'example' => 1,
+                                    ],
+                                ],
+                                'description' => 'objectInArray',
+                            ],
+                            'many' => [
+                                'type' => 'array',
+                                'items' => [
+                                    'type' => 'object',
+                                    'description' => 'getItems',
+                                    'properties' => [
+                                        '_c' => [
+                                            'type' => 'string',
+                                            'example' => 'RestApi\Model\Entity\LogEntry',
+                                        ],
+                                        'id' => [
+                                            'type' => 'number',
+                                            'example' => 1,
+                                        ],
+                                    ],
+                                ]
+                            ],
+                        ],
+                        'description' => 'getItems',
                     ]
                 ]
             ]
@@ -137,9 +192,11 @@ class StandardSchemasTest extends TestCase
         $res = $schemas->getResponseSchemas($data);
         $expected = [
             'type' => 'object',
+            'description' => 'Generic object.',
             'properties' => [
                 'any' => [
                     'type' => 'object',
+                    'description' => 'objectInArray',
                     'properties' => [
                         'simple' => [
                             'type' => 'number',
@@ -154,9 +211,11 @@ class StandardSchemasTest extends TestCase
         $this->assertEquals($expectedSchemas, $schemas->getSchemas());
         $expected = [
             'type' => 'object',
+            'description' => 'Generic object.',
             'properties' => [
                 'any' => [
                     'type' => 'object',
+                    'description' => 'objectInArray',
                     'properties' => [
                         'simple' => [
                             'type' => 'number',
