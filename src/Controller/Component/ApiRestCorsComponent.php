@@ -72,6 +72,7 @@ class ApiRestCorsComponent extends Component
                         'Accept-Language',
                         'X-Experience-API-Version',
                         'X-Whitelabel',
+                        'Baggage',
                     ])
                     ->maxAge(3600);
                 $response = $responseBuilder->build();
