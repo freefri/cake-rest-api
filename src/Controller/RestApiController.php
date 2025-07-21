@@ -25,6 +25,9 @@ use RestApi\Lib\Exception\SilentException;
 use RestApi\Lib\Oauth\ScopeRules;
 use RestApi\Lib\RestRenderer;
 
+/**
+ * @property \App\Controller\Component\OAuthServerComponent $OAuthServer
+ */
 abstract class RestApiController extends Controller
 {
     const STORE = 'addNew';
@@ -39,7 +42,7 @@ abstract class RestApiController extends Controller
     protected $return;
     protected $flatResponse = false;
     protected $useOauthServer = true;
-    public Component $OAuthServer;
+    public $OAuthServer;
 
     protected function loadComponentFromClass(string $className): Component
     {
