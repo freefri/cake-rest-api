@@ -39,6 +39,7 @@ abstract class RestApiController extends Controller
     protected $return;
     protected $flatResponse = false;
     protected $useOauthServer = true;
+    public Component $OAuthServer;
 
     protected function loadComponentFromClass(string $className): Component
     {
@@ -112,7 +113,7 @@ abstract class RestApiController extends Controller
 
         $this->_loadCorsComponent();
         if ($this->useOauthServer) {
-            $this->_loadOAuthServerComponent();
+            $this->OAuthServer = $this->_loadOAuthServerComponent();
         }
         $this->_setUserLang();
     }
