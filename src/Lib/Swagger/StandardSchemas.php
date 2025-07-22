@@ -51,7 +51,7 @@ class StandardSchemas
         $this->schemas[$entityType]['properties'][$property][] = $parsedProperties;
     }
 
-    private function parseProperties(mixed $data): array
+    public function parseProperties(mixed $data, string $testDescription = null): array
     {
         $entity = new StandardEntity($data);
         if ($entity->type()) {
@@ -70,7 +70,7 @@ class StandardSchemas
                     'items' => $this->parseProperties($data[0]),
                 ];
             } else {
-                return TypeParser::getDataWithType($data);
+                return TypeParser::getDataWithType($data, $testDescription);
             }
         }
     }

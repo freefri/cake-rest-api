@@ -83,7 +83,7 @@ class SwaggerTestCaseTest extends TestCase
         $this->assertEquals([['bearerAuth' => []]], $test->getSecurity());
         $expectedRequest = [
             'type' => 'object',
-            'description' => 'Run',
+            'description' => 'Generic object when: Run',
             'properties' => [
                 'hello' => [
                     'type' => 'string',
@@ -207,7 +207,7 @@ class SwaggerTestCaseTest extends TestCase
         $this->assertEquals([['bearerAuth' => []]], $test->getSecurity());
         $expectedRequest = [
             'type' => 'object',
-            'description' => 'Run',
+            'description' => 'Generic object when: Run',
             'properties' => [
                 'hello' => [
                     'type' => 'string',
@@ -496,5 +496,142 @@ class SwaggerTestCaseTest extends TestCase
             ]
         ];
         $this->assertEquals($expectedParams, $test->getParams());
+    }
+
+    public function testGetRequestSchema()
+    {
+        // should parse entities and remove _c
+        $request = new ServerRequest();
+        $controller = new Controller($request);
+        $request = [
+            'post' => [
+                'type' => 'object',
+                'description' => 'Some description',
+                'properties' => [
+                    'survey_id' => [
+                        'type' => 'number',
+                        'example' => 151
+                    ],
+                    'response' => [
+                        'type' => 'array',
+                        'items' => [
+                            'type' => 'object',
+                            'properties' => [
+                                '_c' => [
+                                    'type' => 'string',
+                                    'example' => 'SurveyResponse'
+                                ],
+                            ],
+                            'description' => 'getItems'
+                        ]
+                    ],
+                    '_c' => [
+                        'type' => 'string',
+                        'example' => 'PostUsersSurveyAnswersBody'
+                    ]
+                ]
+            ]
+        ];
+        $body = [
+            'data' => ['hello' => 'world'],
+            'meta' => ['page' => 1],
+        ];
+        $res = $this->_getResponse($body, 403);
+        $lastRoute = '/testurl_last/{eventID}/pathentities/*';
+        $test = new SwaggerTestCase($controller, $request, $res, $lastRoute);
+
+        $expected = [
+            'type' => 'object',
+            'description' => 'Generic object when: Run',
+            'properties' => [
+                'type' => [
+                    'type' => 'string',
+                    'example' => 'object'
+                ],
+                'description' => [
+                    'type' => 'string',
+                    'example' => 'Some description'
+                ],
+                'properties' => [
+                    'type' => 'object',
+                    'properties' => [
+                        'survey_id' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'type' => [
+                                    'type' => 'string',
+                                    'example' => 'number'
+                                ],
+                                'example' => [
+                                    'type' => 'number',
+                                    'example' => (int) 151
+                                ]
+                            ],
+                            'description' => 'objectInArray'
+                        ],
+                        'response' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'type' => [
+                                    'type' => 'string',
+                                    'example' => 'array'
+                                ],
+                                'items' => [
+                                    'type' => 'object',
+                                    'properties' => [
+                                        'type' => [
+                                            'type' => 'string',
+                                            'example' => 'object'
+                                        ],
+                                        'properties' => [
+                                            'type' => 'object',
+                                            'properties' => [
+                                                '_c' => [
+                                                    'type' => 'object',
+                                                    'properties' => [
+                                                        'type' => [
+                                                            'type' => 'string',
+                                                            'example' => 'string'
+                                                        ],
+                                                        'example' => [
+                                                            'type' => 'string',
+                                                            'example' => 'SurveyResponse'
+                                                        ]
+                                                    ],
+                                                    'description' => 'objectInArray'
+                                                ],
+                                            ],
+                                            'description' => 'objectInArray'
+                                        ],
+                                        'description' => [
+                                            'type' => 'string',
+                                            'example' => 'getItems'
+                                        ]
+                                    ],
+                                    'description' => 'objectInArray'
+                                ]
+                            ],
+                            'description' => 'objectInArray'
+                        ],
+                        '_c' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'type' => [
+                                    'type' => 'string',
+                                    'example' => 'string'
+                                ],
+                                'example' => [
+                                    'type' => 'string',
+                                    'example' => 'PostUsersSurveyAnswersBody'
+                                ]
+                            ],
+                            'description' => 'objectInArray'
+                        ]
+                    ],
+                    'description' => 'objectInArray'
+                ]
+            ]
+        ];
+        $this->assertEquals($expected, $test->getRequestSchema());
     }
 }

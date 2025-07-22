@@ -49,7 +49,7 @@ class SwaggerBuilder
                 if ($sec) {
                     $operation['security'] = $sec;
                 }
-                $requestBody = $this->_getRequestBodyInRoute($code_md5_elem);
+                $requestBody = $this->getRequestBodyInRoute($code_md5_elem);
                 if ($requestBody) {
                     $operation['requestBody'] = $requestBody;
                 }
@@ -113,7 +113,7 @@ class SwaggerBuilder
         throw new InternalErrorException('Object structure is not valid ' . json_encode($selectedRouteMethod));
     }
 
-    public function _getRequestBodyInRoute(array $selectedRouteMethod): array
+    public function getRequestBodyInRoute(array $selectedRouteMethod): array
     {
         $requestSchema = [];
         foreach ($selectedRouteMethod as $md5_elem) {
@@ -121,7 +121,13 @@ class SwaggerBuilder
             foreach ($md5_elem as $testCase) {
                 $req = $testCase->getRequestSchema();
                 if ($req && $testCase->getStatusCode() < 400) {
-                    $requestSchema[] = $req;
+                    if (isset($req['$ref'])) {
+                        if ($req['$ref'] !== ($requestSchema[0]['$ref'] ?? null)) {
+                            $requestSchema[] = $req;
+                        }
+                    } else {
+                        $requestSchema[] = $req;
+                    }
                 }
             }
         }
