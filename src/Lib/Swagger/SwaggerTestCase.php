@@ -313,14 +313,16 @@ class SwaggerTestCase implements \JsonSerializable
             ];
         } else {
             return $this->schemas->parseProperties($post, $this->getDescription());
-            //foreach ($post as $property => $value) {
-            //    $properties[$property] = $this->getProp($value, $property);
-            //}
-            //return [
-            //    'type' => 'object',
-            //    'description' => $this->getDescription(),
-            //    'properties' => $properties,
-            //];
+            /*
+            foreach ($post as $property => $value) {
+                $properties[$property] = $this->getProp($value, $property);
+            }
+            return [
+                'type' => 'object',
+                'description' => $this->getDescription(),
+                'properties' => $properties,
+            ];
+            //*/
         }
     }
 

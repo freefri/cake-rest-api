@@ -123,6 +123,7 @@ class SwaggerBuilder
                 if ($req && $testCase->getStatusCode() < 400) {
                     if (isset($req['$ref'])) {
                         if ($req['$ref'] !== ($requestSchema[0]['$ref'] ?? null)) {
+                            // do not add duplicated
                             $requestSchema[] = $req;
                         }
                     } else {

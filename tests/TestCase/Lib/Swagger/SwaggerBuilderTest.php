@@ -391,6 +391,7 @@ class SwaggerBuilderTest extends TestCase
                 'REQUEST_URI' => '/testurl/3'
             ],
             'post' => [
+                '_c' => 'ExamplePostedBody',
                 'first' => 'posted_body'
             ],
             'cookies' => []
@@ -398,6 +399,7 @@ class SwaggerBuilderTest extends TestCase
         $request2 = $request1;
         $request2['query'] = ['my_param' => 'param_value'];
         $request2['post'] = [
+            '_c' => 'ExamplePostedBody',
             'first' => 'another_posted_body',
             'second' => 'second_posted_body',
         ];
@@ -471,36 +473,11 @@ class SwaggerBuilderTest extends TestCase
                         ]
                     ],
                     'requestBody' => [
-                        'description' => 'Request body can match to any of the 2 provided schemas',
+                        'description' => '',
                         'content' => [
                             'application/json' => [
                                 'schema' => [
-                                    'oneOf' => [
-                                        [
-                                            'type' => 'object',
-                                            'description' => 'Generic object when: Run bare',
-                                            'properties' => [
-                                                'first' => [
-                                                    'type' => 'string',
-                                                    'example' => 'posted_body',
-                                                ],
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'object',
-                                            'description' => 'Generic object when: Run bare',
-                                            'properties' => [
-                                                'first' => [
-                                                    'type' => 'string',
-                                                    'example' => 'another_posted_body',
-                                                ],
-                                                'second' => [
-                                                    'type' => 'string',
-                                                    'example' => 'second_posted_body',
-                                                ],
-                                            ],
-                                        ],
-                                    ],
+                                    '$ref' => '#/components/schemas/ExamplePostedBody'
                                 ],
                             ],
                         ],
@@ -513,7 +490,31 @@ class SwaggerBuilderTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals(['paths' => $expected, 'componentSchemas' => []], $array);
+        $schemas = [
+            'ExamplePostedBody' => [
+                'type' => 'object',
+                'properties' => [
+                    'first' => [
+                        (int) 0 => [
+                            'type' => 'string',
+                            'example' => 'posted_body'
+                        ],
+                        (int) 1 => [
+                            'type' => 'string',
+                            'example' => 'another_posted_body'
+                        ]
+                    ],
+                    'second' => [
+                        (int) 0 => [
+                            'type' => 'string',
+                            'example' => 'second_posted_body'
+                        ]
+                    ]
+                ],
+                'description' => 'Entity ExamplePostedBody'
+            ]
+        ];
+        $this->assertEquals(['paths' => $expected, 'componentSchemas' => $schemas], $array);
     }
 
     public function testToArray_skippingRequestBodyFromErrorResponses()
