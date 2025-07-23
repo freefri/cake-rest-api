@@ -6,6 +6,7 @@ namespace RestApi\Lib\Error;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Error\Renderer\WebExceptionRenderer;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Psr\Http\Message\ResponseInterface;
 use RestApi\Controller\RestApiErrorController;
@@ -27,6 +28,9 @@ class ExceptionRenderer extends WebExceptionRenderer
     protected function _getController(): Controller
     {
         $request = $this->request;
+        if (!$request) {
+            $request = new ServerRequest();
+        }
 
         try {
             $controller = new RestApiErrorController($request);
