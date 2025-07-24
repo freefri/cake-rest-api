@@ -26,14 +26,15 @@ class StandardSchemas
         $entity = new StandardEntity($obj);
         $entityType = $entity->getInternalType();
         if ($entityType) {
-            $entity = new StandardEntity($obj);
             if ($entity->isPaginationWrapper()) {
                 $obj['_links'][RestApiEntity::CLASS_NAME] = self::PAGINATION_LINKS;
                 $obj[RestApiEntity::CLASS_NAME] = $this->page($entityType);
+            } else if ($entity->isDataArray()) {
+                $obj[RestApiEntity::CLASS_NAME] = $this->resArray($entityType);
             } else if ($entity->isDataResult()) {
                 $obj[RestApiEntity::CLASS_NAME] = $this->res($entityType);
             }
-            return $this->parseProperties($obj);
+            return $this->parseProperties($obj, $testDescription);
         }
         return TypeParser::getDataWithType($obj, $testDescription);
     }
@@ -83,5 +84,10 @@ class StandardSchemas
     private function page(string $s): string
     {
         return 'Paginated' . $s;
+    }
+
+    private function resArray(string $s): string
+    {
+        return 'Array' . $s;
     }
 }

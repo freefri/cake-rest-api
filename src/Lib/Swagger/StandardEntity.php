@@ -9,10 +9,12 @@ use RestApi\Model\Entity\RestApiEntity;
 class StandardEntity
 {
     private mixed $data;
+    private mixed $internalType;
 
     public function __construct(mixed $data)
     {
         $this->data = $data;
+        $this->internalType = $this->_getInternalType($data);
     }
 
     public function getData(): mixed
@@ -22,7 +24,11 @@ class StandardEntity
 
     public function getInternalType(): ?string
     {
-        $data = $this->data;
+        return $this->internalType;
+    }
+
+    private function _getInternalType($data): ?string
+    {
         $entity = $data['data'][0] ?? null; // data with array of entities
         if (!$entity) {
             $entity = $data[0] ?? null; // directly array of entities
@@ -111,5 +117,13 @@ class StandardEntity
             }
         }
         return true;
+    }
+
+    public function isDataArray(): bool
+    {
+        if (!$this->isDataResult()) {
+            return false;
+        }
+        return isset($this->data['data'][0]);
     }
 }
