@@ -114,16 +114,18 @@ class TypeParser
                 'reference',
                 'filename',
             ];
-            if (in_array($property, $references)) { // references
-                $value = preg_replace('/(?<=\d{2}-)\d{13}/', '*************', $value);
-            }
-            $regexDate = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/';
-            if (preg_match($regexDate, $value)) {
-                return '2016-04-15T10:34:55+02:00';
-            }
-            $amz = 'X-Amz-Credential=';
-            if (mb_strlen($value) > 200 && str_contains($value, $amz)) { // long amazon signed urls
-                return explode($amz, $value)[0] . $amz . '**********';
+            if ($value) {
+                if (in_array($property, $references)) { // references
+                    $value = preg_replace('/(?<=\d{2}-)\d{13}/', '*************', $value);
+                }
+                $regexDate = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/';
+                if (preg_match($regexDate, $value)) {
+                    return '2016-04-15T10:34:55+02:00';
+                }
+                $amz = 'X-Amz-Credential=';
+                if (mb_strlen($value) > 200 && str_contains($value, $amz)) { // long amazon signed urls
+                    return explode($amz, $value)[0] . $amz . '**********';
+                }
             }
             if (in_array($property, $securedAnonymizedVariables)) { // secrets
                 $value = preg_replace('/[a-zA-Z0-9]/', '*', $value);
