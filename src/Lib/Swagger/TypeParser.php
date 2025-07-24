@@ -83,6 +83,17 @@ class TypeParser
         } else if ($value === true || $value === false) {
             $prop = self::_boolean($value);
         } else {
+            $prop = [
+                'type' => 'string',
+                'example' => '' . self::anonymizeVariables($value, $property),
+            ];
+        }
+        return $prop;
+    }
+
+    public static function anonymizeVariables($value, string $property = null)
+    {
+        if ($property) {
             $securedAnonymizedVariables = [
                 'password',
                 'access_token',
@@ -91,16 +102,34 @@ class TypeParser
                 'client_id',
                 'vp_token',
                 'X-Amz-Signature',
+                'psp_redirect',
+                'redirect_url',
+                'trk_ga_ec',
+                'signature',
+                'created',
             ];
-            if ($property && in_array($property, $securedAnonymizedVariables)) {
-                $value = str_repeat('*', mb_strlen($value));
+            $references = [
+                'mandate_id',
+                'merchant_reference',
+                'reference',
+                'filename',
+            ];
+            if (in_array($property, $references)) { // references
+                $value = preg_replace('/(?<=\d{2}-)\d{13}/', '*************', $value);
             }
-            $prop = [
-                'type' => 'string',
-                'example' => ''.$value,
-            ];
+            $regexDate = '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/';
+            if (preg_match($regexDate, $value)) {
+                return '2016-04-15T10:34:55+02:00';
+            }
+            $amz = 'X-Amz-Credential=';
+            if (mb_strlen($value) > 200 && str_contains($value, $amz)) { // long amazon signed urls
+                return explode($amz, $value)[0] . $amz . '**********';
+            }
+            if (in_array($property, $securedAnonymizedVariables)) { // secrets
+                $value = preg_replace('/[a-zA-Z0-9]/', '*', $value);
+            }
         }
-        return $prop;
+        return $value;
     }
 
     public static function getItems($data, int $depth = 0): array

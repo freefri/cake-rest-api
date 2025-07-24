@@ -58,6 +58,9 @@ class StandardSchemas
         if ($entity->type()) {
             unset($data[RestApiEntity::CLASS_NAME]);
             foreach ($data as $property => $value) {
+                if ($value && is_string($value)) {
+                    $value = TypeParser::anonymizeVariables($value, $property);
+                }
                 $parsedProperties = $this->parseProperties($value);
                 $this->_addPropertyToSchema($entity, $property, $parsedProperties);
             }
