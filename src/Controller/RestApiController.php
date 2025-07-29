@@ -183,7 +183,9 @@ abstract class RestApiController extends Controller
             }
         }
         if ($secondParam !== null) {
-            throw new NotFoundException('Invalid resource locator including param: ' . $secondParam);
+            throw new NotFoundException(
+                'Invalid resource locator including param: ' . $secondParam . ' called from: ' . static::class
+            );
         }
         if ($id === null || $id === '') {
             if ($this->request->is('GET')) {
