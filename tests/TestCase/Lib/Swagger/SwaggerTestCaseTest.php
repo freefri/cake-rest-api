@@ -61,7 +61,7 @@ class SwaggerTestCaseTest extends TestCase
             [
                 'description' => 'Auth token',
                 'in' => 'header',
-                'name' => 'Authentication',
+                'name' => 'Authorization',
                 'example' => 'Bearer ****************',
                 'required' => true,
                 'schema' => [
@@ -185,7 +185,7 @@ class SwaggerTestCaseTest extends TestCase
             [
                 'description' => 'Auth token',
                 'in' => 'header',
-                'name' => 'Authentication',
+                'name' => 'Authorization',
                 'example' => 'Bearer ****************',
                 'required' => true,
                 'schema' => [
@@ -477,7 +477,7 @@ class SwaggerTestCaseTest extends TestCase
             [
                 'description' => 'Auth token',
                 'in' => 'header',
-                'name' => 'Authentication',
+                'name' => 'Authorization',
                 'example' => 'Bearer ****************',
                 'required' => true,
                 'schema' => [

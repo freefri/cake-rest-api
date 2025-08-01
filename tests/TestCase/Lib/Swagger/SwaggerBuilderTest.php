@@ -57,7 +57,7 @@ class SwaggerBuilderTest extends TestCase
                         [
                             'description' => 'Auth token',
                             'in' => 'header',
-                            'name' => 'Authentication',
+                            'name' => 'Authorization',
                             'example' => 'Bearer ****************',
                             'required' => true,
                             'schema' => [
@@ -188,7 +188,7 @@ class SwaggerBuilderTest extends TestCase
                         [
                             'description' => 'Auth token',
                             'in' => 'header',
-                            'name' => 'Authentication',
+                            'name' => 'Authorization',
                             'example' => 'Bearer ****************',
                             'required' => true,
                             'schema' => [
@@ -279,7 +279,7 @@ class SwaggerBuilderTest extends TestCase
                         [
                             'description' => 'Auth token',
                             'in' => 'header',
-                            'name' => 'Authentication',
+                            'name' => 'Authorization',
                             'example' => 'Bearer ****************',
                             'required' => true,
                             'schema' => [
@@ -422,7 +422,7 @@ class SwaggerBuilderTest extends TestCase
                         [
                             'description' => 'Auth token',
                             'in' => 'header',
-                            'name' => 'Authentication',
+                            'name' => 'Authorization',
                             'example' => 'Bearer ****************',
                             'required' => true,
                             'schema' => [
@@ -561,9 +561,19 @@ class SwaggerBuilderTest extends TestCase
                     'description' => 'Run bare',
                     'parameters' => [
                         [
+                            'description' => '',
+                            'in' => 'query',
+                            'name' => 'my_param',
+                            'example' => 'param_value',
+                            'required' => false,
+                            'schema' => [
+                                'type' => 'string'
+                            ]
+                        ],
+                        [
                             'description' => 'Auth token',
                             'in' => 'header',
-                            'name' => 'Authentication',
+                            'name' => 'Authorization',
                             'example' => 'Bearer ****************',
                             'required' => true,
                             'schema' => [
@@ -580,16 +590,6 @@ class SwaggerBuilderTest extends TestCase
                                 'type' => 'string'
                             ]
                         ],
-                        [
-                            'description' => '',
-                            'in' => 'query',
-                            'name' => 'my_param',
-                            'example' => 'param_value',
-                            'required' => false,
-                            'schema' => [
-                                'type' => 'string'
-                            ]
-                        ],
                     ],
                     'tags' => [
                         (int) 0 => 'Pets'
@@ -597,23 +597,6 @@ class SwaggerBuilderTest extends TestCase
                     'responses' => [
                         200 => [
                             'description' => 'OK',
-                            'content' => [
-                                'application/json' => [
-                                    'schema' => [
-                                        'type' => 'object',
-                                        'description' => 'Generic object when: Run bare',
-                                        'properties' => [
-                                            'hello' => [
-                                                'type' => 'string',
-                                                'example' => 'world'
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ],
-                        400 => [
-                            'description' => 'Bad Request',
                             'content' => [
                                 'application/json' => [
                                     'schema' => [

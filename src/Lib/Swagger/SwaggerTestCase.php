@@ -250,7 +250,7 @@ class SwaggerTestCase implements \JsonSerializable
             $toRet[] = [
                 'description' => 'Auth token',
                 'in' => 'header',
-                'name' => 'Authentication',
+                'name' => 'Authorization',
                 'example' => 'Bearer ****************',
                 'required' => true,
                 'schema' => ['type' => 'string'],

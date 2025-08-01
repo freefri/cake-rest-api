@@ -48,7 +48,7 @@ class SwaggerFromControllerTest extends TestCase
                             (int) 0 => [
                                 'description' => 'Auth token',
                                 'in' => 'header',
-                                'name' => 'Authentication',
+                                'name' => 'Authorization',
                                 'example' => 'Bearer ****************',
                                 'required' => true,
                                 'schema' => [
@@ -109,30 +109,7 @@ class SwaggerFromControllerTest extends TestCase
         ];
         $res = $this->_getResponse($body, 403);
         $swagger->addToSwagger($controller, $request, $res);
-
-        $expected2 = $expected;
-        $expected2['paths']['']['get']['responses'][403] = [
-            'description' => 'Forbidden',
-            'content' => [
-                'application/json' => [
-                    'schema' => [
-                        'type' => 'object',
-                        'description' => 'Generic object when: Run bare',
-                        'properties' => [
-                            'error' => [
-                                'type' => 'string',
-                                'example' => 'Forbidden'
-                            ],
-                            'code' => [
-                                'type' => 'number',
-                                'example' => 403
-                            ],
-                        ]
-                    ]
-                ]
-            ]
-        ];
-        $this->assertEquals($expected2, $swagger->jsonSerialize());
+        $this->assertEquals($expected, $swagger->jsonSerialize());
     }
 
     private function _getResponse(array $body, int $status = 200): Response
