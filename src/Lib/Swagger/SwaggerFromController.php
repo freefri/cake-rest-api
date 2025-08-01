@@ -3,6 +3,7 @@
 namespace RestApi\Lib\Swagger;
 
 use Cake\Controller\Controller;
+use Cake\Core\Configure;
 use Cake\Http\Response;
 
 class SwaggerFromController implements \JsonSerializable
@@ -56,10 +57,16 @@ class SwaggerFromController implements \JsonSerializable
                     $isOk = $code >= 200 && $code <= 399;
                     if ($isOk) {
                         $countOk++;
+                    } else {
+                        if (!Configure::read('Swagger.displayErrorResponses')) {
+                            unset($toRet[$route][$method][$code]); // remove any not 200 codes
+                        }
                     }
                 }
                 if (!$countOk) {
-                    unset($toRet[$route][$method]);
+                    if (!Configure::read('Swagger.displayMethodsWithoutOk')) {
+                        unset($toRet[$route][$method]);
+                    }
                 }
             }
         }
