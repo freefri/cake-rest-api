@@ -101,6 +101,8 @@ class TypeParser
                 'client_assertion',
                 'client_id',
                 'vp_token',
+                'Policy',
+                'X-Amz-Credential',
                 'X-Amz-Signature',
                 'psp_redirect',
                 'redirect_url',
