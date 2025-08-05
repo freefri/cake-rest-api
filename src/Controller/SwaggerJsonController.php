@@ -59,7 +59,11 @@ class SwaggerJsonController extends \Swagger\Controller\SwaggerUiController
 
     protected function getContent(SwaggerReader $reader, array $paths, array $schemas = []): array
     {
-        return $reader->getInfo($paths);
+        $info = $reader->getInfo($paths);
+        if ($schemas) {
+            $info['components']['schemas'] = $schemas;
+        }
+        return $info;
     }
 
     private function _getBaseNamespace()

@@ -31,7 +31,9 @@ class PHPUnitExtension implements FinishedSubscriber, Extension
         $schemasDirectory = $this->getDirectory() . SwaggerFromController::SCHEMA_DIR . DS;
         $componentSchemas = $reader->readFiles($schemasDirectory, new SchemaReader());
         $paths = $reader->readFiles($this->getDirectory(), new PathReader());
-        $this->_writeFile($reader->getInfo($paths));
+        $info = $reader->getInfo($paths);
+        $info['components']['schemas'] = $componentSchemas;
+        $this->_writeFile($info);
     }
 
     public static function getDirectory(): string
