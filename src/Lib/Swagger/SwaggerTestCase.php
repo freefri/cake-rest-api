@@ -72,6 +72,7 @@ class SwaggerTestCase implements \JsonSerializable
                 $this->_cachedRoute = $mainRoute . $this->_lastEntityIdName($lastInRoute);
             }
         }
+        $this->_cachedRoute = Configure::read('Swagger.addRoutePrefix') . $this->_cachedRoute;
         return $this->_cachedRoute;
     }
 
