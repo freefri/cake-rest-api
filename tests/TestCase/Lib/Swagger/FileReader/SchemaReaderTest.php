@@ -6,6 +6,7 @@ namespace RestApi\Test\TestCase\Lib\Swagger\FileReader;
 
 use Cake\TestSuite\TestCase;
 use RestApi\Lib\Swagger\FileReader\SchemaReader;
+use RestApi\Lib\Swagger\TypeParser;
 
 class SchemaReaderTest extends TestCase
 {
@@ -32,6 +33,13 @@ class SchemaReaderTest extends TestCase
         $reader = new SchemaReader();
         $reader->add($data);
         $data['Course']['properties']['title'][0]['type'] = 'number';
+        $array = [
+            'type' => 'array',
+            'items' => [
+                'type' => 'string', 'example' => 'two',
+            ],
+        ];
+        $data['Course']['properties']['title'][2] = $array;
         $reader->add($data);
         $res = $reader->merge();
         $expected = [
@@ -46,13 +54,13 @@ class SchemaReaderTest extends TestCase
                         ],
                     ],
                     'title' => [
-
                         [
                             'type' => 'string', 'example' => 'Test active course',
                         ],
                         [
                             'type' => 'number', 'example' => 'Test active course',
                         ],
+                        $array,
                     ],
                 ],
                 'description' => 'Entity Course',
@@ -76,16 +84,20 @@ class SchemaReaderTest extends TestCase
                     ],
                     'title' => [
                         'oneOf' => [
-                            ['type' => 'string'],
-                            ['type' => 'number'],
+                            ['type' => 'string', 'example' => 'Test active course'],
+                            ['type' => 'number', 'example' => 'Test active course'],
+                            [
+                                'type' => 'array',
+                                'items' => [
+                                    'type' => 'string', 'example' => 'two',
+                                ],
+                            ],
                         ],
-                        'example' => 'Test active course',
                     ],
                 ],
                 'description' => 'Entity Course',
                 'required' => [
                     'id',
-                    'title'
                 ],
             ],
         ];
@@ -134,6 +146,7 @@ class SchemaReaderTest extends TestCase
 
     public function testAddOneOfType()
     {
+        // should not add when existing
         $reader = new SchemaReader();
         $types = [
             [
@@ -143,7 +156,65 @@ class SchemaReaderTest extends TestCase
                 'type' => 'number',
             ],
         ];
-        $res = $reader->addOneOfType($types, 'string');
+        $res = $reader->addOneOfType($types, ['type' => 'string']);
         $this->assertEquals($types, $res);
+        // should add one more
+        $reader = new SchemaReader();
+        $types = [
+            [
+                'type' => 'string',
+            ],
+        ];
+        $res = $reader->addOneOfType($types, ['type' => 'number', 'example' => '5096']);
+        $types = [
+            [
+                'type' => 'string',
+            ],
+            [
+                'type' => 'number',
+                'example' => '5096',
+            ],
+        ];
+        $this->assertEquals($types, $res);
+    }
+
+    public function testGetNewContent()
+    {
+        // should not get empty objects
+        $contentArray = [
+            [
+                'type' => 'array',
+                'items' => [
+                    '$ref' => '#/components/schemas/AttendeeServiceTag',
+                ],
+            ],
+            [
+                'type' => 'object', 'description' => TypeParser::ANYTHING, 'additionalProperties' => true,
+            ],
+        ];
+        $reader = new SchemaReader();
+        $res = $reader->getNewContent($contentArray);
+        $expected = [
+            'type' => 'array',
+            'items' => [
+                '$ref' => '#/components/schemas/AttendeeServiceTag',
+            ],
+        ];
+        $this->assertEquals($expected, $res);
+        // should not get empty objects
+        $contentArray = [
+            [
+                'type' => 'object', 'description' => TypeParser::ANYTHING, 'additionalProperties' => true,
+            ],
+            [
+                'type' => 'array',
+                'items' => [
+                    '$ref' => '#/components/schemas/AttendeeServiceTag',
+                ],
+            ],
+        ];
+        $reader = new SchemaReader();
+        $res = $reader->getNewContent($contentArray);
+        $this->assertEquals($expected, $res);
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace RestApi\Lib\Swagger\FileReader;
 
+use RestApi\Lib\Swagger\TypeParser;
+
 class SchemaReader implements FileReader
 {
     private array $rawFiles = [];
@@ -61,7 +63,9 @@ class SchemaReader implements FileReader
         foreach ($toRet as &$contents) {
             $mainCounterAmount = $this->_getMainCounterAmount($contents);
             foreach ($contents['properties'] as $propertyName => &$contentArray) {
-                if ($mainCounterAmount !== 0 && $mainCounterAmount === count($contentArray)) {
+                $hasMainElement = $mainCounterAmount !== 0;
+                $hasSameAmountAsMainElement = $mainCounterAmount === count($contentArray);
+                if ($hasMainElement && $hasSameAmountAsMainElement) {
                     $hasNullable = false;
                     foreach ($contentArray as $c) {
                         if ($c['nullable'] ?? false) {
@@ -74,13 +78,13 @@ class SchemaReader implements FileReader
                         }
                     }
                 }
-                $contentArray = $this->_getNewContent($contentArray, $propertyName);
+                $contentArray = $this->getNewContent($contentArray, $propertyName);
             }
         }
         return $toRet;
     }
 
-    private function _getNewContent(mixed $contentArray, string $propertyName = ''): array
+    public function getNewContent(mixed $contentArray, string $propertyName = ''): array
     {
         $newContent = [];
         foreach ($contentArray as $value) {
@@ -94,26 +98,30 @@ class SchemaReader implements FileReader
                     $newContent['nullable'] = true;
                 }
             }
-            if (($newContent['type'] ?? null) !== 'array' && ($value['type'] ?? null) === 'array') {
-                return $value;
-            }
             if ($isValueNullable) {
                 $newContent['nullable'] = $value['nullable'];
             }
-            if (!isset($newContent['example']) && isset($value['example'])) {
+            if (!isset($newContent['example']) && !isset($newContent['oneOf']) && isset($value['example'])) {
                 $newContent['example'] = $value['example'];
             }
             // allow many types per property as oneOf
             if (isset($value['type'])) {
                 if (isset($newContent['type'])) {
                     if ($value['type'] !== $newContent['type'] && !$this->_isStringNullable($value)) {
-                        $newContent['oneOf'][]['type'] = $newContent['type'];
-                        $newContent['oneOf'][]['type'] = $value['type'];
-                        unset($newContent['type']);
+                        if (!$this->_isEmptyObjectOrArray($value)) {
+                            // do not add any empty object or array if there is a type already existing
+                            if ($this->_isEmptyObjectOrArray($newContent)) {
+                                // replace empty object or array when it eas already there
+                                $newContent = $value;
+                            } else {
+                                $newContent = ['oneOf' => [$newContent]];
+                                $newContent['oneOf'][] = $value;
+                            }
+                        }
                     }
                 } else {
                     if (isset($newContent['oneOf'][0]['type'])) {
-                        $newContent['oneOf'] = $this->addOneOfType($newContent['oneOf'], $value['type']);
+                        $newContent['oneOf'] = $this->addOneOfType($newContent['oneOf'], $value);
                     }
                 }
             }
@@ -121,20 +129,27 @@ class SchemaReader implements FileReader
         return $newContent;
     }
 
-    public function addOneOfType(array $types, mixed $newType): array
+    public function addOneOfType(array $types, array $newType): array
     {
         $shouldAdd = true;
         $toRet = [];
         foreach ($types as $oneOf) {
-            if ($oneOf['type'] === $newType) {
+            if ($oneOf['type'] === $newType['type']) {
                 $shouldAdd = false;
             }
             $toRet[] = $oneOf;
         }
         if ($shouldAdd) {
-            $toRet[] = ['type' => $newType];
+            $toRet[] = $newType;
         }
         return $toRet;
+    }
+
+    private function _isEmptyObjectOrArray(mixed $value): bool
+    {
+        $isObject = ($value['type'] ?? null) === 'object';
+        $isUnknownObject = ($value['description'] ?? null) === TypeParser::ANYTHING;
+        return $isObject && $isUnknownObject;
     }
 
     private function _isStringNullable(mixed $newContent): bool

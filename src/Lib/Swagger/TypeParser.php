@@ -4,6 +4,8 @@ namespace RestApi\Lib\Swagger;
 
 class TypeParser
 {
+    public const string ANYTHING = 'Any object';
+
     public static function getDataWithType($json, string $testDescription = null): array
     {
         $isArray = is_array($json) && isset($json[0]);
@@ -32,7 +34,7 @@ class TypeParser
                     'example' => $json,
                 ];
             } else if ($json === []) {
-                $data = self::_any('Any object'); // anything
+                $data = self::_any(TypeParser::ANYTHING);
             } else {
                 $properties = [];
                 foreach ($json as $property => $value) {
