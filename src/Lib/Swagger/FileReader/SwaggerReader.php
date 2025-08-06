@@ -2,6 +2,7 @@
 
 namespace RestApi\Lib\Swagger\FileReader;
 
+use Cake\Core\Configure;
 use Cake\Http\Exception\NotFoundException;
 
 class SwaggerReader
@@ -23,10 +24,14 @@ class SwaggerReader
         } else {
             $serverUrl = 'https://github.com/freefri/cake-rest-api/';
         }
+        $version = Configure::read('Swagger.apiVersion');
+        if (!$version) {
+            $version = (date('Y') - 2017).'.'.date('W').'.'.date('dHi');
+        }
         return [
             'openapi' => '3.0.0',
             'info' => [
-                'version' => (date('Y') - 2017).'.'.date('W').'.'.date('dHi'),
+                'version' => $version,
                 'title' => 'CT - OpenAPI 3.0',
                 'description' => 'API Rest',
                 'termsOfService' => 'https://github.com/freefri/cake-rest-api/',
