@@ -48,16 +48,25 @@ class PHPUnitExtension implements FinishedSubscriber, Extension
     private function _writeFile(array $contents): ?string
     {
         $dir = Configure::read('Swagger.fullFileDir');// when false or null do not generate full json
+        if ($dir === null) {
+            $relative = getenv('SWAGGER_RELATIVE_FILE_DIR');
+            if ($relative) {
+                $dir = ROOT . $relative;
+            }
+        }
         if (!$dir) {
             return null;
         }
-        if ($dir === true) {// when true generate with default directory (optionally add string as directory path)
+        if ($dir === true || $dir === '1') {// when true generate with default directory (optionally add string as directory path)
             $dir = $this->getDirectory();
         }
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
         $jsonFileName = Configure::read('Swagger.fullFileName');
+        if (!$jsonFileName) {
+            $jsonFileName = getenv('SWAGGER_FULL_FILE_NAME');
+        }
         if (!$jsonFileName) {
             $jsonFileName = SwaggerReader::FULL_SWAGGER_JSON;
         }
