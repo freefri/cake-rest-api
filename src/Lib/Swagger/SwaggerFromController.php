@@ -78,9 +78,10 @@ class SwaggerFromController implements \JsonSerializable
         return $this->_toArray();
     }
 
-    private function _writeSingleTestJsonFile(string $name, array $content): string
+    private function _writeSingleTestJsonFile(string $subDir, string $name, array $content): void
     {
         $dir = PHPUnitExtension::getDirectory();
+        $dir = $dir . $subDir;
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
@@ -88,13 +89,12 @@ class SwaggerFromController implements \JsonSerializable
         $handle = fopen($filename, 'w') or die('cannot open the file to add swagger '.$filename);
         fwrite($handle, json_encode($content, JSON_PRETTY_PRINT + JSON_UNESCAPED_SLASHES));
         fclose($handle);
-        return $filename;
     }
 
     public function writeFiles(string $name): void
     {
         $toArray = $this->_toArray();
-        $this->_writeSingleTestJsonFile($name, $toArray[SwaggerBuilder::PATHS]);
-        $this->_writeSingleTestJsonFile(self::SCHEMA_DIR . DS . $name, $toArray[SwaggerBuilder::SCHEMAS]);
+        $this->_writeSingleTestJsonFile('', $name, $toArray[SwaggerBuilder::PATHS]);
+        $this->_writeSingleTestJsonFile(self::SCHEMA_DIR . DS, $name, $toArray[SwaggerBuilder::SCHEMAS]);
     }
 }
