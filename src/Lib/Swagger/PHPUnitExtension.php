@@ -57,7 +57,8 @@ class PHPUnitExtension implements FinishedSubscriber, Extension
         if (!$dir) {
             return null;
         }
-        if ($dir === true || $dir === '1') {// when true generate with default directory (optionally add string as directory path)
+        if ($dir === true || $dir === '1') {
+            // when true generate with default directory (optionally add string as directory path)
             $dir = $this->getDirectory();
         }
         if (!is_dir($dir)) {
