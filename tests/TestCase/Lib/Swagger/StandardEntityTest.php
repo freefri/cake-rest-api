@@ -59,4 +59,21 @@ class StandardEntityTest extends TestCase
         $schemas = new StandardEntity($data);
         $this->assertTrue($schemas->isDataArray());
     }
+
+    public function test_parseType()
+    {
+        $schemas = new StandardEntity([]);
+        $json = ['_c' => 'RestApi\Model\Entity\LogEntry'];
+        // Add namespace
+        $res = $schemas->_parseType($json);
+        $this->assertEquals('RestApiNsLogEntry', $res);
+        // Remove namespace
+        putenv('SWAGGER_NAMESPACE_TO_REMOVE=RestApi');
+        $res = $schemas->_parseType($json);
+        $this->assertEquals('LogEntry', $res);
+        // Add namespace
+        putenv('SWAGGER_NAMESPACE_TO_REMOVE=');
+        $res = $schemas->_parseType($json);
+        $this->assertEquals('RestApiNsLogEntry', $res);
+    }
 }

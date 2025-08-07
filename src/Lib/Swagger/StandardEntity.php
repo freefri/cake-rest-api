@@ -48,11 +48,15 @@ class StandardEntity
         return $this->_parseType($this->data);
     }
 
-    private function _parseType(mixed $json): ?string
+    public function _parseType(mixed $json): ?string
     {
         $res = $json[RestApiEntity::CLASS_NAME] ?? null;
         if ($res) {
-            $res = str_replace('\Model\Entity', '', $res);
+            $ns = getenv('SWAGGER_NAMESPACE_TO_REMOVE');
+            if ($ns) {
+                $res = str_replace($ns . '\\', '', $res);
+            }
+            $res = str_replace('Model\Entity\\', '', $res);
             $res = str_replace('\\', 'Ns', $res);
         }
         return $res;
