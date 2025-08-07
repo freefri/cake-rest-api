@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace RestApi\Model\Entity;
 
 use Cake\Core\Configure;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Entity;
 
 class RestApiEntity extends Entity
@@ -45,5 +46,10 @@ class RestApiEntity extends Entity
     public function toJsonArray(): array
     {
         return json_decode(json_encode($this), true);
+    }
+
+    public function setSoftDeleted(): void
+    {
+        $this->deleted = new FrozenTime();
     }
 }
