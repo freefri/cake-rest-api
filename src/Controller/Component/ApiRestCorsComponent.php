@@ -63,16 +63,21 @@ class ApiRestCorsComponent extends Component
                     ->allowCredentials();
             }
             if ($controller->getRequest()->is('options')) {
+                $headers = Configure::read('App.Cors.AllowHeaders');
+                if (!$headers || !is_array($headers)) {
+                    $headers = [];
+                }
+                $allowHeaders = [
+                    'Authorization',
+                    'Content-Type',
+                    'Accept-Language',
+                    'X-Experience-API-Version',
+                    'X-Whitelabel',
+                ];
+                $allowHeaders = array_merge($allowHeaders, $headers);
                 $responseBuilder
                     ->allowMethods(['POST', 'GET', 'PATCH', 'PUT', 'DELETE'])
-                    ->allowHeaders([
-                        'Authorization',
-                        'Content-Type',
-                        'Accept-Language',
-                        'X-Experience-API-Version',
-                        'X-Whitelabel',
-                        'Baggage',
-                    ])
+                    ->allowHeaders($allowHeaders)
                     ->maxAge(3600);
                 $response = $responseBuilder->build();
                 $controller->setResponse($response);
