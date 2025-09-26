@@ -17,9 +17,9 @@ class RestApiEntity extends Entity
         return 'App\Model\Entity\\';
     }
 
-    public function toChild(string $c, array $array)
+    public static function toChild(string $c, array $array)
     {
-        if ($this->hasIdentifyEntities()) {
+        if (self::hasIdentifyEntities()) {
             $array[RestApiEntity::CLASS_NAME] = $c;
         }
         return $array;
