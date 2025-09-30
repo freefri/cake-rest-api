@@ -131,7 +131,7 @@ class TypeParser
                     return explode($amz, $value)[0] . $amz . '**********';
                 }
             }
-            if (in_array($property, $securedAnonymizedVariables)) { // secrets
+            if (in_array($property, $securedAnonymizedVariables) && $value) { // secrets
                 $value = preg_replace('/[a-zA-Z0-9]/', '*', $value);
             }
         }
