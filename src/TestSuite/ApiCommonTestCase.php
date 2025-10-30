@@ -28,6 +28,11 @@ abstract class ApiCommonTestCase extends ApiCommonIntegrationTestCase
         $this->_skipNext = true;
     }
 
+    protected function useNextRequestInSwagger()
+    {
+        $this->_skipNext = false;
+    }
+
     protected function _sendRequest($url, $method, $data = []): void
     {
         parent::_sendRequest($url, $method, $data);
