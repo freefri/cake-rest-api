@@ -188,7 +188,7 @@ abstract class RestApiController extends Controller
             );
         }
         if ($id === null || $id === '') {
-            if ($this->request->is('GET')) {
+            if ($this->isHttpGet()) {
                 $this->getList();
             } elseif ($this->request->is('POST')) {
                 $this->addNew($this->_getNoEmptyData());
@@ -207,7 +207,7 @@ abstract class RestApiController extends Controller
             if (!$id) {
                 throw new ForbiddenException('Not valid resource id');
             }
-            if ($this->request->is('GET')) {
+            if ($this->isHttpGet()) {
                 $this->getData($id);
             } elseif ($this->request->is('PATCH')) {
                 $this->edit($id, $this->_getNoEmptyData());
@@ -407,5 +407,10 @@ abstract class RestApiController extends Controller
             $file->moveTo($tmpName);
             return $tmpName;
         }
+    }
+
+    protected function isHttpGet(): bool
+    {
+        return $this->request->is('GET') || $this->request->is('HEAD');
     }
 }
