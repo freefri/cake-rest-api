@@ -23,6 +23,7 @@ use RestApi\Lib\Validator\RestApiValidator;
 use RestApi\Lib\Validator\ValidationException;
 use RestApi\Model\ORM\RestApiQuery;
 use RestApi\Model\ORM\RestApiSelectQuery;
+use function Cake\Core\namespaceSplit as cakeNamespaceSplit;
 
 abstract class RestApiTable extends Table
 {
@@ -55,7 +56,7 @@ abstract class RestApiTable extends Table
 
     public static final function name(): string
     {
-        $split = namespaceSplit(static::class);
+        $split = self::namespaceSplit(static::class);
         $name = array_pop($split);
         if (strpos($name, 'Table') === false) {
             throw new InternalErrorException('Class name must contain Table');
@@ -68,9 +69,14 @@ abstract class RestApiTable extends Table
         return self::name() . '.' . $field;
     }
 
+    public static function namespaceSplit($className)
+    {
+        return cakeNamespaceSplit($className);
+    }
+
     public static function nameWithPlugin()
     {
-        $namespaceSplit = namespaceSplit(get_called_class());
+        $namespaceSplit = self::namespaceSplit(get_called_class());
         $classTableName = $namespaceSplit[1];
         $alias = substr($classTableName, 0, strlen($classTableName) - strlen('Table'));
         $plugin = explode('\\', $namespaceSplit[0])[0];
@@ -111,7 +117,7 @@ abstract class RestApiTable extends Table
     public function addBehavior(string $name, array $options = [])
     {
         if (strpos($name, '\\') !== false) {
-            $split = namespaceSplit($name);
+            $split = self::namespaceSplit($name);
             $name = array_pop($split);
             if (strpos($name, 'Behavior') === false) {
                 throw new InternalErrorException('Class name must contain Behavior');
@@ -124,7 +130,7 @@ abstract class RestApiTable extends Table
     public function getTable(): string
     {
         if ($this->_table === null) {
-            $table = namespaceSplit(static::class);
+            $table = self::namespaceSplit(static::class);
             $table = substr(end($table), 0, -5);
             if (!$table) {
                 $table = $this->getAlias();

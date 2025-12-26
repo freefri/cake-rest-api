@@ -24,6 +24,7 @@ use RestApi\Controller\Component\ApiRestCorsComponent;
 use RestApi\Lib\Exception\SilentException;
 use RestApi\Lib\Oauth\ScopeRules;
 use RestApi\Lib\RestRenderer;
+use RestApi\Model\Table\RestApiTable;
 
 /**
  * @property \App\Controller\Component\OAuthServerComponent $OAuthServer
@@ -96,7 +97,7 @@ abstract class RestApiController extends Controller
 
     private static function cls(): string
     {
-        $className = namespaceSplit(static::class);
+        $className = RestApiTable::namespaceSplit(static::class);
         return substr(array_pop($className), 0, -1 * strlen('Controller'));
     }
 
