@@ -75,5 +75,13 @@ class StandardEntityTest extends TestCase
         putenv('SWAGGER_NAMESPACE_TO_REMOVE=');
         $res = $schemas->_parseType($json);
         $this->assertEquals('RestApiNsLogEntry', $res);
+        // Remove namespace
+        putenv('SWAGGER_NAMESPACE_TO_REMOVE_3=RestApi');
+        $res = $schemas->_parseType($json);
+        $this->assertEquals('LogEntry', $res);
+        // Add namespace
+        putenv('SWAGGER_NAMESPACE_TO_REMOVE_3=');
+        $res = $schemas->_parseType($json);
+        $this->assertEquals('RestApiNsLogEntry', $res);
     }
 }

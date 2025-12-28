@@ -52,14 +52,31 @@ class StandardEntity
     {
         $res = $json[RestApiEntity::CLASS_NAME] ?? null;
         if ($res) {
-            $ns = getenv('SWAGGER_NAMESPACE_TO_REMOVE');
-            if ($ns) {
+            $namespaces = $this->_getNameSpacesToReplace();
+            foreach ($namespaces as $ns) {
                 $res = str_replace($ns . '\\', '', $res);
             }
             $res = str_replace('Model\Entity\\', '', $res);
             $res = str_replace('\\', 'Ns', $res);
         }
         return $res;
+    }
+
+    private function _getNameSpacesToReplace(): array
+    {
+        $namespaces = [];
+        for ($i = 0; $i <= 20; $i++) {
+            if ($i === 0) {
+                $value = '';
+            } else {
+                $value = '_' . $i;
+            }
+            $ns = getenv('SWAGGER_NAMESPACE_TO_REMOVE' . $value);
+            if ($ns) {
+                $namespaces[] = $ns;
+            }
+        }
+        return $namespaces;
     }
 
     public function getRequired(): array
