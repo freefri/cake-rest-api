@@ -3,6 +3,7 @@
 namespace RestApi\Model\Table;
 
 use Cake\Http\Exception\InternalErrorException;
+use function Cake\I18n\__d as cake__d;
 
 trait SoftDeleteTrait
 {
@@ -24,7 +25,7 @@ trait SoftDeleteTrait
         }
         if ($this->getSchema()->getColumn($field) === null) {
             throw new InternalErrorException(
-                __d('admin', 'Configured field `{0}` is missing from the table `{1}`.',
+                cake__d('admin', 'Configured field `{0}` is missing from the table `{1}`.',
                     $field,
                     $this->getAlias()
                 )
