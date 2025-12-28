@@ -216,5 +216,21 @@ class SchemaReaderTest extends TestCase
         $reader = new SchemaReader();
         $res = $reader->getNewContent($contentArray);
         $this->assertEquals($expected, $res);
+        // should not get string nullable when other type exists
+        $contentArray = [
+            [
+                'type' => 'string', 'nullable' => true, 'example' => null,
+            ],
+            [
+                '$ref' => '#/components/schemas/Result',
+            ],
+        ];
+        $reader = new SchemaReader();
+        $res = $reader->getNewContent($contentArray, 'three');
+        $expected = [
+            'nullable' => true,
+            '$ref' => '#/components/schemas/Result'
+        ];
+        $this->assertEquals($expected, $res);
     }
 }
