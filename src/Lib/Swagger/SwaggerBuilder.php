@@ -113,21 +113,38 @@ class SwaggerBuilder
         throw new InternalErrorException('Object structure is not valid ' . json_encode($selectedRouteMethod));
     }
 
+    private function _addFileBlob(?array $req, bool $isFileUpload): ?array
+    {
+        if ($isFileUpload) {
+            $req['required'][] = 'file';
+            $req['properties']['file'] = [
+                'type' => 'string',
+                'format' => 'binary',
+                'description' => 'Binary blob file to upload',
+            ];
+        }
+        return $req;
+    }
+
     public function getRequestBodyInRoute(array $selectedRouteMethod): array
     {
+        $contentType = 'application/json';
         $requestSchema = [];
         foreach ($selectedRouteMethod as $md5_elem) {
             /** @var SwaggerTestCase $testCase */
             foreach ($md5_elem as $testCase) {
+                if ($testCase->isFileUpload()) {
+                    $contentType = 'multipart/form-data';
+                }
                 $req = $testCase->getRequestSchema();
                 if ($req && $testCase->getStatusCode() < 400) {
                     if (isset($req['$ref'])) {
                         if ($req['$ref'] !== ($requestSchema[0]['$ref'] ?? null)) {
                             // do not add duplicated
-                            $requestSchema[] = $req;
+                            $requestSchema[] = $this->_addFileBlob($req, $testCase->isFileUpload());
                         }
                     } else {
-                        $requestSchema[] = $req;
+                        $requestSchema[] = $this->_addFileBlob($req, $testCase->isFileUpload());
                     }
                 }
             }
@@ -148,7 +165,7 @@ class SwaggerBuilder
         return [
             'description' => $description,
             'content' => [
-                'application/json' => [
+                $contentType => [
                     'schema' => $requestSchema
                 ]
             ],

@@ -295,6 +295,16 @@ class SwaggerTestCase implements \JsonSerializable
         return $this->schemas->getResponseSchemas($fullJson, $this->getDescription());
     }
 
+    public function getUploadedFile(): ?\Laminas\Diactoros\UploadedFile
+    {
+        return $this->_request['files']['file'] ?? null;
+    }
+
+    public function isFileUpload(): bool
+    {
+        return (bool)$this->getUploadedFile();
+    }
+
     public function getRequestSchema(): ?array
     {
         $post = $this->_request['post'] ?? '';
