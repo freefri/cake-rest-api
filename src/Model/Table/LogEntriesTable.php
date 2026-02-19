@@ -8,6 +8,7 @@ use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\ORM\Table;
 use RestApi\Model\Entity\LogEntry;
+use function Cake\Core\namespaceSplit;
 
 class LogEntriesTable extends Table
 {
