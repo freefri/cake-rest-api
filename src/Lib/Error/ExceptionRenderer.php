@@ -12,6 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use RestApi\Controller\RestApiErrorController;
 use RestApi\Lib\Exception\DetailedException;
 use RestApi\Lib\Validator\ValidationException;
+use RestApi\Model\Table\RestApiTable;
 use Throwable;
 
 class ExceptionRenderer extends WebExceptionRenderer
@@ -86,7 +87,7 @@ class ExceptionRenderer extends WebExceptionRenderer
             }
             $toRet['code'] = $code;
             if ($exception instanceof DetailedException) {
-                $toRet['error'] = namespaceSplit(get_class($exception))[1];
+                $toRet['error'] = RestApiTable::namespaceSplit(get_class($exception))[1];
                 $toRet['message'] = $exception->getMessage();
             }
             if ($exception instanceof ValidationException) {

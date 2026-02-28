@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace RestApi\Lib\Exception;
 
 use Cake\Http\Exception\HttpException;
+use RestApi\Model\Table\RestApiTable;
 use Throwable;
 
 class DetailedException extends HttpException
@@ -13,7 +14,7 @@ class DetailedException extends HttpException
     public function __construct(?string $message = null, ?int $code = null, ?Throwable $previous = null)
     {
         if (empty($message)) {
-            $message = namespaceSplit(get_class($this))[1];
+            $message = RestApiTable::namespaceSplit(get_class($this))[1];
         }
         parent::__construct($message, $code, $previous);
     }
