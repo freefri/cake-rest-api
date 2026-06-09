@@ -28,7 +28,7 @@
     "php": ">=8.1",
     "ext-mbstring": "*",
     "ext-json": "*",
-    "cakephp/cakephp": "^5.2",
+    "cakephp/cakephp": "^5.3",
     "cakephp/migrations": "^4.6 || ^5.0",
     "eduplex-api/cake-api-swagger": "^0.3.1",
     "bshaffer/oauth2-server-php": "~1.14",
