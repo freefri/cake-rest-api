@@ -21,7 +21,7 @@ class TypeParserTest extends TestCase
         $res = TypeParser::anonymizeVariables('2014-03-24T09:32:30+01:00', 'created');
         $this->assertEquals('2016-04-15T10:34:55+02:00', $res);
         // long amazon signed urls
-        $url = 'https://ct-module-files.s3.eu-west-1.amazonaws.com/something?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAWMOHZLNB6CZEQ5EK%2F20250724%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20250724T143351Z&X-Amz-SignedHeaders=host&X-Amz-Expires=600&X-Amz-Signature=b1904f47df6392e493da47c3cd2a21f68d4ad5f2ca44e1508fd2cc4ec60c1d4f';
+        $url = 'https://ct-module-files.s3.eu-west-1.amazonaws.com/something?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAWM*******CZEQ5EK%2F20250724%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20250724T143351Z&X-Amz-SignedHeaders=host&X-Amz-Expires=600&X-Amz-Signature=b1904f47df6392e493da47c3cd2a21f68d4ad5f2ca44e*******************';
         $res = TypeParser::anonymizeVariables($url, 'anything');
         $this->assertEquals('https://ct-module-files.s3.eu-west-1.amazonaws.com/something?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=**********', $res);
         // references
