@@ -225,6 +225,15 @@ class TypeParserTest extends TestCase
         ], $res);
     }
 
+    public function testGetPropPhoneNumber()
+    {
+        $res = TypeParser::getProp('+43666888777', 'phone');
+        $this->assertEquals([
+            'type' => 'string',
+            'example' => '+43666888777',
+        ], $res);
+    }
+
     public function testGetItemsScalar()
     {
         $res = TypeParser::getItems([1, 2, 3]);

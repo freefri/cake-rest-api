@@ -78,7 +78,8 @@ class TypeParser
         if (is_bool($value)) {
             return self::_boolean($value);
         }
-        if (is_numeric($value)) {
+        $looksLikePhone = is_string($value) && str_starts_with($value, '+');
+        if (is_numeric($value) && !$looksLikePhone) {
             return [
                 'type' => 'number',
                 'example' => $value + 0,
