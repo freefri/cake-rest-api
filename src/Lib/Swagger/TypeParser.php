@@ -21,18 +21,8 @@ class TypeParser
                     'nullable' => true,
                     'example' => $json,
                 ];
-            } else if (is_bool($json)) {
-                $data = self::_boolean($json);
-            } else if (is_numeric($json)) {
-                $data = [
-                    'type' => 'number',
-                    'example' => $json + 0,
-                ];
-            } else if (is_string($json)) {
-                $data = [
-                    'type' => 'string',
-                    'example' => $json,
-                ];
+            } else if (!is_array($json)) {
+                $data = self::_scalar($json);
             } else if ($json === []) {
                 $data = self::_any(TypeParser::ANYTHING);
             } else {
@@ -77,20 +67,27 @@ class TypeParser
                     ];
                 }
             }
-        } else if (is_numeric($value)) {
-            $prop = [
+        } else {
+            $prop = self::_scalar($value, $property);
+        }
+        return $prop;
+    }
+
+    private static function _scalar($value, string $property = null): array
+    {
+        if (is_bool($value)) {
+            return self::_boolean($value);
+        }
+        if (is_numeric($value)) {
+            return [
                 'type' => 'number',
                 'example' => $value + 0,
             ];
-        } else if ($value === true || $value === false) {
-            $prop = self::_boolean($value);
-        } else {
-            $prop = [
-                'type' => 'string',
-                'example' => '' . self::anonymizeVariables($value, $property),
-            ];
         }
-        return $prop;
+        return [
+            'type' => 'string',
+            'example' => '' . self::anonymizeVariables($value, $property),
+        ];
     }
 
     public static function anonymizeVariables($value, string $property = null)
