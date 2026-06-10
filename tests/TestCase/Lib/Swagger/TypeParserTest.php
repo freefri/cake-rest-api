@@ -33,4 +33,231 @@ class TypeParserTest extends TestCase
         $res = TypeParser::anonymizeVariables($string, 'reference');
         $this->assertEquals('50-*************', $res);
     }
+
+    public function testGetDataWithTypeList()
+    {
+        $res = TypeParser::getDataWithType([1, 2, 3]);
+        $this->assertEquals([
+            'type' => 'array',
+            'items' => [
+                'type' => 'number',
+                'example' => 1,
+            ],
+        ], $res);
+    }
+
+    public function testGetDataWithTypeNull()
+    {
+        $res = TypeParser::getDataWithType(null);
+        $this->assertEquals([
+            'type' => 'string',
+            'nullable' => true,
+            'example' => null,
+        ], $res);
+    }
+
+    public function testGetDataWithTypeBool()
+    {
+        $res = TypeParser::getDataWithType(true);
+        $this->assertEquals([
+            'type' => 'boolean',
+            'example' => true,
+        ], $res);
+
+        $res = TypeParser::getDataWithType(false);
+        $this->assertEquals([
+            'type' => 'boolean',
+            'example' => false,
+        ], $res);
+    }
+
+    public function testGetDataWithTypeNumeric()
+    {
+        $res = TypeParser::getDataWithType(42);
+        $this->assertEquals([
+            'type' => 'number',
+            'example' => 42,
+        ], $res);
+
+        // numeric string is treated as a number
+        $res = TypeParser::getDataWithType('1.5');
+        $this->assertEquals([
+            'type' => 'number',
+            'example' => 1.5,
+        ], $res);
+    }
+
+    public function testGetDataWithTypeString()
+    {
+        $res = TypeParser::getDataWithType('hello');
+        $this->assertEquals([
+            'type' => 'string',
+            'example' => 'hello',
+        ], $res);
+    }
+
+    public function testGetDataWithTypeEmptyArray()
+    {
+        $res = TypeParser::getDataWithType([]);
+        $this->assertEquals([
+            'type' => 'object',
+            'description' => TypeParser::ANYTHING,
+            'additionalProperties' => true,
+        ], $res);
+    }
+
+    public function testGetDataWithTypeObject()
+    {
+        $res = TypeParser::getDataWithType(['name' => 'John', 'age' => 30]);
+        $this->assertEquals([
+            'type' => 'object',
+            'properties' => [
+                'name' => [
+                    'type' => 'string',
+                    'example' => 'John',
+                ],
+                'age' => [
+                    'type' => 'number',
+                    'example' => 30,
+                ],
+            ],
+            'description' => 'Generic object.',
+        ], $res);
+    }
+
+    public function testGetDataWithTypeObjectWithDescription()
+    {
+        $res = TypeParser::getDataWithType(['name' => 'John'], 'some test');
+        $this->assertEquals([
+            'type' => 'object',
+            'properties' => [
+                'name' => [
+                    'type' => 'string',
+                    'example' => 'John',
+                ],
+            ],
+            'description' => 'Generic object when: some test',
+        ], $res);
+    }
+
+    public function testGetPropEmptyArray()
+    {
+        $res = TypeParser::getProp([]);
+        $this->assertEquals([
+            'type' => 'array',
+            'items' => [
+                'type' => 'object',
+                'description' => 'Empty array',
+                'additionalProperties' => true,
+            ],
+        ], $res);
+    }
+
+    public function testGetPropList()
+    {
+        $res = TypeParser::getProp([1, 2]);
+        $this->assertEquals([
+            'type' => 'array',
+            'items' => [
+                'type' => 'number',
+                'example' => 1,
+            ],
+        ], $res);
+    }
+
+    public function testGetPropObject()
+    {
+        $res = TypeParser::getProp(['a' => 1]);
+        $this->assertEquals([
+            'type' => 'object',
+            'properties' => [
+                'a' => [
+                    'type' => 'number',
+                    'example' => 1,
+                ],
+            ],
+            'description' => 'objectInArray',
+        ], $res);
+    }
+
+    public function testGetPropMaxDepth()
+    {
+        $res = TypeParser::getProp(['a' => 1], 'x', 10);
+        $this->assertEquals([
+            'type' => 'string',
+            'example' => '{`a`:1}',
+        ], $res);
+    }
+
+    public function testGetPropNumeric()
+    {
+        $res = TypeParser::getProp(5);
+        $this->assertEquals([
+            'type' => 'number',
+            'example' => 5,
+        ], $res);
+    }
+
+    public function testGetPropBool()
+    {
+        $res = TypeParser::getProp(true);
+        $this->assertEquals([
+            'type' => 'boolean',
+            'example' => true,
+        ], $res);
+    }
+
+    public function testGetPropString()
+    {
+        $res = TypeParser::getProp('hello');
+        $this->assertEquals([
+            'type' => 'string',
+            'example' => 'hello',
+        ], $res);
+    }
+
+    public function testGetPropStringAnonymized()
+    {
+        $res = TypeParser::getProp('mysecret', 'password');
+        $this->assertEquals([
+            'type' => 'string',
+            'example' => '********',
+        ], $res);
+    }
+
+    public function testGetItemsScalar()
+    {
+        $res = TypeParser::getItems([1, 2, 3]);
+        $this->assertEquals([
+            'type' => 'number',
+            'example' => 1,
+        ], $res);
+    }
+
+    public function testGetItemsArrayOfArrays()
+    {
+        $res = TypeParser::getItems([[1, 2], [3, 4]]);
+        $this->assertEquals([
+            'type' => 'array',
+            'items' => [
+                'type' => 'number',
+                'example' => 1,
+            ],
+        ], $res);
+    }
+
+    public function testGetItemsArrayOfObjects()
+    {
+        $res = TypeParser::getItems([['a' => 1]]);
+        $this->assertEquals([
+            'type' => 'object',
+            'properties' => [
+                'a' => [
+                    'type' => 'number',
+                    'example' => 1,
+                ],
+            ],
+            'description' => 'getItems',
+        ], $res);
+    }
 }
