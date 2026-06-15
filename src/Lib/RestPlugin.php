@@ -15,13 +15,23 @@ abstract class RestPlugin extends BasePlugin
 
     public function routes(RouteBuilder $routes): void
     {
-        $routes->plugin(
-            $this->name,
-            ['path' => $this->getRoutePathGeneric($this->getBaseNamespace())],
-            function (RouteBuilder $builder) {
-                $this->routeConnectors($builder);
-            }
-        );
+        $pluginNamespace = $this->getBaseNamespace();
+        $routePathsGeneric = [
+            $this->getRoutePathGeneric($pluginNamespace)
+        ];
+        $secondaryPath = $this->getRoutePath2Generic($pluginNamespace);
+        if ($secondaryPath) {
+            $routePathsGeneric[] = $secondaryPath;
+        }
+        foreach ($routePathsGeneric as $routePathGeneric) {
+            $routes->plugin(
+                $this->name,
+                ['path' => $routePathGeneric],
+                function (RouteBuilder $builder) {
+                    $this->routeConnectors($builder);
+                }
+            );
+        }
         parent::routes($routes);
     }
 
@@ -54,6 +64,11 @@ abstract class RestPlugin extends BasePlugin
     private static function getRoutePathGeneric(string $pluginNamespace): string
     {
         return self::getGenericPluginConfig('routePath', $pluginNamespace);
+    }
+
+    private static function getRoutePath2Generic(string $pluginNamespace): string
+    {
+        return self::getGenericPluginConfig('routePath2', $pluginNamespace);
     }
 
     private static function getGenericPluginConfig(string $key, string $pluginNamespace): string

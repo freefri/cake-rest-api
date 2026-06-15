@@ -21,6 +21,7 @@ return [
     'ExamplePlugin' => [
         'tablePrefix' => 'example_',
         'routePath' => '/api/v1',
+        'routePath2' => '/api/v2',
     ],
 ];
 ```
@@ -28,6 +29,7 @@ return [
 The following configuration can be used:
 - `tablePrefix`: (optional) in case you want to add a prefix for you database tables, e.g. `myplugin_users`. Can be empty string.
 - `routePath`: Definition for the beginning of the path for all routes in the plugin
+- `routePath2`: (optional) a second path prefix under which all the plugin routes are additionally registered, e.g. to expose the same routes under both `/api/v1` and `/api/v2`. When empty or not set, only `routePath` is used.
 
 ## Swagger
 In order to make swagger UI with openapi description available, a new controller `SwaggerJsonController` must be
