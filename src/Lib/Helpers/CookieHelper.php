@@ -97,6 +97,20 @@ class CookieHelper
         return $this->cookie;
     }
 
+    protected function expireCookie(string $key): Cookie
+    {
+        return new Cookie(
+            $key,
+            '',
+            FrozenTime::createFromTimestamp(1, new DateTimeZone('GMT')),
+            null,
+            null,
+            true,
+            true,
+            CookieInterface::SAMESITE_NONE
+        );
+    }
+
     protected function getRememberName(): string
     {
         return env('REMEMBER_NAME_API', 'rememberapi2');
