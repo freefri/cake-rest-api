@@ -25,4 +25,14 @@ trait RestApiPaginationTrait
     {
         return PaginationHelper::processQueryFiltersStatic($filters);
     }
+
+    public function getPage(): int
+    {
+        return (int)($this->request->getQueryParams()['page'] ?? 1);
+    }
+
+    public function getLimit(): int
+    {
+        return (int)($this->request->getQueryParams()['limit'] ?? 1);
+    }
 }
