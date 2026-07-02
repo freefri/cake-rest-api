@@ -3,6 +3,7 @@
 namespace RestApi\Controller\Traits;
 
 use Cake\Http\ServerRequest;
+use Cake\ORM\Query;
 use RestApi\Lib\Helpers\PaginationHelper;
 
 /**
@@ -10,6 +11,8 @@ use RestApi\Lib\Helpers\PaginationHelper;
  */
 trait RestApiPaginationTrait
 {
+    private int $_defaultLimit = 10;
+
     protected function calculateOffset($page, $resultsPerPage = 10)
     {
         return PaginationHelper::calculateOffset($page, $resultsPerPage);
@@ -26,13 +29,40 @@ trait RestApiPaginationTrait
         return PaginationHelper::processQueryFiltersStatic($filters);
     }
 
-    public function getPage(): int
+    protected function getPage(): int
     {
         return (int)($this->request->getQueryParams()['page'] ?? 1);
     }
 
-    public function getLimit(): int
+    protected function setDefaultLimit(int $defaultLimit): self
     {
-        return (int)($this->request->getQueryParams()['limit'] ?? 1);
+        $this->_defaultLimit = $defaultLimit;
+        return $this;
+    }
+
+    protected function getLimit(): int
+    {
+        return (int)($this->request->getQueryParams()['limit'] ?? $this->_defaultLimit);
+    }
+
+    protected function getPaginated(Query $query, string $host): array
+    {
+        $limit = $this->getLimit();
+        $page = $this->getPage();
+        $offset = $this->calculateOffset($page, $limit);
+        $pageResults = $query->limit($limit)->offset($offset)->toArray();
+        $fetchedCount = count($pageResults);
+        if ($fetchedCount < $limit) {
+            $total = $offset + $fetchedCount;
+        } else {
+            $total = $query->count();
+        }
+        $numPages = ceil($total / $limit);
+        return [
+            'data' => $pageResults,
+            'total' => $total,
+            'limit' => $limit,
+            '_links' => $this->getLinks($page, $numPages, $host)
+        ];
     }
 }
