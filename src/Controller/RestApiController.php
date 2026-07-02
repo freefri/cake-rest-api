@@ -343,7 +343,22 @@ abstract class RestApiController extends Controller
         return explode('?', $this->request->getRequestTarget())[0];
     }
 
+    /**
+     * @deprecated use getManualOauth() instead, only use getLocalOauth for overwriting
+     */
     protected abstract function getLocalOauth();
+
+    protected function getManualOauth()
+    {
+        if (!$this->isPublicController()) {
+            throw new InternalErrorException(
+                'getManualOauth() is only for public controllers, where the request lifecycle does '
+                . 'not verify auth. This controller is non-public: use $this->OAuthServer, which '
+                . 'OAuthServerComponent has already verified for the request.'
+            );
+        }
+        return $this->getLocalOauth();
+    }
 
     protected function isOwnProvider($userId): bool
     {
