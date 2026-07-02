@@ -45,7 +45,7 @@ trait RestApiPaginationTrait
         return (int)($this->request->getQueryParams()['limit'] ?? $this->_defaultLimit);
     }
 
-    protected function getPaginated(Query $query, string $host): array
+    protected function getPaginatedResult(Query $query, string $host): array
     {
         $limit = $this->getLimit();
         $page = $this->getPage();
