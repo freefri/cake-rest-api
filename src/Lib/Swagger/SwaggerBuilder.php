@@ -130,6 +130,7 @@ class SwaggerBuilder
     {
         $contentType = 'application/json';
         $requestSchema = [];
+        $fileUploadWithoutBody = null;
         foreach ($selectedRouteMethod as $md5_elem) {
             /** @var SwaggerTestCase $testCase */
             foreach ($md5_elem as $testCase) {
@@ -146,11 +147,20 @@ class SwaggerBuilder
                     } else {
                         $requestSchema[] = $this->_addFileBlob($req, $testCase->isFileUpload());
                     }
+                } elseif (!$req && $testCase->isFileUpload() && $testCase->getStatusCode() < 400) {
+                    $fileUploadWithoutBody = $testCase->getDescription();
                 }
             }
         }
         if (!$requestSchema) {
-            return [];
+            if ($fileUploadWithoutBody === null) {
+                return [];
+            }
+            $requestSchema[] = $this->_addFileBlob([
+                'type' => 'object',
+                'description' => $fileUploadWithoutBody,
+                'properties' => [],
+            ], true);
         }
         $description = '';
         $count = count($requestSchema);
