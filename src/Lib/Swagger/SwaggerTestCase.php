@@ -146,7 +146,7 @@ class SwaggerTestCase implements \JsonSerializable
     private function _getPathParams(): array
     {
         $matches = [];
-        preg_match_all('/{[a-zA-Z_]+}/', $this->getRoute(), $matches);
+        preg_match_all('/{[a-zA-Z_][a-zA-Z0-9_]*}/', $this->getRoute(), $matches);
         if (!isset($matches[0][0])) {
             return [];
         }

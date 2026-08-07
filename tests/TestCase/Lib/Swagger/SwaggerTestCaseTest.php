@@ -498,6 +498,73 @@ class SwaggerTestCaseTest extends TestCase
         $this->assertEquals($expectedParams, $test->getParams());
     }
 
+    public function testGetParamsWhenPathSegmentContainsADigit()
+    {
+        $request = new ServerRequest();
+        $controller = new Controller($request);
+        $request = [
+            'url' => '/testurl_last/3/h5p/ede22012-2aee-4c23-9046-774ccb85638d',
+            'session' => null,
+            'query' => [],
+            'files' => [],
+            'environment' => [
+                'REQUEST_METHOD' => 'GET',
+                'QUERY_STRING' => '',
+                'REQUEST_URI' => '/testurl_last/3/h5p/ede22012-2aee-4c23-9046-774ccb85638d'
+            ],
+            'post' => [],
+            'cookies' => []
+        ];
+        $res = $this->_getResponse(['data' => ['hello' => 'world']]);
+        $lastRoute = '/testurl_last/{eventID}/h5p/*';
+        $test = new SwaggerTestCase($controller, $request, $res, $lastRoute);
+
+        $this->assertEquals('/testurl_last/{eventID}/h5p/{h5pID}', $test->getRoute());
+        $expectedParams = [
+            [
+                'description' => 'ID in URL',
+                'in' => 'path',
+                'name' => 'eventID',
+                'example' => 3,
+                'required' => true,
+                'schema' => [
+                    'type' => 'integer'
+                ]
+            ],
+            [
+                'description' => 'ID in URL',
+                'in' => 'path',
+                'name' => 'h5pID',
+                'example' => 'ede22012-2aee-4c23-9046-774ccb85638d',
+                'required' => true,
+                'schema' => [
+                    'type' => 'string'
+                ]
+            ],
+            [
+                'description' => 'Auth token',
+                'in' => 'header',
+                'name' => 'Authorization',
+                'example' => 'Bearer ****************',
+                'required' => true,
+                'schema' => [
+                    'type' => 'string'
+                ]
+            ],
+            [
+                'description' => SwaggerTestCase::acceptLanguage(),
+                'in' => 'header',
+                'name' => 'Accept-Language',
+                'example' => 'en',
+                'required' => false,
+                'schema' => [
+                    'type' => 'string'
+                ]
+            ]
+        ];
+        $this->assertEquals($expectedParams, $test->getParams());
+    }
+
     public function testGetRequestSchema()
     {
         // should parse entities and remove _c
