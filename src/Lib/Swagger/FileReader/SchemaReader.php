@@ -135,10 +135,34 @@ class SchemaReader implements FileReader
                     // if already existing is null add nullable schema
                     $newContent = $value;
                     $newContent['nullable'] = true;
+                } else {
+                    $newContent = $this->addOneOfRef($newContent, $value);
                 }
             }
         }
         return $newContent;
+    }
+
+    public function addOneOfRef(array $newContent, array $value): array
+    {
+        if (isset($newContent['oneOf'])) {
+            foreach ($newContent['oneOf'] as $oneOf) {
+                if (($oneOf['$ref'] ?? null) === $value['$ref']) {
+                    return $newContent;
+                }
+            }
+            $newContent['oneOf'][] = $value;
+            return $newContent;
+        }
+        $existingRef = $newContent['$ref'] ?? null;
+        if ($existingRef === null || $existingRef === $value['$ref']) {
+            return $newContent;
+        }
+        $toRet = ['oneOf' => [['$ref' => $existingRef], $value]];
+        if (isset($newContent['nullable'])) {
+            $toRet['nullable'] = $newContent['nullable'];
+        }
+        return $toRet;
     }
 
     public function addOneOfType(array $types, array $newType): array
