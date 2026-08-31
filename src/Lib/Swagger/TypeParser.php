@@ -75,6 +75,13 @@ class TypeParser
 
     private static function _scalar($value, string $property = null): array
     {
+        if ($value === null) {
+            return [
+                'type' => 'string',
+                'nullable' => true,
+                'example' => null,
+            ];
+        }
         if (is_bool($value)) {
             return self::_boolean($value);
         }

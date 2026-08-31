@@ -216,6 +216,16 @@ class TypeParserTest extends TestCase
         ], $res);
     }
 
+    public function testGetPropNull()
+    {
+        $res = TypeParser::getProp(null, 'redirect_url');
+        $this->assertEquals([
+            'type' => 'string',
+            'nullable' => true,
+            'example' => null,
+        ], $res);
+    }
+
     public function testGetPropStringAnonymized()
     {
         $res = TypeParser::getProp('mysecret', 'password');
