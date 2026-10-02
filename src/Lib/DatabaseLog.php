@@ -38,20 +38,8 @@ class DatabaseLog extends BaseLog
         try {
             $this->getLogTable()->saveLog($level, $message, $context);
         } catch (\Throwable $e) {
-            if (strpos($message, "\n") !== false) {
-                $message = explode("\n", $message);
-            }
-            $err = [
-                'msg' => 'Error saving logs',
-                'level' => $level,
-                'logError' => $e->getMessage(),
-                'logTrace' => $e->getTraceAsString(),
-                'originalError' => $message
-            ];
-            http_response_code(500);
-            header('Content-Type: application/json; charset=utf-8');
-            echo(json_encode($err));
-            exit;
+            error_log('DatabaseLog could not save a ' . $level . ' entry (' . $e->getMessage() . '): '
+                . mb_strcut($message, 0, 2000, 'UTF-8'));
         }
     }
 
