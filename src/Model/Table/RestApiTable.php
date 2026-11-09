@@ -10,6 +10,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Log\Log;
+use Cake\ORM\Association;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
@@ -112,6 +113,18 @@ abstract class RestApiTable extends Table
     public static function addBelongsToMany(RestApiTable $model): BelongsToMany
     {
         return $model->belongsToMany(static::name(), ['className' => static::nameWithPlugin()]);
+    }
+
+    public function hasMany(string $associated, array $options = []): HasMany
+    {
+        $options += ['strategy' => Association::STRATEGY_SELECT];
+        return parent::hasMany($associated, $options);
+    }
+
+    public function belongsToMany(string $associated, array $options = []): BelongsToMany
+    {
+        $options += ['strategy' => Association::STRATEGY_SELECT];
+        return parent::belongsToMany($associated, $options);
     }
 
     public function addBehavior(string $name, array $options = [])
